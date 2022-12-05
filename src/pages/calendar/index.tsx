@@ -10,8 +10,8 @@ import { Menu, Transition } from '@headlessui/react'
 // import { z } from 'zod'
 import classnames from 'classnames'
 
-// infer the type of selected day
 
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const days = [
   { date: '2021-12-27', events: [] },
@@ -89,19 +89,30 @@ const days = [
 // how to use the classnames package instead
 
 
-type SelectedDay = [string, string] | null
+type SelectedDay = [Date, Date] | null
 
 export default function Calendar() {
 
-  // make a type for Day in format "2022-10"
-
-
-
-  // const DaySchema = z.string().regex(/^\d{4}-\d{2}$/)
-
-  // write a useState hook initialized with nothing
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<SelectedDay>(null)
   const [month, setMonth] = useState(0)
+
+  // Generate an array of Date objects for the current month
+  const days = [];
+  const numDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  for (let i = 1; i <= numDays; i++) {
+    const date = new Date(currentYear, currentMonth, i);
+    days.push({
+      date,
+      events: [],
+      isCurrentMonth: date.getMonth() === currentMonth,
+      isToday: date.toDateString() === new Date().toDateString(),
+      isSelected: false,
+    });
+  }
+
 
   // 
 // To allow users to drag with the mouse to select dates in your calendar component, you can use the onMouseDown, onMouseMove, and onMouseUp event handlers. Here is a rough outline of how you might implement this behavior:
@@ -116,14 +127,24 @@ export default function Calendar() {
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
       <header className="flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none">
-        <h1 className="text-lg font-semibold text-gray-900">
-          <time dateTime="2022-01">January 2022</time>
-        </h1>
+      <h1 className="text-lg font-semibold text-gray-900">
+  <time dateTime={`${currentYear}-${currentMonth.toString().padStart(2, '0')}`}>
+    {monthNames[currentMonth - 1]} {currentYear}
+  </time>
+</h1>
         <div className="flex items-center">
           <div className="flex items-center rounded-md shadow-sm md:items-stretch">
             <button
               type="button"
               className="flex items-center justify-center rounded-l-md border border-r-0 border-gray-300 bg-white py-2 pl-3 pr-4 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
+              onClick={() => {
+                if (currentMonth === 1) {
+                  setCurrentMonth(12);
+                  setCurrentYear(currentYear - 1);
+                } else {
+                  setCurrentMonth(currentMonth - 1);
+                }
+              }}
             >
               <span className="sr-only">Previous month</span>
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -131,6 +152,11 @@ export default function Calendar() {
             <button
               type="button"
               className="hidden border-t border-b border-gray-300 bg-white px-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:relative md:block"
+              onClick={() => {
+                const today = new Date();
+                setCurrentMonth(today.getMonth() + 1);
+                setCurrentYear(today.getFullYear());
+              }}
             >
               Today
             </button>
@@ -138,6 +164,14 @@ export default function Calendar() {
             <button
               type="button"
               className="flex items-center justify-center rounded-r-md border border-l-0 border-gray-300 bg-white py-2 pl-4 pr-3 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
+              onClick={() => {
+                if (currentMonth === 12) {
+                  setCurrentMonth(1);
+                  setCurrentYear(currentYear + 1);
+                } else {
+                  setCurrentMonth(currentMonth + 1);
+                }
+              }}
             >
               <span className="sr-only">Next month</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
