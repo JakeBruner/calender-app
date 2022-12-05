@@ -1,12 +1,17 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ClockIcon,
+  // ClockIcon,
   EllipsisHorizontalIcon,
 } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
+// import { z } from 'zod'
+import classnames from 'classnames'
+
+// infer the type of selected day
+
 
 const days = [
   { date: '2021-12-27', events: [] },
@@ -79,13 +84,35 @@ const days = [
   { date: '2022-02-05', events: [] },
   { date: '2022-02-06', events: [] },
 ]
-const selectedDay = days.find((day) => day.isSelected)
+// const selectedDay = days.find((day) => day.isSelected)
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+// how to use the classnames package instead
 
-export default function Example() {
+
+type SelectedDay = [string, string] | null
+
+export default function Calendar() {
+
+  // make a type for Day in format "2022-10"
+
+
+
+  // const DaySchema = z.string().regex(/^\d{4}-\d{2}$/)
+
+  // write a useState hook initialized with nothing
+  const [selectedDay, setSelectedDay] = useState<SelectedDay>(null)
+  const [month, setMonth] = useState(0)
+
+  // 
+// To allow users to drag with the mouse to select dates in your calendar component, you can use the onMouseDown, onMouseMove, and onMouseUp event handlers. Here is a rough outline of how you might implement this behavior:
+
+// In your calendar component, add state to store the currently selected date range. This state should be initialized with an empty array.
+// When the user clicks on a date with the mouse, set the start date for the selected range to the clicked date. This should also update the state to store the start date.
+// When the user moves the mouse over other dates, update the selected range in the state by adding all of the dates between the start date and the current date to the range.
+// When the user releases the mouse, set the end date for the selected range and update the state to store the end date.
+
+  
+
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
       <header className="flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none">
@@ -141,7 +168,7 @@ export default function Example() {
                       {({ active }) => (
                         <a
                           href="#"
-                          className={classNames(
+                          className={classnames(
                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                             'block px-4 py-2 text-sm'
                           )}
@@ -154,7 +181,7 @@ export default function Example() {
                       {({ active }) => (
                         <a
                           href="#"
-                          className={classNames(
+                          className={classnames(
                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                             'block px-4 py-2 text-sm'
                           )}
@@ -167,7 +194,7 @@ export default function Example() {
                       {({ active }) => (
                         <a
                           href="#"
-                          className={classNames(
+                          className={classnames(
                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                             'block px-4 py-2 text-sm'
                           )}
@@ -180,7 +207,7 @@ export default function Example() {
                       {({ active }) => (
                         <a
                           href="#"
-                          className={classNames(
+                          className={classnames(
                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                             'block px-4 py-2 text-sm'
                           )}
@@ -222,7 +249,7 @@ export default function Example() {
                     {({ active }) => (
                       <a
                         href="#"
-                        className={classNames(
+                        className={classnames(
                           active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                           'block px-4 py-2 text-sm'
                         )}
@@ -237,7 +264,7 @@ export default function Example() {
                     {({ active }) => (
                       <a
                         href="#"
-                        className={classNames(
+                        className={classnames(
                           active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                           'block px-4 py-2 text-sm'
                         )}
@@ -252,7 +279,7 @@ export default function Example() {
                     {({ active }) => (
                       <a
                         href="#"
-                        className={classNames(
+                        className={classnames(
                           active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                           'block px-4 py-2 text-sm'
                         )}
@@ -265,7 +292,7 @@ export default function Example() {
                     {({ active }) => (
                       <a
                         href="#"
-                        className={classNames(
+                        className={classnames(
                           active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                           'block px-4 py-2 text-sm'
                         )}
@@ -278,7 +305,7 @@ export default function Example() {
                     {({ active }) => (
                       <a
                         href="#"
-                        className={classNames(
+                        className={classnames(
                           active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                           'block px-4 py-2 text-sm'
                         )}
@@ -291,7 +318,7 @@ export default function Example() {
                     {({ active }) => (
                       <a
                         href="#"
-                        className={classNames(
+                        className={classnames(
                           active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                           'block px-4 py-2 text-sm'
                         )}
@@ -335,7 +362,7 @@ export default function Example() {
             {days.map((day) => (
               <div
                 key={day.date}
-                className={classNames(
+                className={classnames(
                   day.isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-500',
                   'relative py-2 px-3'
                 )}
@@ -378,7 +405,7 @@ export default function Example() {
               <button
                 key={day.date}
                 type="button"
-                className={classNames(
+                className={classnames(
                   day.isCurrentMonth ? 'bg-white' : 'bg-gray-50',
                   (day.isSelected || day.isToday) && 'font-semibold',
                   day.isSelected && 'text-white',
@@ -390,7 +417,7 @@ export default function Example() {
               >
                 <time
                   dateTime={day.date}
-                  className={classNames(
+                  className={classnames(
                     day.isSelected && 'flex h-6 w-6 items-center justify-center rounded-full',
                     day.isSelected && day.isToday && 'bg-indigo-600',
                     day.isSelected && !day.isToday && 'bg-gray-900',
@@ -412,29 +439,39 @@ export default function Example() {
           </div>
         </div>
       </div>
-      {selectedDay?.events.length > 0 && (
-        <div className="py-10 px-4 sm:px-6 lg:hidden">
-          <ol className="divide-y divide-gray-100 overflow-hidden rounded-lg bg-white text-sm shadow ring-1 ring-black ring-opacity-5">
-            {selectedDay.events.map((event) => (
-              <li key={event.id} className="group flex p-4 pr-6 focus-within:bg-gray-50 hover:bg-gray-50">
-                <div className="flex-auto">
-                  <p className="font-semibold text-gray-900">{event.name}</p>
-                  <time dateTime={event.datetime} className="mt-2 flex items-center text-gray-700">
-                    <ClockIcon className="mr-2 h-5 w-5 text-gray-400" aria-hidden="true" />
-                    {event.time}
-                  </time>
-                </div>
-                <a
-                  href={event.href}
-                  className="ml-6 flex-none self-center rounded-md border border-gray-300 bg-white py-2 px-3 font-semibold text-gray-700 opacity-0 shadow-sm hover:bg-gray-50 focus:opacity-100 group-hover:opacity-100"
-                >
-                  Edit<span className="sr-only">, {event.name}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
+      {/* <Events selectedDay={selectedDay} /> */}
     </div>
   )
 }
+
+// const Events = ({ selectedDay }: { selectedDay: SelectedDay | undefined }) => {
+//   const events = []
+
+//   if (selectedDay?.events.length > 0) {
+//     return (
+//       <div className="py-10 px-4 sm:px-6 lg:hidden">
+//         <ol className="divide-y divide-gray-100 overflow-hidden rounded-lg bg-white text-sm shadow ring-1 ring-black ring-opacity-5">
+//           {selectedDay.events.map((event: Event) => (
+//             <li key={event.id} className="group flex p-4 pr-6 focus-within:bg-gray-50 hover:bg-gray-50">
+//               <div className="flex-auto">
+//                 <p className="font-semibold text-gray-900">{event.name}</p>
+//                 <time dateTime={event.datetime} className="mt-2 flex items-center text-gray-700">
+//                   <ClockIcon className="mr-2 h-5 w-5 text-gray-400" aria-hidden="true" />
+//                   {event.time}
+//                 </time>
+//               </div>
+//               <a
+//                 href={event.href}
+//                 className="ml-6 flex-none self-center rounded-md border border-gray-300 bg-white py-2 px-3 font-semibold text-gray-700 opacity-0 shadow-sm hover:bg-gray-50 focus:opacity-100 group-hover:opacity-100"
+//               >
+//                 Edit<span className="sr-only">, {event.name}</span>
+//               </a>
+//             </li>
+//           ))}
+//         </ol>
+//       </div>
+//     );
+//   } else {
+//     return null;
+//   }
+// };
