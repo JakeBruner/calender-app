@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -7,112 +7,151 @@ import {
   EllipsisHorizontalIcon,
 } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
-// import { z } from 'zod'
+import { format, parseISO, isSameMonth, isSameDay, isToday } from 'date-fns'
 import classnames from 'classnames'
 
+// import * as z from 'zod';
+// const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+// type DateString = z.infer<typeof dateSchema>;
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const days = [
-  { date: '2021-12-27', events: [] },
-  { date: '2021-12-28', events: [] },
-  { date: '2021-12-29', events: [] },
-  { date: '2021-12-30', events: [] },
-  { date: '2021-12-31', events: [] },
-  { date: '2022-01-01', isCurrentMonth: true, events: [] },
-  { date: '2022-01-02', isCurrentMonth: true, events: [] },
-  {
-    date: '2022-01-03',
-    isCurrentMonth: true,
-    events: [
-      { id: 1, name: 'Design review', time: '10AM', datetime: '2022-01-03T10:00', href: '#' },
-      { id: 2, name: 'Sales meeting', time: '2PM', datetime: '2022-01-03T14:00', href: '#' },
-    ],
-  },
-  { date: '2022-01-04', isCurrentMonth: true, events: [] },
-  { date: '2022-01-05', isCurrentMonth: true, events: [] },
-  { date: '2022-01-06', isCurrentMonth: true, events: [] },
-  {
-    date: '2022-01-07',
-    isCurrentMonth: true,
-    events: [{ id: 3, name: 'Date night', time: '6PM', datetime: '2022-01-08T18:00', href: '#' }],
-  },
-  { date: '2022-01-08', isCurrentMonth: true, events: [] },
-  { date: '2022-01-09', isCurrentMonth: true, events: [] },
-  { date: '2022-01-10', isCurrentMonth: true, events: [] },
-  { date: '2022-01-11', isCurrentMonth: true, events: [] },
-  {
-    date: '2022-01-12',
-    isCurrentMonth: true,
-    isToday: true,
-    events: [{ id: 6, name: "Sam's birthday party", time: '2PM', datetime: '2022-01-25T14:00', href: '#' }],
-  },
-  { date: '2022-01-13', isCurrentMonth: true, events: [] },
-  { date: '2022-01-14', isCurrentMonth: true, events: [] },
-  { date: '2022-01-15', isCurrentMonth: true, events: [] },
-  { date: '2022-01-16', isCurrentMonth: true, events: [] },
-  { date: '2022-01-17', isCurrentMonth: true, events: [] },
-  { date: '2022-01-18', isCurrentMonth: true, events: [] },
-  { date: '2022-01-19', isCurrentMonth: true, events: [] },
-  { date: '2022-01-20', isCurrentMonth: true, events: [] },
-  { date: '2022-01-21', isCurrentMonth: true, events: [] },
-  {
-    date: '2022-01-22',
-    isCurrentMonth: true,
-    isSelected: true,
-    events: [
-      { id: 4, name: 'Maple syrup museum', time: '3PM', datetime: '2022-01-22T15:00', href: '#' },
-      { id: 5, name: 'Hockey game', time: '7PM', datetime: '2022-01-22T19:00', href: '#' },
-    ],
-  },
-  { date: '2022-01-23', isCurrentMonth: true, events: [] },
-  { date: '2022-01-24', isCurrentMonth: true, events: [] },
-  { date: '2022-01-25', isCurrentMonth: true, events: [] },
-  { date: '2022-01-26', isCurrentMonth: true, events: [] },
-  { date: '2022-01-27', isCurrentMonth: true, events: [] },
-  { date: '2022-01-28', isCurrentMonth: true, events: [] },
-  { date: '2022-01-29', isCurrentMonth: true, events: [] },
-  { date: '2022-01-30', isCurrentMonth: true, events: [] },
-  { date: '2022-01-31', isCurrentMonth: true, events: [] },
-  { date: '2022-02-01', events: [] },
-  { date: '2022-02-02', events: [] },
-  {
-    date: '2022-02-03',
-    events: [{ id: 7, name: 'Cinema with friends', time: '9PM', datetime: '2022-02-04T21:00', href: '#' }],
-  },
-  { date: '2022-02-04', events: [] },
-  { date: '2022-02-05', events: [] },
-  { date: '2022-02-06', events: [] },
-]
+// const days = [
+//   { date: '2021-12-27', events: [] },
+//   { date: '2021-12-28', events: [] },
+//   { date: '2021-12-29', events: [] },
+//   { date: '2021-12-30', events: [] },
+//   { date: '2021-12-31', events: [] },
+//   { date: '2022-01-01', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-02', isCurrentMonth: true, events: [] },
+//   {
+//     date: '2022-01-03',
+//     isCurrentMonth: true,
+//     events: [
+//       { id: 1, name: 'Design review', time: '10AM', datetime: '2022-01-03T10:00', href: '#' },
+//       { id: 2, name: 'Sales meeting', time: '2PM', datetime: '2022-01-03T14:00', href: '#' },
+//     ],
+//   },
+//   { date: '2022-01-04', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-05', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-06', isCurrentMonth: true, events: [] },
+//   {
+//     date: '2022-01-07',
+//     isCurrentMonth: true,
+//     events: [{ id: 3, name: 'Date night', time: '6PM', datetime: '2022-01-08T18:00', href: '#' }],
+//   },
+//   { date: '2022-01-08', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-09', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-10', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-11', isCurrentMonth: true, events: [] },
+//   {
+//     date: '2022-01-12',
+//     isCurrentMonth: true,
+//     isToday: true,
+//     events: [{ id: 6, name: "Sam's birthday party", time: '2PM', datetime: '2022-01-25T14:00', href: '#' }],
+//   },
+//   { date: '2022-01-13', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-14', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-15', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-16', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-17', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-18', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-19', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-20', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-21', isCurrentMonth: true, events: [] },
+//   {
+//     date: '2022-01-22',
+//     isCurrentMonth: true,
+//     isSelected: true,
+//     events: [
+//       { id: 4, name: 'Maple syrup museum', time: '3PM', datetime: '2022-01-22T15:00', href: '#' },
+//       { id: 5, name: 'Hockey game', time: '7PM', datetime: '2022-01-22T19:00', href: '#' },
+//     ],
+//   },
+//   { date: '2022-01-23', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-24', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-25', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-26', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-27', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-28', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-29', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-30', isCurrentMonth: true, events: [] },
+//   { date: '2022-01-31', isCurrentMonth: true, events: [] },
+//   { date: '2022-02-01', events: [] },
+//   { date: '2022-02-02', events: [] },
+//   {
+//     date: '2022-02-03',
+//     events: [{ id: 7, name: 'Cinema with friends', time: '9PM', datetime: '2022-02-04T21:00', href: '#' }],
+//   },
+//   { date: '2022-02-04', events: [] },
+//   { date: '2022-02-05', events: [] },
+//   { date: '2022-02-06', events: [] },
+// ]
+
+
 // const selectedDay = days.find((day) => day.isSelected)
+interface Day {
+  // date: DateString; // in the format of YYYY-MM-DD so keys are unique
+  date: Date;
+  isCurrentMonth?: boolean;
+  isSelected?: boolean;
+}
+// type DateString = string & {
+//   split(separator: string): string[];
+//   pop(): string;
+//   replace(pattern: RegExp, replacement: string): string;
+// } // in the format of YYYY-MM-DD so keys are unique
 
-// how to use the classnames package instead
-
-
-type SelectedDay = [Date, Date] | null
+type SelectedRange = [Date, Date] | null
 
 export default function Calendar() {
 
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [selectedDay, setSelectedDay] = useState<SelectedDay>(null)
-  const [month, setMonth] = useState(0)
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedDay, setSelectedDay] = useState<SelectedRange>(null)
 
-  // Generate an array of Date objects for the current month
-  const days = [];
-  const numDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const today = new Date();
+  const checkIfToday = (day: Day) => day.date === today;
 
-  for (let i = 1; i <= numDays; i++) {
-    const date = new Date(currentYear, currentMonth, i);
-    days.push({
-      date,
-      events: [],
-      isCurrentMonth: date.getMonth() === currentMonth,
-      isToday: date.toDateString() === new Date().toDateString(),
-      isSelected: false,
+  const [days, setDays] = useState<Day[]>([]);
+
+  // populate the array of calendar days with a dependency on the current month and year
+  useEffect(() => {
+    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+
+    // create an array of days from 1 to the last day in the month
+    const _days: Day[] = Array.from({ length: daysInMonth }, (_, i) => i + 1).map((dayNumber) => {
+      const date = new Date(selectedYear, selectedMonth, dayNumber);
+      const isCurrentMonth = date.getMonth() === selectedMonth;
+      const isToday = date.toDateString() === new Date().toDateString();
+      return {
+        date,
+        isCurrentMonth,
+        isToday,
+        // isSelected,
+      };
     });
-  }
 
+    // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
+    const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+    const numberOfPlaceholders = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+    for (let i = 0; i < numberOfPlaceholders; i++) {
+      _days.unshift({
+        date: new Date(selectedYear, selectedMonth, -i),
+      });
+    }
+
+    // add empty placeholders for the last few days so that the last day always falls on a Saturday
+    const lastDayOfMonth = new Date(selectedYear, selectedMonth + 1, 0).getDay();
+    const numberOfPlaceholdersAtEnd = lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
+    for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
+      _days.push({
+        date: new Date(selectedYear, selectedMonth + 1, i + 1),
+      });
+    }
+
+    setDays(_days);
+  }, [selectedMonth, selectedYear]);
 
   // 
 // To allow users to drag with the mouse to select dates in your calendar component, you can use the onMouseDown, onMouseMove, and onMouseUp event handlers. Here is a rough outline of how you might implement this behavior:
@@ -128,8 +167,8 @@ export default function Calendar() {
     <div className="lg:flex lg:h-full lg:flex-col">
       <header className="flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none">
       <h1 className="text-lg font-semibold text-gray-900">
-  <time dateTime={`${currentYear}-${currentMonth.toString().padStart(2, '0')}`}>
-    {monthNames[currentMonth - 1]} {currentYear}
+  <time dateTime={`${selectedYear}-${selectedMonth.toString().padStart(2, '0')}`}>
+    {monthNames[selectedMonth - 1]} {selectedYear}
   </time>
 </h1>
         <div className="flex items-center">
@@ -138,11 +177,11 @@ export default function Calendar() {
               type="button"
               className="flex items-center justify-center rounded-l-md border border-r-0 border-gray-300 bg-white py-2 pl-3 pr-4 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
               onClick={() => {
-                if (currentMonth === 1) {
-                  setCurrentMonth(12);
-                  setCurrentYear(currentYear - 1);
+                if (selectedMonth === 1) {
+                  setSelectedMonth(12);
+                  setSelectedYear(selectedYear - 1);
                 } else {
-                  setCurrentMonth(currentMonth - 1);
+                  setSelectedMonth(selectedMonth - 1);
                 }
               }}
             >
@@ -154,8 +193,8 @@ export default function Calendar() {
               className="hidden border-t border-b border-gray-300 bg-white px-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:relative md:block"
               onClick={() => {
                 const today = new Date();
-                setCurrentMonth(today.getMonth() + 1);
-                setCurrentYear(today.getFullYear());
+                setSelectedMonth(today.getMonth() + 1);
+                setSelectedYear(today.getFullYear());
               }}
             >
               Today
@@ -165,11 +204,11 @@ export default function Calendar() {
               type="button"
               className="flex items-center justify-center rounded-r-md border border-l-0 border-gray-300 bg-white py-2 pl-4 pr-3 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
               onClick={() => {
-                if (currentMonth === 12) {
-                  setCurrentMonth(1);
-                  setCurrentYear(currentYear + 1);
+                if (selectedMonth === 12) {
+                  setSelectedMonth(1);
+                  setSelectedYear(selectedYear + 1);
                 } else {
-                  setCurrentMonth(currentMonth + 1);
+                  setSelectedMonth(selectedMonth + 1);
                 }
               }}
             >
@@ -367,6 +406,8 @@ export default function Calendar() {
           </Menu>
         </div>
       </header>
+
+      {/* DESKTOP CALENDER */}
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
         <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
           <div className="bg-white py-2">
@@ -395,23 +436,24 @@ export default function Calendar() {
           <div className="hidden w-full lg:grid lg:grid-cols-7 lg:grid-rows-6 lg:gap-px">
             {days.map((day) => (
               <div
-                key={day.date}
+                key={day.date.toDateString()}
                 className={classnames(
                   day.isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-500',
-                  'relative py-2 px-3'
+                  'relative py-2 px-3 min-h-[100px]'
                 )}
+                
               >
                 <time
-                  dateTime={day.date}
+                  dateTime={day.date.toDateString()}
                   className={
-                    day.isToday
+                    checkIfToday(day)
                       ? 'flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white'
                       : undefined
                   }
                 >
-                  {day.date.split('-').pop()?.replace(/^0/, '')}
+                  {day.date.getDate()}
                 </time>
-                {day.events.length > 0 && (
+                {/* {day.events.length > 0 && (
                   <ol className="mt-2">
                     {day.events.slice(0, 2).map((event) => (
                       <li key={event.id}>
@@ -430,46 +472,48 @@ export default function Calendar() {
                     ))}
                     {day.events.length > 2 && <li className="text-gray-500">+ {day.events.length - 2} more</li>}
                   </ol>
-                )}
+                )} */}
               </div>
             ))}
           </div>
+
+          {/* MOBILE CALENDER */}
           <div className="isolate grid w-full grid-cols-7 grid-rows-6 gap-px lg:hidden">
-            {days.map((day) => (
+            {days.map((day) =>  { 
+              const isToday = checkIfToday(day);
+            return (
               <button
-                key={day.date}
+                key={day.date.toDateString()}
                 type="button"
                 className={classnames(
                   day.isCurrentMonth ? 'bg-white' : 'bg-gray-50',
-                  (day.isSelected || day.isToday) && 'font-semibold',
+                  (day.isSelected || isToday) && 'font-semibold',
                   day.isSelected && 'text-white',
-                  !day.isSelected && day.isToday && 'text-indigo-600',
-                  !day.isSelected && day.isCurrentMonth && !day.isToday && 'text-gray-900',
-                  !day.isSelected && !day.isCurrentMonth && !day.isToday && 'text-gray-500',
-                  'flex h-14 flex-col py-2 px-3 hover:bg-gray-100 focus:z-10'
+                  !day.isSelected && isToday && 'text-indigo-600',
+                  !day.isSelected && day.isCurrentMonth && !isToday && 'text-gray-900',
+                  !day.isSelected && !day.isCurrentMonth && !isToday && 'text-gray-500',
+                  'flex h-14 flex-col py-2 px-3 hover:bg-gray-100 focus:z-10 min-h-[70px]'
                 )}
               >
                 <time
-                  dateTime={day.date}
+                  dateTime={day.date.toDateString()}
                   className={classnames(
                     day.isSelected && 'flex h-6 w-6 items-center justify-center rounded-full',
-                    day.isSelected && day.isToday && 'bg-indigo-600',
-                    day.isSelected && !day.isToday && 'bg-gray-900',
+                    day.isSelected && isToday && 'bg-indigo-600',
+                    day.isSelected && !isToday && 'bg-gray-900',
                     'ml-auto'
                   )}
                 >
-                  {day.date.split('-').pop()?.replace(/^0/, '')}
+                  {day.date.getDate()}
                 </time>
-                <span className="sr-only">{day.events.length} events</span>
-                {day.events.length > 0 && (
+                <span className="sr-only">{day.date.getDate()} events</span>
+                {true && (
                   <span className="-mx-0.5 mt-auto flex flex-wrap-reverse">
-                    {day.events.map((event) => (
-                      <span key={event.id} className="mx-0.5 mb-1 h-1.5 w-1.5 rounded-full bg-gray-400" />
-                    ))}
+                    
                   </span>
                 )}
               </button>
-            ))}
+            )})}
           </div>
         </div>
       </div>
