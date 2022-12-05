@@ -7,7 +7,7 @@ import {
   EllipsisHorizontalIcon,
 } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
-import { format, parseISO, isSameMonth, isSameDay, isToday } from 'date-fns'
+// import { isToday } from 'date-fns'
 import classnames from 'classnames'
 
 // import * as z from 'zod';
@@ -104,30 +104,33 @@ interface Day {
 
 type SelectedRange = [Date, Date] | null
 
+const isToday = (date: Date): boolean => date.getMonth() === new Date().getMonth() && date.getDate() === new Date().getDate()
+
 export default function Calendar() {
 
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<SelectedRange>(null)
+  const [moreRows, setMoreRows] = useState(false)
 
-  const today = new Date();
-  const checkIfToday = (day: Day) => day.date === today;
+  // const today = new Date();
+  // const checkIfToday = (day: Day) => day.date === today;
 
   const [days, setDays] = useState<Day[]>([]);
 
   // populate the array of calendar days with a dependency on the current month and year
   useEffect(() => {
-    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+    const daysInMonth = new Date(selectedYear, selectedMonth+1, 0).getDate();
 
     // create an array of days from 1 to the last day in the month
     const _days: Day[] = Array.from({ length: daysInMonth }, (_, i) => i + 1).map((dayNumber) => {
       const date = new Date(selectedYear, selectedMonth, dayNumber);
       const isCurrentMonth = date.getMonth() === selectedMonth;
-      const isToday = date.toDateString() === new Date().toDateString();
+      // const isToday = date.toDateString() === new Date().toDateString();
       return {
         date,
         isCurrentMonth,
-        isToday,
+        // isToday,
         // isSelected,
       };
     });
@@ -150,6 +153,13 @@ export default function Calendar() {
       });
     }
 
+    // check if needs more rows
+    if (_days.length > 35) {
+      setMoreRows(true)
+    } else {
+      setMoreRows(false)
+    }
+
     setDays(_days);
   }, [selectedMonth, selectedYear]);
 
@@ -165,20 +175,20 @@ export default function Calendar() {
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
-      <header className="flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none">
-      <h1 className="text-lg font-semibold text-gray-900">
+      <header className="flex items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
+      <h1 className="text-lg font-semibold text-neutral-900">
   <time dateTime={`${selectedYear}-${selectedMonth.toString().padStart(2, '0')}`}>
-    {monthNames[selectedMonth - 1]} {selectedYear}
+    {monthNames[selectedMonth]} {selectedYear}
   </time>
 </h1>
         <div className="flex items-center">
           <div className="flex items-center rounded-md shadow-sm md:items-stretch">
             <button
               type="button"
-              className="flex items-center justify-center rounded-l-md border border-r-0 border-gray-300 bg-white py-2 pl-3 pr-4 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
+              className="flex items-center justify-center rounded-l-md border border-r-0 border-neutral-300 bg-white py-2 pl-3 pr-4 text-neutral-400 hover:text-neutral-500 focus:relative md:w-9 md:px-2 md:hover:bg-neutral-50"
               onClick={() => {
-                if (selectedMonth === 1) {
-                  setSelectedMonth(12);
+                if (selectedMonth === 0) {
+                  setSelectedMonth(11);
                   setSelectedYear(selectedYear - 1);
                 } else {
                   setSelectedMonth(selectedMonth - 1);
@@ -190,22 +200,22 @@ export default function Calendar() {
             </button>
             <button
               type="button"
-              className="hidden border-t border-b border-gray-300 bg-white px-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:relative md:block"
+              className="hidden border-t border-b border-neutral-300 bg-white px-3.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 focus:relative md:block"
               onClick={() => {
                 const today = new Date();
-                setSelectedMonth(today.getMonth() + 1);
+                setSelectedMonth(today.getMonth());
                 setSelectedYear(today.getFullYear());
               }}
             >
               Today
             </button>
-            <span className="relative -mx-px h-5 w-px bg-gray-300 md:hidden" />
+            <span className="relative -mx-px h-5 w-px bg-neutral-300 md:hidden" />
             <button
               type="button"
-              className="flex items-center justify-center rounded-r-md border border-l-0 border-gray-300 bg-white py-2 pl-4 pr-3 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
+              className="flex items-center justify-center rounded-r-md border border-l-0 border-neutral-300 bg-white py-2 pl-4 pr-3 text-neutral-400 hover:text-neutral-500 focus:relative md:w-9 md:px-2 md:hover:bg-neutral-50"
               onClick={() => {
-                if (selectedMonth === 12) {
-                  setSelectedMonth(1);
+                if (selectedMonth === 11) {
+                  setSelectedMonth(0);
                   setSelectedYear(selectedYear + 1);
                 } else {
                   setSelectedMonth(selectedMonth + 1);
@@ -220,10 +230,10 @@ export default function Calendar() {
             <Menu as="div" className="relative">
               <Menu.Button
                 type="button"
-                className="flex items-center rounded-md border border-gray-300 bg-white py-2 pl-3 pr-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                className="flex items-center rounded-md border border-neutral-300 bg-white py-2 pl-3 pr-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50"
               >
                 Month view
-                <ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                <ChevronDownIcon className="ml-2 h-5 w-5 text-neutral-400" aria-hidden="true" />
               </Menu.Button>
 
               <Transition
@@ -242,7 +252,7 @@ export default function Calendar() {
                         <a
                           href="#"
                           className={classnames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                            active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                             'block px-4 py-2 text-sm'
                           )}
                         >
@@ -255,7 +265,7 @@ export default function Calendar() {
                         <a
                           href="#"
                           className={classnames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                            active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                             'block px-4 py-2 text-sm'
                           )}
                         >
@@ -268,7 +278,7 @@ export default function Calendar() {
                         <a
                           href="#"
                           className={classnames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                            active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                             'block px-4 py-2 text-sm'
                           )}
                         >
@@ -281,7 +291,7 @@ export default function Calendar() {
                         <a
                           href="#"
                           className={classnames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                            active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                             'block px-4 py-2 text-sm'
                           )}
                         >
@@ -293,16 +303,16 @@ export default function Calendar() {
                 </Menu.Items>
               </Transition>
             </Menu>
-            <div className="ml-6 h-6 w-px bg-gray-300" />
+            <div className="ml-6 h-6 w-px bg-neutral-300" />
             <button
               type="button"
-              className="ml-6 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="ml-6 rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
             >
               Add event
             </button>
           </div>
           <Menu as="div" className="relative ml-6 md:hidden">
-            <Menu.Button className="-mx-2 flex items-center rounded-full border border-transparent p-2 text-gray-400 hover:text-gray-500">
+            <Menu.Button className="-mx-2 flex items-center rounded-full border border-transparent p-2 text-neutral-400 hover:text-neutral-500">
               <span className="sr-only">Open menu</span>
               <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
             </Menu.Button>
@@ -316,14 +326,14 @@ export default function Calendar() {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="absolute right-0 z-10 mt-3 w-36 origin-top-right divide-y divide-gray-100 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <Menu.Items className="absolute right-0 z-10 mt-3 w-36 origin-top-right divide-y divide-neutral-100 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="py-1">
                   <Menu.Item>
                     {({ active }) => (
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                           'block px-4 py-2 text-sm'
                         )}
                       >
@@ -338,7 +348,7 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                           'block px-4 py-2 text-sm'
                         )}
                       >
@@ -353,7 +363,7 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                           'block px-4 py-2 text-sm'
                         )}
                       >
@@ -366,7 +376,7 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                           'block px-4 py-2 text-sm'
                         )}
                       >
@@ -379,7 +389,7 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                           'block px-4 py-2 text-sm'
                         )}
                       >
@@ -392,7 +402,7 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
                           'block px-4 py-2 text-sm'
                         )}
                       >
@@ -409,7 +419,7 @@ export default function Calendar() {
 
       {/* DESKTOP CALENDER */}
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
-        <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
+        <div className="grid grid-cols-7 gap-px border-b border-neutral-300 bg-neutral-200 text-center text-xs font-semibold leading-6 text-neutral-700 lg:flex-none">
           <div className="bg-white py-2">
             M<span className="sr-only sm:not-sr-only">on</span>
           </div>
@@ -432,13 +442,15 @@ export default function Calendar() {
             S<span className="sr-only sm:not-sr-only">un</span>
           </div>
         </div>
-        <div className="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
-          <div className="hidden w-full lg:grid lg:grid-cols-7 lg:grid-rows-6 lg:gap-px">
+        <div className="flex bg-neutral-200 text-xs leading-6 text-neutral-700 lg:flex-auto">
+          <div className={classnames(
+            moreRows ? 'lg:grid-rows-6' : 'lg:grid-rows-5',
+          'hidden w-full lg:grid lg:grid-cols-7 lg:gap-px')}>
             {days.map((day) => (
               <div
                 key={day.date.toDateString()}
                 className={classnames(
-                  day.isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-500',
+                  day.isCurrentMonth ? 'bg-white' : 'bg-neutral-50 text-neutral-500',
                   'relative py-2 px-3 min-h-[100px]'
                 )}
                 
@@ -446,8 +458,8 @@ export default function Calendar() {
                 <time
                   dateTime={day.date.toDateString()}
                   className={
-                    checkIfToday(day)
-                      ? 'flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white'
+                    isToday(day.date)
+                      ? 'flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 font-semibold text-white'
                       : undefined
                   }
                 >
@@ -458,19 +470,19 @@ export default function Calendar() {
                     {day.events.slice(0, 2).map((event) => (
                       <li key={event.id}>
                         <a href={event.href} className="group flex">
-                          <p className="flex-auto truncate font-medium text-gray-900 group-hover:text-indigo-600">
+                          <p className="flex-auto truncate font-medium text-neutral-900 group-hover:text-sky-600">
                             {event.name}
                           </p>
                           <time
                             dateTime={event.datetime}
-                            className="ml-3 hidden flex-none text-gray-500 group-hover:text-indigo-600 xl:block"
+                            className="ml-3 hidden flex-none text-neutral-500 group-hover:text-sky-600 xl:block"
                           >
                             {event.time}
                           </time>
                         </a>
                       </li>
                     ))}
-                    {day.events.length > 2 && <li className="text-gray-500">+ {day.events.length - 2} more</li>}
+                    {day.events.length > 2 && <li className="text-neutral-500">+ {day.events.length - 2} more</li>}
                   </ol>
                 )} */}
               </div>
@@ -478,40 +490,42 @@ export default function Calendar() {
           </div>
 
           {/* MOBILE CALENDER */}
-          <div className="isolate grid w-full grid-cols-7 grid-rows-6 gap-px lg:hidden">
+          <div className={classnames(
+                  moreRows ? 'grid-rows-6' : 'grid-rows-5',
+                  'isolate grid w-full grid-cols-7 gap-px lg:hidden')}>
             {days.map((day) =>  { 
-              const isToday = checkIfToday(day);
+              const isItToday = isToday(day.date);
             return (
               <button
                 key={day.date.toDateString()}
                 type="button"
                 className={classnames(
-                  day.isCurrentMonth ? 'bg-white' : 'bg-gray-50',
-                  (day.isSelected || isToday) && 'font-semibold',
+                  day.isCurrentMonth ? 'bg-white' : 'bg-neutral-100',
+                  (day.isSelected || isItToday) && 'font-semibold',
                   day.isSelected && 'text-white',
-                  !day.isSelected && isToday && 'text-indigo-600',
-                  !day.isSelected && day.isCurrentMonth && !isToday && 'text-gray-900',
-                  !day.isSelected && !day.isCurrentMonth && !isToday && 'text-gray-500',
-                  'flex h-14 flex-col py-2 px-3 hover:bg-gray-100 focus:z-10 min-h-[70px]'
+                  !day.isSelected && isItToday && 'text-sky-600',
+                  !day.isSelected && day.isCurrentMonth && !isItToday && 'text-neutral-900',
+                  !day.isSelected && !day.isCurrentMonth && !isItToday && 'text-neutral-500',
+                  'flex h-14 flex-col py-2 px-3 hover:bg-neutral-100 focus:z-10 min-h-[70px]'
                 )}
               >
                 <time
                   dateTime={day.date.toDateString()}
                   className={classnames(
                     day.isSelected && 'flex h-6 w-6 items-center justify-center rounded-full',
-                    day.isSelected && isToday && 'bg-indigo-600',
-                    day.isSelected && !isToday && 'bg-gray-900',
+                    day.isSelected && isItToday && 'bg-sky-600',
+                    day.isSelected && !isItToday && 'bg-neutral-900',
                     'ml-auto'
                   )}
                 >
                   {day.date.getDate()}
                 </time>
                 <span className="sr-only">{day.date.getDate()} events</span>
-                {true && (
+                {/* {true && (
                   <span className="-mx-0.5 mt-auto flex flex-wrap-reverse">
                     
                   </span>
-                )}
+                )} */}
               </button>
             )})}
           </div>
@@ -528,19 +542,19 @@ export default function Calendar() {
 //   if (selectedDay?.events.length > 0) {
 //     return (
 //       <div className="py-10 px-4 sm:px-6 lg:hidden">
-//         <ol className="divide-y divide-gray-100 overflow-hidden rounded-lg bg-white text-sm shadow ring-1 ring-black ring-opacity-5">
+//         <ol className="divide-y divide-neutral-100 overflow-hidden rounded-lg bg-white text-sm shadow ring-1 ring-black ring-opacity-5">
 //           {selectedDay.events.map((event: Event) => (
-//             <li key={event.id} className="group flex p-4 pr-6 focus-within:bg-gray-50 hover:bg-gray-50">
+//             <li key={event.id} className="group flex p-4 pr-6 focus-within:bg-neutral-50 hover:bg-neutral-50">
 //               <div className="flex-auto">
-//                 <p className="font-semibold text-gray-900">{event.name}</p>
-//                 <time dateTime={event.datetime} className="mt-2 flex items-center text-gray-700">
-//                   <ClockIcon className="mr-2 h-5 w-5 text-gray-400" aria-hidden="true" />
+//                 <p className="font-semibold text-neutral-900">{event.name}</p>
+//                 <time dateTime={event.datetime} className="mt-2 flex items-center text-neutral-700">
+//                   <ClockIcon className="mr-2 h-5 w-5 text-neutral-400" aria-hidden="true" />
 //                   {event.time}
 //                 </time>
 //               </div>
 //               <a
 //                 href={event.href}
-//                 className="ml-6 flex-none self-center rounded-md border border-gray-300 bg-white py-2 px-3 font-semibold text-gray-700 opacity-0 shadow-sm hover:bg-gray-50 focus:opacity-100 group-hover:opacity-100"
+//                 className="ml-6 flex-none self-center rounded-md border border-neutral-300 bg-white py-2 px-3 font-semibold text-neutral-700 opacity-0 shadow-sm hover:bg-neutral-50 focus:opacity-100 group-hover:opacity-100"
 //               >
 //                 Edit<span className="sr-only">, {event.name}</span>
 //               </a>
