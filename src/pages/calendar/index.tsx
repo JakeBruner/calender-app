@@ -1,20 +1,33 @@
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment, useState, useEffect, useRef } from "react";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   // ClockIcon,
   EllipsisHorizontalIcon,
-} from '@heroicons/react/20/solid'
-import { Menu, Transition } from '@headlessui/react'
+} from "@heroicons/react/20/solid";
+import { Menu, Transition } from "@headlessui/react";
 // import { isToday } from 'date-fns'
-import classnames from 'classnames'
+import classnames from "classnames";
 
 // import * as z from 'zod';
 // const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 // type DateString = z.infer<typeof dateSchema>;
 
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 // const days = [
 //   { date: '2021-12-27', events: [] },
@@ -88,7 +101,6 @@ const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'Jul
 //   { date: '2022-02-06', events: [] },
 // ]
 
-
 // const selectedDay = days.find((day) => day.isSelected)
 interface Day {
   // date: DateString; // in the format of YYYY-MM-DD so keys are unique
@@ -96,34 +108,37 @@ interface Day {
   isCurrentMonth?: boolean;
   isSelected?: boolean;
 }
-// type DateString = string & {
-//   split(separator: string): string[];
-//   pop(): string;
-//   replace(pattern: RegExp, replacement: string): string;
-// } // in the format of YYYY-MM-DD so keys are unique
 
-type SelectedRange = [Date, Date] | null
+type SelectedRange = [Date | null, Date | null];
 
-const isToday = (date: Date): boolean => date.getMonth() === new Date().getMonth() && date.getDate() === new Date().getDate()
+const isToday = (date: Date): boolean =>
+  date.getMonth() === new Date().getMonth() &&
+  date.getDate() === new Date().getDate();
 
 export default function Calendar() {
-
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedDay, setSelectedDay] = useState<SelectedRange>(null)
-  const [moreRows, setMoreRows] = useState(false)
 
-  // const today = new Date();
-  // const checkIfToday = (day: Day) => day.date === today;
+  const [selectedRange, setSelectedRange] = useState<SelectedRange>([
+    null,
+    null,
+  ]);
+  // const [ isDragging, setIsDragging ] = useState( false );
+
+  // if there needs to be 5 or 6 rows of days
+  const [moreRows, setMoreRows] = useState(false);
 
   const [days, setDays] = useState<Day[]>([]);
 
   // populate the array of calendar days with a dependency on the current month and year
   useEffect(() => {
-    const daysInMonth = new Date(selectedYear, selectedMonth+1, 0).getDate();
+    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
 
     // create an array of days from 1 to the last day in the month
-    const _days: Day[] = Array.from({ length: daysInMonth }, (_, i) => i + 1).map((dayNumber) => {
+    const _days: Day[] = Array.from(
+      { length: daysInMonth },
+      (_, i) => i + 1
+    ).map((dayNumber) => {
       const date = new Date(selectedYear, selectedMonth, dayNumber);
       const isCurrentMonth = date.getMonth() === selectedMonth;
       // const isToday = date.toDateString() === new Date().toDateString();
@@ -137,7 +152,8 @@ export default function Calendar() {
 
     // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
     const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
-    const numberOfPlaceholders = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+    const numberOfPlaceholders =
+      firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     for (let i = 0; i < numberOfPlaceholders; i++) {
       _days.unshift({
         date: new Date(selectedYear, selectedMonth, -i),
@@ -145,8 +161,13 @@ export default function Calendar() {
     }
 
     // add empty placeholders for the last few days so that the last day always falls on a Saturday
-    const lastDayOfMonth = new Date(selectedYear, selectedMonth + 1, 0).getDay();
-    const numberOfPlaceholdersAtEnd = lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
+    const lastDayOfMonth = new Date(
+      selectedYear,
+      selectedMonth + 1,
+      0
+    ).getDay();
+    const numberOfPlaceholdersAtEnd =
+      lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
     for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
       _days.push({
         date: new Date(selectedYear, selectedMonth + 1, i + 1),
@@ -155,32 +176,88 @@ export default function Calendar() {
 
     // check if needs more rows
     if (_days.length > 35) {
-      setMoreRows(true)
+      setMoreRows(true);
     } else {
-      setMoreRows(false)
+      setMoreRows(false);
     }
 
     setDays(_days);
   }, [selectedMonth, selectedYear]);
 
-  // 
-// To allow users to drag with the mouse to select dates in your calendar component, you can use the onMouseDown, onMouseMove, and onMouseUp event handlers. Here is a rough outline of how you might implement this behavior:
+  // helper functions for interacting with the calendar
+  const idToDate = (id: number) => new Date(selectedYear, selectedMonth, id);
 
-// In your calendar component, add state to store the currently selected date range. This state should be initialized with an empty array.
-// When the user clicks on a date with the mouse, set the start date for the selected range to the clicked date. This should also update the state to store the start date.
-// When the user moves the mouse over other dates, update the selected range in the state by adding all of the dates between the start date and the current date to the range.
-// When the user releases the mouse, set the end date for the selected range and update the state to store the end date.
+  const isInRange = (date: Date) => {
+    // if only one date is selected, return true if the date is the same as the selected date
+    if (!selectedRange[0] && !selectedRange[1]) return false;
+    if (!selectedRange[1])
+      return date.toDateString() === selectedRange[0]?.toDateString();
+    if (!selectedRange[0])
+      return false
+    return date >= selectedRange[0] && date <= selectedRange[1];
+  };
 
-  
+  useEffect(() => {
+    // When the selectedRange state variable changes, update the component
+    console.log("selectedRange", selectedRange);
+    // setSelectedRange(selectedRange);
+  }, [selectedRange]);
+
+  // const cursorRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  // // Define a useEffect hook to listen for changes to the user's cursor position
+  // useEffect(() => {
+  //   // When the user's cursor position changes, update the selectedRange state variable
+  //   setSelectedRange([cursorRef.current.x, cursorRef.current.y]);
+  // }, [cursorRef.current.x, cursorRef.current.y]);
+  // const handleMouseMove = (event: React.MouseEvent, date: Date) => {
+  //   // Update the user's cursor position in the cursorRef object
+  //   cursorRef.current = { x: event.pageX, y: event.pageY };
+
+  //   // Pass the date of the div element that the user's cursor is hovering over to the setSelectedRange function
+  //   setSelectedRange(date);
+  // };
+
+  const handleClick = (event: React.MouseEvent) => {
+    console.log(event.target);
+    if (event.target instanceof HTMLDivElement) {
+      // Get the selected day's id value
+      if (!event.target.id) return;
+      if (!selectedRange[0]) {
+        const selectedDayId = parseInt(event.target.id, 10);
+        // console.log(selectedDayId)
+        // Use the mapping function to convert the selected day's id into a Date object
+        const selectedDate = idToDate(selectedDayId);
+        // Update the selected day state variable with the Date object
+        setSelectedRange([selectedDate, null]);
+      }
+      if (selectedRange[0] && !selectedRange[1]) {
+        const selectedDayId = parseInt(event.target.id, 10);
+        console.log(selectedDayId);
+
+        // Use the mapping function to convert the selected day's id into a Date object
+        const selectedDate = idToDate(selectedDayId);
+
+        // Update the selected day state variable with the Date object
+        setSelectedRange([selectedRange[0], selectedDate]);
+      }
+      if (selectedRange[0] && selectedRange[1]) {
+        setSelectedRange([null, null]);
+      }
+    }
+  };
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
       <header className="flex items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
-      <h1 className="text-lg font-semibold text-neutral-900">
-  <time dateTime={`${selectedYear}-${selectedMonth.toString().padStart(2, '0')}`}>
-    {monthNames[selectedMonth]} {selectedYear}
-  </time>
-</h1>
+        <h1 className="text-lg font-semibold text-neutral-900">
+          <time
+            dateTime={`${selectedYear}-${selectedMonth
+              .toString()
+              .padStart(2, "0")}`}
+          >
+            {monthNames[selectedMonth]} {selectedYear}
+          </time>
+        </h1>
         <div className="flex items-center">
           <div className="flex items-center rounded-md shadow-sm md:items-stretch">
             <button
@@ -233,7 +310,10 @@ export default function Calendar() {
                 className="flex items-center rounded-md border border-neutral-300 bg-white py-2 pl-3 pr-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50"
               >
                 Month view
-                <ChevronDownIcon className="ml-2 h-5 w-5 text-neutral-400" aria-hidden="true" />
+                <ChevronDownIcon
+                  className="ml-2 h-5 w-5 text-neutral-400"
+                  aria-hidden="true"
+                />
               </Menu.Button>
 
               <Transition
@@ -252,8 +332,10 @@ export default function Calendar() {
                         <a
                           href="#"
                           className={classnames(
-                            active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-neutral-100 text-neutral-900"
+                              : "text-neutral-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Day view
@@ -265,8 +347,10 @@ export default function Calendar() {
                         <a
                           href="#"
                           className={classnames(
-                            active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-neutral-100 text-neutral-900"
+                              : "text-neutral-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Week view
@@ -278,8 +362,10 @@ export default function Calendar() {
                         <a
                           href="#"
                           className={classnames(
-                            active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-neutral-100 text-neutral-900"
+                              : "text-neutral-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Month view
@@ -291,8 +377,10 @@ export default function Calendar() {
                         <a
                           href="#"
                           className={classnames(
-                            active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-neutral-100 text-neutral-900"
+                              : "text-neutral-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Year view
@@ -333,8 +421,10 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                          'block px-4 py-2 text-sm'
+                          active
+                            ? "bg-neutral-100 text-neutral-900"
+                            : "text-neutral-700",
+                          "block px-4 py-2 text-sm"
                         )}
                       >
                         Create event
@@ -348,8 +438,10 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                          'block px-4 py-2 text-sm'
+                          active
+                            ? "bg-neutral-100 text-neutral-900"
+                            : "text-neutral-700",
+                          "block px-4 py-2 text-sm"
                         )}
                       >
                         Go to today
@@ -363,8 +455,10 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                          'block px-4 py-2 text-sm'
+                          active
+                            ? "bg-neutral-100 text-neutral-900"
+                            : "text-neutral-700",
+                          "block px-4 py-2 text-sm"
                         )}
                       >
                         Day view
@@ -376,8 +470,10 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                          'block px-4 py-2 text-sm'
+                          active
+                            ? "bg-neutral-100 text-neutral-900"
+                            : "text-neutral-700",
+                          "block px-4 py-2 text-sm"
                         )}
                       >
                         Week view
@@ -389,8 +485,10 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                          'block px-4 py-2 text-sm'
+                          active
+                            ? "bg-neutral-100 text-neutral-900"
+                            : "text-neutral-700",
+                          "block px-4 py-2 text-sm"
                         )}
                       >
                         Month view
@@ -402,8 +500,10 @@ export default function Calendar() {
                       <a
                         href="#"
                         className={classnames(
-                          active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700',
-                          'block px-4 py-2 text-sm'
+                          active
+                            ? "bg-neutral-100 text-neutral-900"
+                            : "text-neutral-700",
+                          "block px-4 py-2 text-sm"
                         )}
                       >
                         Year view
@@ -443,29 +543,52 @@ export default function Calendar() {
           </div>
         </div>
         <div className="flex bg-neutral-200 text-xs leading-6 text-neutral-700 lg:flex-auto">
-          <div className={classnames(
-            moreRows ? 'lg:grid-rows-6' : 'lg:grid-rows-5',
-          'hidden w-full lg:grid lg:grid-cols-7 lg:gap-px')}>
-            {days.map((day) => (
-              <div
-                key={day.date.toDateString()}
-                className={classnames(
-                  day.isCurrentMonth ? 'bg-white' : 'bg-neutral-50 text-neutral-500',
-                  'relative py-2 px-3 min-h-[100px]'
-                )}
-                
-              >
-                <time
-                  dateTime={day.date.toDateString()}
-                  className={
-                    isToday(day.date)
-                      ? 'flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 font-semibold text-white'
-                      : undefined
-                  }
+          <div
+            className={classnames(
+              moreRows ? "lg:grid-rows-6" : "lg:grid-rows-5",
+              "hidden w-full lg:grid lg:grid-cols-7 lg:gap-px"
+            )}
+            onClick={handleClick}
+          >
+            {days.map((day) => {
+              const isItToday = isToday(day.date);
+              const isSelected = isInRange(day.date);
+              return (
+                <div
+                  key={day.date.toDateString()}
+                  id={day.date.getDate().toString()}
+                  className={classnames(
+                    day.isCurrentMonth
+                      ? "bg-white" : "bg-neutral-100",
+                      (isSelected || isItToday) && "font-semibold",
+                      isSelected && "text-white",
+                      !isSelected && isItToday && "text-sky-600",
+                      !isSelected &&
+                        day.isCurrentMonth &&
+                        !isItToday &&
+                        "text-neutral-900",
+                      !isSelected &&
+                        !day.isCurrentMonth &&
+                        !isItToday &&
+                        "text-neutral-500",
+                    "relative min-h-[100px] py-2 px-3 hover:bg-neutral-100"
+                  )}
                 >
-                  {day.date.getDate()}
-                </time>
-                {/* {day.events.length > 0 && (
+                  <time
+                    dateTime={day.date.toDateString()}
+                    className={classnames(
+                      isSelected &&
+                        "flex h-6 w-6 items-center justify-center rounded-full",
+                      isSelected && isItToday && "bg-sky-600",
+                      isSelected && !isItToday && "bg-neutral-900",
+                      isItToday && !isSelected
+                        ? "flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 font-semibold text-white"
+                        : undefined
+                    )}
+                  >
+                    {day.date.getDate()}
+                  </time>
+                  {/* {day.events.length > 0 && (
                   <ol className="mt-2">
                     {day.events.slice(0, 2).map((event) => (
                       <li key={event.id}>
@@ -485,55 +608,70 @@ export default function Calendar() {
                     {day.events.length > 2 && <li className="text-neutral-500">+ {day.events.length - 2} more</li>}
                   </ol>
                 )} */}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
 
           {/* MOBILE CALENDER */}
-          <div className={classnames(
-                  moreRows ? 'grid-rows-6' : 'grid-rows-5',
-                  'isolate grid w-full grid-cols-7 gap-px lg:hidden')}>
-            {days.map((day) =>  { 
+          <div
+            className={classnames(
+              moreRows ? "grid-rows-6" : "grid-rows-5",
+              "isolate grid w-full grid-cols-7 gap-px lg:hidden"
+            )}
+            onClick={handleClick}
+          >
+            {days.map((day) => {
               const isItToday = isToday(day.date);
-            return (
-              <button
-                key={day.date.toDateString()}
-                type="button"
-                className={classnames(
-                  day.isCurrentMonth ? 'bg-white' : 'bg-neutral-100',
-                  (day.isSelected || isItToday) && 'font-semibold',
-                  day.isSelected && 'text-white',
-                  !day.isSelected && isItToday && 'text-sky-600',
-                  !day.isSelected && day.isCurrentMonth && !isItToday && 'text-neutral-900',
-                  !day.isSelected && !day.isCurrentMonth && !isItToday && 'text-neutral-500',
-                  'flex h-14 flex-col py-2 px-3 hover:bg-neutral-100 focus:z-10 min-h-[70px]'
-                )}
-              >
-                <time
-                  dateTime={day.date.toDateString()}
+              const isSelected = isInRange(day.date);
+              // console.log(isSelected)
+              return (
+                <div
+                  key={day.date.toDateString()}
+                  id={day.date.getDate().toString()}
                   className={classnames(
-                    day.isSelected && 'flex h-6 w-6 items-center justify-center rounded-full',
-                    day.isSelected && isItToday && 'bg-sky-600',
-                    day.isSelected && !isItToday && 'bg-neutral-900',
-                    'ml-auto'
+                    day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
+                    (isSelected || isItToday) && "font-semibold",
+                    isSelected && "text-white",
+                    !isSelected && isItToday && "text-sky-600",
+                    !isSelected &&
+                      day.isCurrentMonth &&
+                      !isItToday &&
+                      "text-neutral-900",
+                    !isSelected &&
+                      !day.isCurrentMonth &&
+                      !isItToday &&
+                      "text-neutral-500",
+                    "flex h-14 min-h-[70px] flex-col py-2 px-3 hover:bg-neutral-100 focus:z-10"
                   )}
                 >
-                  {day.date.getDate()}
-                </time>
-                <span className="sr-only">{day.date.getDate()} events</span>
-                {/* {true && (
+                  <time
+                    dateTime={day.date.toDateString()}
+                    className={classnames(
+                      isSelected &&
+                        "flex h-6 w-6 items-center justify-center rounded-full",
+                      isSelected && isItToday && "bg-sky-600",
+                      isSelected && !isItToday && "bg-neutral-900",
+                      "ml-auto"
+                    )}
+                  >
+                    {day.date.getDate()}
+                  </time>
+                  <span className="sr-only">{day.date.getDate()} events</span>
+                  {/* {true && (
                   <span className="-mx-0.5 mt-auto flex flex-wrap-reverse">
                     
                   </span>
                 )} */}
-              </button>
-            )})}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
       {/* <Events selectedDay={selectedDay} /> */}
     </div>
-  )
+  );
 }
 
 // const Events = ({ selectedDay }: { selectedDay: SelectedDay | undefined }) => {
