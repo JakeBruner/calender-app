@@ -1,10 +1,13 @@
-import Image from 'next/image'
+// import Image from 'next/image'
 
 
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, CalendarIcon } from '@heroicons/react/24/outline'
 import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
+
+import DateSelector from './DateSelector'
+
 // import { boolean } from 'zod';
 
 const team = [
@@ -47,20 +50,19 @@ const team = [
 
 interface FlyoverProps {
   dateRange: [Date | null, Date | null];
+  setDateRange: (dateRange: [Date | null, Date | null]) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
 
-export const Flyover: React.FC<FlyoverProps> = ({dateRange, open, setOpen}) => {
+export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, setOpen}) => {
 
 
 
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
-        <div className="fixed inset-0" />
-
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
@@ -78,7 +80,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, open, setOpen}) => {
                     <div className="h-0 flex-1 overflow-y-auto">
                       <div className="bg-sky-700 py-6 px-4 sm:px-6">
                         <div className="flex items-center justify-between">
-                          <Dialog.Title className="text-lg font-medium text-white">New Project</Dialog.Title>
+                          <Dialog.Title className="text-lg font-medium text-white">Request new booking</Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
@@ -92,7 +94,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, open, setOpen}) => {
                         </div>
                         <div className="mt-1">
                           <p className="text-sm text-sky-300">
-                            Get started by filling in the information below to create your new project.
+                            Get started by filling in dates and the information below.
                           </p>
                         </div>
                       </div>
@@ -101,7 +103,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, open, setOpen}) => {
                           <div className="space-y-6 pt-6 pb-5">
                             <div>
                               <label htmlFor="project-name" className="block text-sm font-medium text-gray-900">
-                                Project name
+                                Booking title
                               </label>
                               <div className="mt-1">
                                 <input
@@ -114,7 +116,15 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, open, setOpen}) => {
                             </div>
                             <div>
                               <label htmlFor="description" className="block text-sm font-medium text-gray-900">
-                                Description
+                                Dates
+                              </label>
+                              <div className="mt-1">
+                                <DateSelector dateRange={dateRange} setDateRange={setDateRange} />
+                              </div>
+                            </div>
+                            <div>
+                              <label htmlFor="description" className="block text-sm font-medium text-gray-900">
+                                Description <span className="text-neutral-400">(optional)</span>
                               </label>
                               <div className="mt-1">
                                 <textarea
@@ -127,15 +137,14 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, open, setOpen}) => {
                               </div>
                             </div>
                             <div>
-                              <h3 className="text-sm font-medium text-gray-900">Team Members</h3>
+                              <h3 className="text-sm font-medium text-gray-900">Invite other users:</h3>
                               <div className="mt-2">
                                 <div className="flex space-x-2">
                                   {team.map((person) => (
                                     <a key={person.email} href={person.href} className="rounded-full hover:opacity-75">
-                                      <Image
-                                        className="inline-blockrounded-full"
-                                        height={32}
-                                        width={32}
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        className="inline-block rounded-full h-8 w-8"
                                         src={person.imageUrl}
                                         alt={person.name}
                                       />
@@ -145,7 +154,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, open, setOpen}) => {
                                     type="button"
                                     className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                   >
-                                    <span className="sr-only">Add team member</span>
+                                    <span className="sr-only">Add users</span>
                                     <PlusIcon className="h-5 w-5" aria-hidden="true" />
                                   </button>
                                 </div>

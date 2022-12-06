@@ -181,7 +181,7 @@ export default function Calendar() {
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
-      <Flyover open={showFlyover} setOpen={setShowFlyover} dateRange={selectedRange} />
+      <Flyover open={showFlyover} setOpen={setShowFlyover} dateRange={selectedRange} setDateRange={setSelectedRange} />
       <header className="flex items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
         <h1 className="text-lg font-semibold text-neutral-900">
           <time
@@ -329,8 +329,11 @@ export default function Calendar() {
             <button
               type="button"
               className="ml-6 rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+              onClick={() => {
+                setShowFlyover(true);
+              }}
             >
-              Add event
+              Request booking
             </button>
           </div>
           <Menu as="div" className="relative ml-6 md:hidden">
