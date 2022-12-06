@@ -10,6 +10,8 @@ import { Menu, Transition } from "@headlessui/react";
 // import { isToday } from 'date-fns'
 import classnames from "classnames";
 
+import Flyover from "../../components/Flyover";
+
 // import * as z from 'zod';
 // const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 // type DateString = z.infer<typeof dateSchema>;
@@ -58,6 +60,8 @@ export default function Calendar() {
   const [moreRows, setMoreRows] = useState(false);
 
   const [days, setDays] = useState<Day[]>([]);
+
+  const [showFlyover, setShowFlyover] = useState(false);
 
   // populate the array of calendar days with a dependency on the current month and year
   useEffect(() => {
@@ -177,6 +181,7 @@ export default function Calendar() {
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
+      <Flyover open={showFlyover} setOpen={setShowFlyover} dateRange={selectedRange} />
       <header className="flex items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
         <h1 className="text-lg font-semibold text-neutral-900">
           <time
