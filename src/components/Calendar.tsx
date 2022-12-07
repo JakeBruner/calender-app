@@ -1,6 +1,83 @@
 import classnames from "classnames";
 import { useEffect, useState } from "react";
 import type { SelectedRange, Day } from "../types/calendar";
+import React from "react";
+
+interface DayProps {
+  day: Day;
+  isItToday: boolean;
+  isSelected: boolean;
+}
+
+const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
+  return (
+    <div
+      key={day.date.toDateString()}
+      id={day.date.getDate().toString()}
+      className={classnames(
+        day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
+        (isSelected || isItToday) && "font-semibold",
+        isSelected && "text-white",
+        !isSelected && isItToday && "text-sky-600",
+        !isSelected && day.isCurrentMonth && !isItToday && "text-neutral-900",
+        !isSelected && !day.isCurrentMonth && !isItToday && "text-neutral-500",
+        "relative min-h-[100px] py-2 px-3 hover:bg-neutral-100"
+      )}
+    >
+      <time
+        dateTime={day.date.toDateString()}
+        className={classnames(
+          isSelected && "flex h-6 w-6 items-center justify-center rounded-full",
+          isSelected && isItToday && "bg-sky-600",
+          isSelected && !isItToday && "bg-neutral-900",
+          isItToday && !isSelected
+            ? "flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 font-semibold text-white"
+            : undefined
+        )}
+      >
+        {day.date.getDate()}
+      </time>
+    </div>
+  );
+};
+
+const MemoizedDesktopDay = React.memo(DesktopDay);
+
+// Day component that displays the day number and applies styling if it is in the selected range
+const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
+  return (
+    <div
+      id={day.date.getDate().toString()}
+      className={classnames(
+        day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
+        (isSelected || isItToday) && "font-semibold",
+        isSelected && "text-white",
+        !isSelected && isItToday && "text-sky-600",
+        !isSelected && day.isCurrentMonth && !isItToday && "text-neutral-900",
+        !isSelected && !day.isCurrentMonth && !isItToday && "text-neutral-500",
+        isSelected
+          ? "bg-green-50 hover:bg-green-100/60"
+          : "hover:bg-neutral-100",
+        "flex h-14 min-h-[70px] flex-col py-2 px-3 focus:z-10"
+      )}
+    >
+      <time
+        dateTime={day.date.toDateString()}
+        className={classnames(
+          isSelected && "flex h-6 w-6 items-center justify-center rounded-full",
+          isSelected && isItToday && "bg-sky-600",
+          isSelected && !isItToday && "bg-green-700/70",
+          "ml-auto"
+        )}
+      >
+        {day.date.getDate()}
+      </time>
+      <span className="sr-only">{day.date.getDate()} events</span>
+    </div>
+  );
+};
+
+const MemoizedMobileDay = React.memo(MobileDay);
 
 interface CalendarProps {
   selectedRange: SelectedRange;
@@ -92,6 +169,14 @@ export const Calendar: React.FC<CalendarProps> = ({
         setSelectedRange([null, null]);
         return;
       }
+      if (
+        selectedMonth === selectedRange[0]?.getMonth() &&
+        selectedYear === selectedRange[0].getFullYear() &&
+        parseInt(event.target.id, 10) < selectedRange[0]?.getDate()
+      ) {
+        setSelectedRange([null, null]);
+        return;
+      }
       if (!selectedRange[0]) {
         const selectedDayId = parseInt(event.target.id, 10);
 
@@ -102,7 +187,6 @@ export const Calendar: React.FC<CalendarProps> = ({
       }
       if (selectedRange[0] && !selectedRange[1]) {
         const selectedDayId = parseInt(event.target.id, 10);
-       
 
         // Use the mapping function to convert the selected day's id into a Date object
         const selectedDate = idToDate(selectedDayId);
@@ -119,9 +203,12 @@ export const Calendar: React.FC<CalendarProps> = ({
   // helper functions for interacting with the calendar
   const idToDate = (id: number) => new Date(selectedYear, selectedMonth, id);
 
+  const today = new Date();
+
   const isToday = (date: Date): boolean =>
-    date.getMonth() === new Date().getMonth() &&
-    date.getDate() === new Date().getDate();
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate();
 
   const isInRange = (date: Date) => {
     // if only one date is selected, return true if the date is the same as the selected date
@@ -170,60 +257,12 @@ export const Calendar: React.FC<CalendarProps> = ({
             const isItToday = isToday(day.date);
             const isSelected = isInRange(day.date);
             return (
-              <div
+              <MemoizedDesktopDay
                 key={day.date.toDateString()}
-                id={day.date.getDate().toString()}
-                className={classnames(
-                  day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
-                  (isSelected || isItToday) && "font-semibold",
-                  isSelected && "text-white",
-                  !isSelected && isItToday && "text-sky-600",
-                  !isSelected &&
-                    day.isCurrentMonth &&
-                    !isItToday &&
-                    "text-neutral-900",
-                  !isSelected &&
-                    !day.isCurrentMonth &&
-                    !isItToday &&
-                    "text-neutral-500",
-                  "relative min-h-[100px] py-2 px-3 hover:bg-neutral-100"
-                )}
-              >
-                <time
-                  dateTime={day.date.toDateString()}
-                  className={classnames(
-                    isSelected &&
-                      "flex h-6 w-6 items-center justify-center rounded-full",
-                    isSelected && isItToday && "bg-sky-600",
-                    isSelected && !isItToday && "bg-neutral-900",
-                    isItToday && !isSelected
-                      ? "flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 font-semibold text-white"
-                      : undefined
-                  )}
-                >
-                  {day.date.getDate()}
-                </time>
-                {/* {day.events.length > 0 && (
-                  <ol className="mt-2">
-                    {day.events.slice(0, 2).map((event) => (
-                      <li key={event.id}>
-                        <a href={event.href} className="group flex">
-                          <p className="flex-auto truncate font-medium text-neutral-900 group-hover:text-sky-600">
-                            {event.name}
-                          </p>
-                          <time
-                            dateTime={event.datetime}
-                            className="ml-3 hidden flex-none text-neutral-500 group-hover:text-sky-600 xl:block"
-                          >
-                            {event.time}
-                          </time>
-                        </a>
-                      </li>
-                    ))}
-                    {day.events.length > 2 && <li className="text-neutral-500">+ {day.events.length - 2} more</li>}
-                  </ol>
-                )} */}
-              </div>
+                day={day}
+                isItToday={isItToday}
+                isSelected={isSelected}
+              />
             );
           })}
         </div>
@@ -241,45 +280,12 @@ export const Calendar: React.FC<CalendarProps> = ({
             const isSelected = isInRange(day.date);
             // console.log(isSelected)
             return (
-              <div
+              <MemoizedMobileDay
                 key={day.date.toDateString()}
-                id={day.date.getDate().toString()}
-                className={classnames(
-                  day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
-                  (isSelected || isItToday) && "font-semibold",
-                  isSelected && "text-white",
-                  !isSelected && isItToday && "text-sky-600",
-                  !isSelected &&
-                    day.isCurrentMonth &&
-                    !isItToday &&
-                    "text-neutral-900",
-                  !isSelected &&
-                    !day.isCurrentMonth &&
-                    !isItToday &&
-                    "text-neutral-500",
-                  isSelected ? "bg-green-50 hover:bg-green-100/60" : "hover:bg-neutral-100",
-                  "flex h-14 min-h-[70px] flex-col py-2 px-3 focus:z-10"
-                )}
-              >
-                <time
-                  dateTime={day.date.toDateString()}
-                  className={classnames(
-                    isSelected &&
-                      "flex h-6 w-6 items-center justify-center rounded-full",
-                    isSelected && isItToday && "bg-sky-600",
-                    isSelected && !isItToday && "bg-green-700/70",
-                    "ml-auto"
-                  )}
-                >
-                  {day.date.getDate()}
-                </time>
-                <span className="sr-only">{day.date.getDate()} events</span>
-                {/* {true && (
-                  <span className="-mx-0.5 mt-auto flex flex-wrap-reverse">
-                    
-                  </span>
-                )} */}
-              </div>
+                day={day}
+                isItToday={isItToday}
+                isSelected={isSelected}
+              />
             );
           })}
         </div>

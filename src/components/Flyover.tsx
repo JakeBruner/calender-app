@@ -115,11 +115,15 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                               </div>
                             </div>
                             <div>
-                              <label htmlFor="description" className="block text-sm font-medium text-gray-900">
+                              
+                              <label htmlFor="description" className="pl-1 block text-sm font-medium text-gray-900">
                                 Dates
                               </label>
                               <div className="mt-1">
+                              <CalendarIcon className="h-5 w-5 text-gray-400 inline-block" aria-hidden="true" />
+
                                 <DateSelector dateRange={dateRange} setDateRange={setDateRange} />
+
                               </div>
                             </div>
                             <div>
@@ -263,7 +267,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                         Cancel
                       </button>
                       <button
-                        type="submit"
+                        // type="submit"
                         className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                       >
                         Save

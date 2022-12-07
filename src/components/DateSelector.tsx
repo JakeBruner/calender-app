@@ -23,7 +23,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({ dateRange, setDateRange }) 
   };
 
   return (
-      <div className="flex space-x-2">
+      <div className="inline-flex space-x-2">
         <div className="flex-1">
           <input
             type="date"
