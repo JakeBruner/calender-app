@@ -13,6 +13,8 @@ import classnames from "classnames";
 import Flyover from "../../components/Flyover";
 import Calendar from "../../components/Calendar";
 import Image from "next/image";
+import Head from 'next/head';
+
 
 
 const monthNames = [
@@ -49,6 +51,9 @@ export default function CalendarApp(): JSX.Element {
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
+      <Head>
+        <title>Bookings Calendar</title>
+      </Head>
       <Flyover open={showFlyover} setOpen={setShowFlyover} dateRange={selectedRange} setDateRange={setSelectedRange} />
       <header className="flex relative items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
         <Image src="/logo2.png" className="absolute" width={36} height={36} alt="Logo" />

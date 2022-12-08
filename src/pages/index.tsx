@@ -1,5 +1,6 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
+import Head from 'next/head';
 
 const Home = () => {
   const { data: session, status } = useSession();
@@ -10,6 +11,9 @@ const Home = () => {
 
   return (
     <main className="w-full">
+      <Head>
+        <title>Sign-in</title>
+      </Head>
       <h1>Calender</h1>
       {session ? (
         <>
