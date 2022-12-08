@@ -18,8 +18,8 @@ import Image from "next/image";
 const monthNames = [
   "January",
   "February",
-  "March",
   "April",
+  "March",
   "May",
   "June",
   "July",
@@ -51,7 +51,7 @@ export default function CalendarApp(): JSX.Element {
     <div className="lg:flex lg:h-full lg:flex-col">
       <Flyover open={showFlyover} setOpen={setShowFlyover} dateRange={selectedRange} setDateRange={setSelectedRange} />
       <header className="flex relative items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
-        <Image src="/logo.png" className="absolute" width={36} height={36} alt="Logo" />
+        <Image src="/logo2.png" className="absolute" width={36} height={36} alt="Logo" />
         <h1 className="text-lg font-semibold text-neutral-900 ml-12 md:ml-14 2xl:ml-16">
           <time
             dateTime={`${selectedYear}-${selectedMonth
