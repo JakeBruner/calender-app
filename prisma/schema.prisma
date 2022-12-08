@@ -27,6 +27,7 @@ model Booking {
   updatedAt   DateTime @updatedAt
   start       DateTime
   end         DateTime
+  title       String
   message     String?
   approved    Boolean  @default(false)
   draft       Boolean  @default(false)
@@ -34,9 +35,6 @@ model Booking {
   authorId    String
   sharedUsers User[]   @relation("SharedBookings")
 }
-
-// write me an explicit join table
-// model BookingUser {
 
 // Necessary for Next auth
 model Account {

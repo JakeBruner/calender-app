@@ -1,13 +1,62 @@
 import classnames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { SelectedRange, Day } from "../types/calendar";
 import React from "react";
+import { setMonth } from "date-fns";
 
 interface DayProps {
   day: Day;
   isItToday: boolean;
   isSelected: boolean;
 }
+
+// model Booking {
+//   id          String   @id @default(cuid())
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+//   start       DateTime
+//   end         DateTime
+//   title       String
+//   message     String?
+//   approved    Boolean  @default(false)
+//   draft       Boolean  @default(false)
+//   author      User     @relation(fields: [authorId], references: [id])
+//   authorId    String
+//   sharedUsers User[]   @relation("SharedBookings")
+// }
+
+const testBookings = [
+  {
+    id: "1",
+    start: new Date(2021, 8, 1),
+    end: new Date(2021, 8, 3),
+    title: "Test Booking 1",
+    message: "Test Message 1",
+    approved: true,
+    draft: false,
+  },
+  {
+    id: "2",
+    start: new Date(2021, 8, 3),
+    end: new Date(2021, 8, 5),
+    title: "Test Booking 2",
+    message: "Test Message 2",
+    approved: true,
+    draft: false,
+  },
+  {
+    id: "3",
+    start: new Date(2021, 8, 5),
+    end: new Date(2021, 8, 7),
+    title: "Test Booking 3",
+    message: "Test Message 3",
+    approved: true,
+    draft: false,
+  },
+];
+
+type Booking = typeof testBookings[0];
+
 
 const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
   return (
@@ -59,9 +108,11 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
         isSelected
           ? "bg-green-50 hover:bg-green-100/60"
           : "hover:bg-neutral-100",
-        "flex h-14 min-h-[70px] flex-col py-2 px-3 focus:z-10"
+        "flex h-14 min-h-[70px] flex-col focus:z-10",
+        "t"
       )}
     >
+      <div>
       <time
         dateTime={day.date.toDateString()}
         className={classnames(
@@ -73,6 +124,7 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
       >
         {day.date.getDate()}
       </time>
+      </div>
       <span className="sr-only">{day.date.getDate()} events</span>
     </div>
   );
@@ -97,6 +149,59 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   const [days, setDays] = useState<Day[]>([]);
 
+  const populateDays = useCallback(() => {
+    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+  
+    // create an array of days from 1 to the last day in the month
+    const _days: Day[] = Array.from(
+      { length: daysInMonth },
+      (_, i) => i + 1
+    ).map((dayNumber) => {
+      const date = new Date(selectedYear, selectedMonth, dayNumber);
+      const isCurrentMonth = date.getMonth() === selectedMonth;
+  
+      return {
+        date,
+        isCurrentMonth,
+        // isToday,
+        // isSelected,
+      };
+    });
+  
+    // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
+    const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+    const numberOfPlaceholders =
+      firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+    for (let i = 0; i < numberOfPlaceholders; i++) {
+      _days.unshift({
+        date: new Date(selectedYear, selectedMonth, -i),
+      });
+    }
+  
+    // add empty placeholders for the last few days so that the last day always falls on a Saturday
+    const lastDayOfMonth = new Date(
+      selectedYear,
+      selectedMonth + 1,
+      0
+    ).getDay();
+    const numberOfPlaceholdersAtEnd =
+      lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
+    for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
+      _days.push({
+        date: new Date(selectedYear, selectedMonth + 1, i + 1),
+      });
+    }
+  
+    // check if needs more rows
+    if (_days.length > 35) {
+      setMoreRows(true);
+    } else {
+      setMoreRows(false);
+    }
+  
+    setDays(_days);
+  }, [selectedMonth, selectedYear]);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -106,6 +211,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedRange, setSelectedRange]);
+
 
   // populate the array of calendar days with a dependency on the current month and year
   useEffect(() => {
@@ -118,7 +224,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     ).map((dayNumber) => {
       const date = new Date(selectedYear, selectedMonth, dayNumber);
       const isCurrentMonth = date.getMonth() === selectedMonth;
-      // const isToday = date.toDateString() === new Date().toDateString();
+      
       return {
         date,
         isCurrentMonth,

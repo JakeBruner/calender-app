@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import {
   // ChevronDownIcon,
   ChevronLeftIcon,
@@ -44,6 +44,18 @@ export default function CalendarApp(): JSX.Element {
     null,
     null,
   ]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        setMonth(selectedMonth - 1);
+      } else if (event.key === "ArrowRight") {
+        setMonth(selectedMonth + 1);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedMonth, setMonth]);
 
 
   const [showFlyover, setShowFlyover] = useState(false);
