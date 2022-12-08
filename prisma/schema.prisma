@@ -22,16 +22,21 @@ model Example {
 }
 
 model Booking {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  start     DateTime
-  end       DateTime
-  message   String?
-  approved  Boolean  @default(false)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  start       DateTime
+  end         DateTime
+  message     String?
+  approved    Boolean  @default(false)
+  draft       Boolean  @default(false)
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+  sharedUsers User[]   @relation("SharedBookings")
 }
+
+// write me an explicit join table
+// model BookingUser {
 
 // Necessary for Next auth
 model Account {
@@ -62,15 +67,23 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+enum Role {
+  ADMIN
+  USER
+  LIMBO
+}
+
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  bookings      Booking[]
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  role             Role      @default(LIMBO)
+  bookings         Booking[]
+  viewableBookings Booking[] @relation("SharedBookings")
+  accounts         Account[]
+  sessions         Session[]
 }
 
 model VerificationToken {

@@ -32,7 +32,8 @@ const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
           isSelected && !isItToday && "bg-neutral-900",
           isItToday && !isSelected
             ? "flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 font-semibold text-white"
-            : undefined
+            : undefined,
+            "cursor-default pointer-events-none select-none"
         )}
       >
         {day.date.getDate()}
@@ -67,7 +68,7 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
           isSelected && "flex h-6 w-6 items-center justify-center rounded-full",
           isSelected && isItToday && "bg-sky-600",
           isSelected && !isItToday && "bg-green-700/70",
-          "ml-auto"
+          "ml-auto cursor-default pointer-events-none select-none"
         )}
       >
         {day.date.getDate()}
