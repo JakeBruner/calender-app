@@ -12,10 +12,8 @@ import classnames from "classnames";
 
 import Flyover from "../../components/Flyover";
 import Calendar from "../../components/Calendar";
+import Image from "next/image";
 
-// import * as z from 'zod';
-// const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
-// type DateString = z.infer<typeof dateSchema>;
 
 const monthNames = [
   "January",
@@ -36,7 +34,7 @@ type SelectedRange = [Date | null, Date | null];
 
 
 
-export default function CalendarApp() {
+export default function CalendarApp(): JSX.Element {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -52,8 +50,9 @@ export default function CalendarApp() {
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
       <Flyover open={showFlyover} setOpen={setShowFlyover} dateRange={selectedRange} setDateRange={setSelectedRange} />
-      <header className="flex items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
-        <h1 className="text-lg font-semibold text-neutral-900">
+      <header className="flex relative items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
+        <Image src="/logo.png" className="absolute" width={36} height={36} alt="Logo" />
+        <h1 className="text-lg font-semibold text-neutral-900 ml-12 md:ml-14 2xl:ml-16">
           <time
             dateTime={`${selectedYear}-${selectedMonth
               .toString()
