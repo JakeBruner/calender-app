@@ -50,7 +50,12 @@ const testBookings = [
 
 type Booking = typeof testBookings[0];
 // wrapped means the day occurs on a monday and the booking title should write itself again
-type BookingsPerDay = (Booking[] & { first?: boolean; wrapped?: boolean }) | null;
+// type BookingsPerDay = (Booking[] & { first?: boolean; wrapped?: boolean }) | null;
+interface BookingsPerDay {
+  bookings: Booking[] | null;
+  first?: boolean;
+  wrapped?: boolean;
+}
 
 interface Day {
   date: Date;
@@ -59,6 +64,9 @@ interface Day {
   isToday?: boolean;
   bookings?: BookingsPerDay;
 }
+
+type DayAndBookings = Day & BookingsPerDay;
+
 
 interface DayProps {
   day: Day;
@@ -167,7 +175,8 @@ export const Calendar: React.FC<CalendarProps> = ({
   //! this shouldn't be an issue (and maybe even better) because the amount is limited
   //! then it will just be one query instead of one query per month
 
-  const getBookingsForDay = (day: Date) => {
+  //* BOOKINGS HELPER 
+  const getBookingsForDay = (day: Date): BookingsPerDay => {
     // first means day is the start of a booking
     let first = false;
     // wrapped means day is on a monday, and title should rewrite
@@ -179,6 +188,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         first = true;
         return true;
       }
+      
       if (booking.start && booking.end) {
         return (
           day >= booking.start &&
@@ -187,14 +197,17 @@ export const Calendar: React.FC<CalendarProps> = ({
       }
     });
 
+    day.getDay() === 1 && bookings.length > 0 && (wrapped = true);
+
     return { bookings, first, wrapped };
   };
+
 
   const populateDaysAndBookings = useCallback(() => {
     const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
     const today = new Date();
     // create an array of days from 1 to the last day in the month
-    const _days: Day[] = Array.from(
+    const _days: DayAndBookings[] = Array.from(
       { length: daysInMonth },
       (_, i) => i + 1
     ).map((dayNumber) => {
@@ -204,7 +217,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       date.getMonth() === today.getMonth() &&
       date.getDate() === today.getDate();
 
-      const { bookings, first } = getBookingsForDay(date);
+      const { bookings, first, wrapped} = getBookingsForDay(date);
   
       return {
         date,
@@ -212,6 +225,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         isToday,
         bookings: (bookings.length > 0 ? bookings : null),
         first,
+        wrapped,
       };
     });
 
@@ -224,8 +238,11 @@ export const Calendar: React.FC<CalendarProps> = ({
     for (let i = 0; i < numberOfPlaceholders; i++) {
       const date = new Date(selectedYear, selectedMonth, -i);
       const {bookings, first, wrapped } = getBookingsForDay(date);
+
       _days.unshift({
         date,
+        isCurrentMonth: false,
+        isToday: false,
         bookings: (bookings.length > 0 ? bookings : null),
         first,
         wrapped,
