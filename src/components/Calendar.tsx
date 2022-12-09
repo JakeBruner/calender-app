@@ -199,68 +199,73 @@ export const Calendar: React.FC<CalendarProps> = ({
   //   return { bookings, first, wrapped };
   // };
 
-  const computeDaysInMonth = useMemo(() => {
-    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-    const today = new Date();
-    // create an array of days from 1 to the last day in the month
-    const _days: Day[] = Array.from(
-      { length: daysInMonth },
-      (_, i) => i + 1
-    ).map((dayNumber) => {
-      const date = new Date(selectedYear, selectedMonth, dayNumber);
-      const isCurrentMonth = date.getMonth() === selectedMonth;
-      const isToday =
-        date.getFullYear() === today.getFullYear() &&
-        date.getMonth() === today.getMonth() &&
-        date.getDate() === today.getDate();
+	//* start nonsense
+	/* useMemo hook is used to memoize the computation of days in the month. useCallback memoizes this populateDays function, which sets setDays() to the computed array of days. The useEffect hook is used to call the populateDays function when the component is rendered. These hooks are used together to avoid unnecessary recalculations. */
 
-      return {
-        date,
-        isCurrentMonth,
-        isToday,
-      };
+const computeDays = useMemo(() => {
+  const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+  const today = new Date();
+  // create an array of days from 1 to the last day in the month
+  const _days: Day[] = Array.from(
+    { length: daysInMonth },
+    (_, i) => i + 1
+  ).map((dayNumber) => {
+    const date = new Date(selectedYear, selectedMonth, dayNumber);
+    const isCurrentMonth = date.getMonth() === selectedMonth;
+    const isToday = date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate();
+
+    return {
+      date,
+      isCurrentMonth,
+      isToday,
+    };
+  });
+
+
+  // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
+  const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+
+  const numberOfPlaceholders =
+    firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+  for (let i = 0; i < numberOfPlaceholders; i++) {
+    _days.unshift({
+      date: new Date(selectedYear, selectedMonth, -i),
     });
+  }
 
-    // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
-    const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+  // add empty placeholders for the last few days so that the last day always falls on a Saturday
+  const lastDayOfMonth = new Date(
+    selectedYear,
+    selectedMonth + 1,
+    0
+  ).getDay();
+  const numberOfPlaceholdersAtEnd =
+    lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
+  for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
+    _days.push({
+      date: new Date(selectedYear, selectedMonth + 1, i + 1),
+    });
+  }
 
-    const numberOfPlaceholders =
-      firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-    for (let i = 0; i < numberOfPlaceholders; i++) {
-      _days.unshift({
-        date: new Date(selectedYear, selectedMonth, -i),
-      });
-    }
+  return _days;
+}, [selectedMonth, selectedYear]); // dependencies
 
-    // add empty placeholders for the last few days so that the last day always falls on a Saturday
-    const lastDayOfMonth = new Date(
-      selectedYear,
-      selectedMonth + 1,
-      0
-    ).getDay();
-    const numberOfPlaceholdersAtEnd =
-      lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
-    for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
-      _days.push({
-        date: new Date(selectedYear, selectedMonth + 1, i + 1),
-      });
-    }
-
-    // check if needs more rows
-    if (_days.length > 35) {
-      setMoreRows(true);
-    } else {
-      setMoreRows(false);
-    }
-  }, [selectedMonth, selectedYear]);
-
+	// this prevents useEffect infinite loop and unnecessary re-computations
   const populateDays = useCallback(() => {
-    setDays(_days);
-  }, [selectedMonth, selectedYear]);
+    const days = computeDays;
+		setDays(days);
+		setMoreRows(days.length > 35);
+  }, [computeDays]);
 
+	// finally, useEffect is used to call populateDays when the component is rendered
   useEffect(() => {
     populateDays();
   }, [populateDays]);
+
+	//* end nonsense
+
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -380,7 +385,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           onClick={handleClick}
         >
           {days.map((day) => {
-            const isItToday = isDateToday(day.date);
+            const isItToday = day.isToday || false;
             const isSelected = isInRange(day.date);
             // console.log(isSelected)
             return (
