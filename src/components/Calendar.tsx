@@ -21,34 +21,37 @@ import React from "react";
 const testBookings = [
   {
     id: "1",
-    start: new Date(2021, 8, 1),
-    end: new Date(2021, 8, 3),
+    start: new Date(2022, 11, 1),
+    end: new Date(2022, 11, 3),
     title: "Test Booking 1",
     message: "Test Message 1",
+		authorname: "Author 1",
     approved: true,
     draft: false,
   },
   {
     id: "2",
-    start: new Date(2021, 8, 3),
-    end: new Date(2021, 8, 5),
+    start: new Date(2022,11, 3),
+    end: new Date(2022, 11, 5),
     title: "Test Booking 2",
     message: "Test Message 2",
+		authorname: "Author 2",
     approved: true,
     draft: false,
   },
   {
     id: "3",
-    start: new Date(2021, 8, 5),
-    end: new Date(2021, 8, 7),
+    start: new Date(2022, 11, 5),
+    end: new Date(2022, 11, 7),
     title: "Test Booking 3",
     message: "Test Message 3",
+		authorname: "Author 3",
     approved: true,
     draft: false,
   },
 ];
 
-type Booking = typeof testBookings[0];
+// type Booking = typeof testBookings[0];
 // wrapped means the day occurs on a monday and the booking title should write itself again
 // type BookingsPerDay = (Booking[] & { first?: boolean; wrapped?: boolean }) | null;
 // interface BookingsPerDay {
@@ -199,7 +202,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   //   return { bookings, first, wrapped };
   // };
 
-	//* start nonsense
+	//! start nonsense
 	/* useMemo hook is used to memoize the computation of days in the month. useCallback memoizes this populateDays function, which sets setDays() to the computed array of days. The useEffect hook is used to call the populateDays function when the component is rendered. These hooks are used together to avoid unnecessary recalculations. */
 
 const computeDays = useMemo(() => {
@@ -264,7 +267,7 @@ const computeDays = useMemo(() => {
     populateDays();
   }, [populateDays]);
 
-	//* end nonsense
+	//! end nonsense
 
 
   useEffect(() => {
