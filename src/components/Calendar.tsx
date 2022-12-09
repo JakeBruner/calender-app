@@ -1,6 +1,6 @@
 import classnames from "classnames";
-import { useEffect, useState, useCallback } from "react";
-import type { SelectedRange, /*Day*/ } from "../types/calendar";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import type { SelectedRange /*Day*/ } from "../types/calendar";
 import React from "react";
 
 // model Booking {
@@ -51,22 +51,18 @@ const testBookings = [
 type Booking = typeof testBookings[0];
 // wrapped means the day occurs on a monday and the booking title should write itself again
 // type BookingsPerDay = (Booking[] & { first?: boolean; wrapped?: boolean }) | null;
-interface BookingsPerDay {
-  bookings: Booking[] | null;
-  first?: boolean;
-  wrapped?: boolean;
-}
+// interface BookingsPerDay {
+//   bookings: Booking[] | null;
+//   first?: boolean;
+//   wrapped?: boolean;
+// }
 
 interface Day {
   date: Date;
   isCurrentMonth?: boolean;
   isSelected?: boolean;
   isToday?: boolean;
-  bookings?: BookingsPerDay;
 }
-
-type DayAndBookings = Day & BookingsPerDay;
-
 
 interface DayProps {
   day: Day;
@@ -98,7 +94,7 @@ const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
           isItToday && !isSelected
             ? "flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 font-semibold text-white"
             : undefined,
-            "cursor-default pointer-events-none select-none"
+          "pointer-events-none cursor-default select-none"
         )}
       >
         {day.date.getDate()}
@@ -129,17 +125,18 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
       )}
     >
       <div>
-      <time
-        dateTime={day.date.toDateString()}
-        className={classnames(
-          isSelected && "flex h-6 w-6 items-center justify-center rounded-full",
-          isSelected && isItToday && "bg-sky-600",
-          isSelected && !isItToday && "bg-green-700/70",
-          "ml-auto cursor-default pointer-events-none select-none"
-        )}
-      >
-        {day.date.getDate()}
-      </time>
+        <time
+          dateTime={day.date.toDateString()}
+          className={classnames(
+            isSelected &&
+              "flex h-6 w-6 items-center justify-center rounded-full",
+            isSelected && isItToday && "bg-sky-600",
+            isSelected && !isItToday && "bg-green-700/70",
+            "pointer-events-none ml-auto cursor-default select-none"
+          )}
+        >
+          {day.date.getDate()}
+        </time>
       </div>
       <span className="sr-only">{day.date.getDate()} events</span>
     </div>
@@ -175,80 +172,66 @@ export const Calendar: React.FC<CalendarProps> = ({
   //! this shouldn't be an issue (and maybe even better) because the amount is limited
   //! then it will just be one query instead of one query per month
 
-  //* BOOKINGS HELPER 
-  const getBookingsForDay = (day: Date): BookingsPerDay => {
-    // first means day is the start of a booking
-    let first = false;
-    // wrapped means day is on a monday, and title should rewrite
-    let wrapped = false;
+  // //* BOOKINGS HELPER
+  // const getBookingsForDay = (day: Date): BookingsPerDay => {
+  //   // first means day is the start of a booking
+  //   let first = false;
+  //   // wrapped means day is on a monday, and title should rewrite
+  //   let wrapped = false;
 
-    const bookings = testBookings.filter((booking) => {
-      // if in range
-      if (booking.start.toDateString() === day.toDateString()) {
-        first = true;
-        return true;
-      }
-      
-      if (booking.start && booking.end) {
-        return (
-          day >= booking.start &&
-          day <= booking.end 
-        );
-      }
-    });
+  //   const bookings = testBookings.filter((booking) => {
+  //     // if in range
+  //     if (booking.start.toDateString() === day.toDateString()) {
+  //       first = true;
+  //       return true;
+  //     }
 
-    day.getDay() === 1 && bookings.length > 0 && (wrapped = true);
+  //     if (booking.start && booking.end) {
+  //       return (
+  //         day >= booking.start &&
+  //         day <= booking.end
+  //       );
+  //     }
+  //   });
 
-    return { bookings, first, wrapped };
-  };
+  //   day.getDay() === 1 && bookings.length > 0 && (wrapped = true);
 
+  //   return { bookings, first, wrapped };
+  // };
 
-  const populateDaysAndBookings = useCallback(() => {
+  const computeDaysInMonth = useMemo(() => {
     const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
     const today = new Date();
     // create an array of days from 1 to the last day in the month
-    const _days: DayAndBookings[] = Array.from(
+    const _days: Day[] = Array.from(
       { length: daysInMonth },
       (_, i) => i + 1
     ).map((dayNumber) => {
       const date = new Date(selectedYear, selectedMonth, dayNumber);
       const isCurrentMonth = date.getMonth() === selectedMonth;
-      const isToday = date.getFullYear() === today.getFullYear() &&
-      date.getMonth() === today.getMonth() &&
-      date.getDate() === today.getDate();
+      const isToday =
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate();
 
-      const { bookings, first, wrapped} = getBookingsForDay(date);
-  
       return {
         date,
         isCurrentMonth,
         isToday,
-        bookings: (bookings.length > 0 ? bookings : null),
-        first,
-        wrapped,
       };
     });
 
-  
     // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
     const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
 
     const numberOfPlaceholders =
       firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     for (let i = 0; i < numberOfPlaceholders; i++) {
-      const date = new Date(selectedYear, selectedMonth, -i);
-      const {bookings, first, wrapped } = getBookingsForDay(date);
-
       _days.unshift({
-        date,
-        isCurrentMonth: false,
-        isToday: false,
-        bookings: (bookings.length > 0 ? bookings : null),
-        first,
-        wrapped,
+        date: new Date(selectedYear, selectedMonth, -i),
       });
     }
-  
+
     // add empty placeholders for the last few days so that the last day always falls on a Saturday
     const lastDayOfMonth = new Date(
       selectedYear,
@@ -262,20 +245,22 @@ export const Calendar: React.FC<CalendarProps> = ({
         date: new Date(selectedYear, selectedMonth + 1, i + 1),
       });
     }
-  
+
     // check if needs more rows
     if (_days.length > 35) {
       setMoreRows(true);
     } else {
       setMoreRows(false);
     }
-  
+  }, [selectedMonth, selectedYear]);
+
+  const populateDays = useCallback(() => {
     setDays(_days);
-  }, [selectedMonth, selectedYear, testBookings]);
+  }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
-    populateDaysAndBookings();
-  }, [populateDaysAndBookings]);
+    populateDays();
+  }, [populateDays]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -286,61 +271,6 @@ export const Calendar: React.FC<CalendarProps> = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedRange, setSelectedRange]);
-
-
-  // populate the array of calendar days with a dependency on the current month and year
-  // useEffect(() => {
-  //   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-
-  //   // create an array of days from 1 to the last day in the month
-  //   const _days: Day[] = Array.from(
-  //     { length: daysInMonth },
-  //     (_, i) => i + 1
-  //   ).map((dayNumber) => {
-  //     const date = new Date(selectedYear, selectedMonth, dayNumber);
-  //     const isCurrentMonth = date.getMonth() === selectedMonth;
-      
-  //     return {
-  //       date,
-  //       isCurrentMonth,
-  //       // isToday,
-  //       // isSelected,
-  //     };
-  //   });
-
-  //   // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
-  //   const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
-  //   const numberOfPlaceholders =
-  //     firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-  //   for (let i = 0; i < numberOfPlaceholders; i++) {
-  //     _days.unshift({
-  //       date: new Date(selectedYear, selectedMonth, -i),
-  //     });
-  //   }
-
-  //   // add empty placeholders for the last few days so that the last day always falls on a Saturday
-  //   const lastDayOfMonth = new Date(
-  //     selectedYear,
-  //     selectedMonth + 1,
-  //     0
-  //   ).getDay();
-  //   const numberOfPlaceholdersAtEnd =
-  //     lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
-  //   for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
-  //     _days.push({
-  //       date: new Date(selectedYear, selectedMonth + 1, i + 1),
-  //     });
-  //   }
-
-  //   // check if needs more rows
-  //   if (_days.length > 35) {
-  //     setMoreRows(true);
-  //   } else {
-  //     setMoreRows(false);
-  //   }
-
-  //   setDays(_days);
-  // }, [selectedMonth, selectedYear]);
 
   const handleClick = (event: React.MouseEvent) => {
     // console.log(event.target);
