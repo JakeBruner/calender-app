@@ -48,14 +48,14 @@ export default function CalendarApp(): JSX.Element {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft") {
-        setMonth(selectedMonth - 1);
+        setSelectedMonth(selectedMonth - 1);
       } else if (event.key === "ArrowRight") {
-        setMonth(selectedMonth + 1);
+        setSelectedMonth(selectedMonth + 1);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedMonth, setMonth]);
+  }, [selectedMonth, setSelectedMonth]);
 
 
   const [showFlyover, setShowFlyover] = useState(false);

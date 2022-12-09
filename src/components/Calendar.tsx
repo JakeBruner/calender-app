@@ -1,14 +1,7 @@
 import classnames from "classnames";
 import { useEffect, useState, useCallback } from "react";
-import type { SelectedRange, Day } from "../types/calendar";
+import type { SelectedRange, /*Day*/ } from "../types/calendar";
 import React from "react";
-import { setMonth } from "date-fns";
-
-interface DayProps {
-  day: Day;
-  isItToday: boolean;
-  isSelected: boolean;
-}
 
 // model Booking {
 //   id          String   @id @default(cuid())
@@ -56,7 +49,22 @@ const testBookings = [
 ];
 
 type Booking = typeof testBookings[0];
+// wrapped means the day occurs on a monday and the booking title should write itself again
+type BookingsPerDay = (Booking[] & { first?: boolean; wrapped?: boolean }) | null;
 
+interface Day {
+  date: Date;
+  isCurrentMonth?: boolean;
+  isSelected?: boolean;
+  isToday?: boolean;
+  bookings?: BookingsPerDay;
+}
+
+interface DayProps {
+  day: Day;
+  isItToday: boolean;
+  isSelected: boolean;
+}
 
 const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
   return (
@@ -149,9 +157,42 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   const [days, setDays] = useState<Day[]>([]);
 
-  const populateDays = useCallback(() => {
+  // const isDateToday = (date: Date): boolean =>
+  //   date.getFullYear() === today.getFullYear() &&
+  //   date.getMonth() === today.getMonth() &&
+  //   date.getDate() === today.getDate();
+
+  // const [daysBookings, daysBookings] = useState<BookingsPerCalenderDay[]>(testBookings);
+  //! I will just select * from Bookings and filter them in the frontend
+  //! this shouldn't be an issue (and maybe even better) because the amount is limited
+  //! then it will just be one query instead of one query per month
+
+  const getBookingsForDay = (day: Date) => {
+    // first means day is the start of a booking
+    let first = false;
+    // wrapped means day is on a monday, and title should rewrite
+    let wrapped = false;
+
+    const bookings = testBookings.filter((booking) => {
+      // if in range
+      if (booking.start.toDateString() === day.toDateString()) {
+        first = true;
+        return true;
+      }
+      if (booking.start && booking.end) {
+        return (
+          day >= booking.start &&
+          day <= booking.end 
+        );
+      }
+    });
+
+    return { bookings, first, wrapped };
+  };
+
+  const populateDaysAndBookings = useCallback(() => {
     const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-  
+    const today = new Date();
     // create an array of days from 1 to the last day in the month
     const _days: Day[] = Array.from(
       { length: daysInMonth },
@@ -159,22 +200,35 @@ export const Calendar: React.FC<CalendarProps> = ({
     ).map((dayNumber) => {
       const date = new Date(selectedYear, selectedMonth, dayNumber);
       const isCurrentMonth = date.getMonth() === selectedMonth;
+      const isToday = date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate();
+
+      const { bookings, first } = getBookingsForDay(date);
   
       return {
         date,
         isCurrentMonth,
-        // isToday,
-        // isSelected,
+        isToday,
+        bookings: (bookings.length > 0 ? bookings : null),
+        first,
       };
     });
+
   
     // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
     const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+
     const numberOfPlaceholders =
       firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     for (let i = 0; i < numberOfPlaceholders; i++) {
+      const date = new Date(selectedYear, selectedMonth, -i);
+      const {bookings, first, wrapped } = getBookingsForDay(date);
       _days.unshift({
-        date: new Date(selectedYear, selectedMonth, -i),
+        date,
+        bookings: (bookings.length > 0 ? bookings : null),
+        first,
+        wrapped,
       });
     }
   
@@ -200,7 +254,11 @@ export const Calendar: React.FC<CalendarProps> = ({
     }
   
     setDays(_days);
-  }, [selectedMonth, selectedYear]);
+  }, [selectedMonth, selectedYear, testBookings]);
+
+  useEffect(() => {
+    populateDaysAndBookings();
+  }, [populateDaysAndBookings]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -214,58 +272,58 @@ export const Calendar: React.FC<CalendarProps> = ({
 
 
   // populate the array of calendar days with a dependency on the current month and year
-  useEffect(() => {
-    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+  // useEffect(() => {
+  //   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
 
-    // create an array of days from 1 to the last day in the month
-    const _days: Day[] = Array.from(
-      { length: daysInMonth },
-      (_, i) => i + 1
-    ).map((dayNumber) => {
-      const date = new Date(selectedYear, selectedMonth, dayNumber);
-      const isCurrentMonth = date.getMonth() === selectedMonth;
+  //   // create an array of days from 1 to the last day in the month
+  //   const _days: Day[] = Array.from(
+  //     { length: daysInMonth },
+  //     (_, i) => i + 1
+  //   ).map((dayNumber) => {
+  //     const date = new Date(selectedYear, selectedMonth, dayNumber);
+  //     const isCurrentMonth = date.getMonth() === selectedMonth;
       
-      return {
-        date,
-        isCurrentMonth,
-        // isToday,
-        // isSelected,
-      };
-    });
+  //     return {
+  //       date,
+  //       isCurrentMonth,
+  //       // isToday,
+  //       // isSelected,
+  //     };
+  //   });
 
-    // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
-    const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
-    const numberOfPlaceholders =
-      firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-    for (let i = 0; i < numberOfPlaceholders; i++) {
-      _days.unshift({
-        date: new Date(selectedYear, selectedMonth, -i),
-      });
-    }
+  //   // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
+  //   const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+  //   const numberOfPlaceholders =
+  //     firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+  //   for (let i = 0; i < numberOfPlaceholders; i++) {
+  //     _days.unshift({
+  //       date: new Date(selectedYear, selectedMonth, -i),
+  //     });
+  //   }
 
-    // add empty placeholders for the last few days so that the last day always falls on a Saturday
-    const lastDayOfMonth = new Date(
-      selectedYear,
-      selectedMonth + 1,
-      0
-    ).getDay();
-    const numberOfPlaceholdersAtEnd =
-      lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
-    for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
-      _days.push({
-        date: new Date(selectedYear, selectedMonth + 1, i + 1),
-      });
-    }
+  //   // add empty placeholders for the last few days so that the last day always falls on a Saturday
+  //   const lastDayOfMonth = new Date(
+  //     selectedYear,
+  //     selectedMonth + 1,
+  //     0
+  //   ).getDay();
+  //   const numberOfPlaceholdersAtEnd =
+  //     lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
+  //   for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
+  //     _days.push({
+  //       date: new Date(selectedYear, selectedMonth + 1, i + 1),
+  //     });
+  //   }
 
-    // check if needs more rows
-    if (_days.length > 35) {
-      setMoreRows(true);
-    } else {
-      setMoreRows(false);
-    }
+  //   // check if needs more rows
+  //   if (_days.length > 35) {
+  //     setMoreRows(true);
+  //   } else {
+  //     setMoreRows(false);
+  //   }
 
-    setDays(_days);
-  }, [selectedMonth, selectedYear]);
+  //   setDays(_days);
+  // }, [selectedMonth, selectedYear]);
 
   const handleClick = (event: React.MouseEvent) => {
     // console.log(event.target);
@@ -309,13 +367,6 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   // helper functions for interacting with the calendar
   const idToDate = (id: number) => new Date(selectedYear, selectedMonth, id);
-
-  const today = new Date();
-
-  const isToday = (date: Date): boolean =>
-    date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth() &&
-    date.getDate() === today.getDate();
 
   const isInRange = (date: Date) => {
     // if only one date is selected, return true if the date is the same as the selected date
@@ -361,13 +412,12 @@ export const Calendar: React.FC<CalendarProps> = ({
           onClick={handleClick}
         >
           {days.map((day) => {
-            const isItToday = isToday(day.date);
             const isSelected = isInRange(day.date);
             return (
               <MemoizedDesktopDay
                 key={day.date.toDateString()}
                 day={day}
-                isItToday={isItToday}
+                isItToday={day.isToday || false}
                 isSelected={isSelected}
               />
             );
@@ -383,7 +433,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           onClick={handleClick}
         >
           {days.map((day) => {
-            const isItToday = isToday(day.date);
+            const isItToday = isDateToday(day.date);
             const isSelected = isInRange(day.date);
             // console.log(isSelected)
             return (
