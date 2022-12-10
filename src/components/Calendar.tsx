@@ -3,62 +3,6 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import type { SelectedRange /*Day*/ } from "../types/calendar";
 import React from "react";
 
-// model Booking {
-//   id          String   @id @default(cuid())
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-//   start       DateTime
-//   end         DateTime
-//   title       String
-//   message     String?
-//   approved    Boolean  @default(false)
-//   draft       Boolean  @default(false)
-//   author      User     @relation(fields: [authorId], references: [id])
-//   authorId    String
-//   sharedUsers User[]   @relation("SharedBookings")
-// }
-
-const testBookings = [
-  {
-    id: "1",
-    start: new Date(2022, 11, 1),
-    end: new Date(2022, 11, 3),
-    title: "Test Booking 1",
-    message: "Test Message 1",
-		authorname: "Author 1",
-    approved: true,
-    draft: false,
-  },
-  {
-    id: "2",
-    start: new Date(2022,11, 3),
-    end: new Date(2022, 11, 5),
-    title: "Test Booking 2",
-    message: "Test Message 2",
-		authorname: "Author 2",
-    approved: true,
-    draft: false,
-  },
-  {
-    id: "3",
-    start: new Date(2022, 11, 5),
-    end: new Date(2022, 11, 7),
-    title: "Test Booking 3",
-    message: "Test Message 3",
-		authorname: "Author 3",
-    approved: true,
-    draft: false,
-  },
-];
-
-// type Booking = typeof testBookings[0];
-// wrapped means the day occurs on a monday and the booking title should write itself again
-// type BookingsPerDay = (Booking[] & { first?: boolean; wrapped?: boolean }) | null;
-// interface BookingsPerDay {
-//   bookings: Booking[] | null;
-//   first?: boolean;
-//   wrapped?: boolean;
-// }
 
 interface Day {
   date: Date;
@@ -155,55 +99,26 @@ interface CalendarProps {
   selectedYear: number;
 }
 
+
+
 export const Calendar: React.FC<CalendarProps> = ({
   selectedRange,
   setSelectedRange,
   selectedMonth,
   selectedYear,
 }) => {
+
+  // const bookings = trpc.bookings.getAll.useQuery();
+
   const [moreRows, setMoreRows] = useState(false);
 
   const [days, setDays] = useState<Day[]>([]);
 
-  // const isDateToday = (date: Date): boolean =>
-  //   date.getFullYear() === today.getFullYear() &&
-  //   date.getMonth() === today.getMonth() &&
-  //   date.getDate() === today.getDate();
 
-  // const [daysBookings, daysBookings] = useState<BookingsPerCalenderDay[]>(testBookings);
-  //! I will just select * from Bookings and filter them in the frontend
-  //! this shouldn't be an issue (and maybe even better) because the amount is limited
-  //! then it will just be one query instead of one query per month
-
-  // //* BOOKINGS HELPER
-  // const getBookingsForDay = (day: Date): BookingsPerDay => {
-  //   // first means day is the start of a booking
-  //   let first = false;
-  //   // wrapped means day is on a monday, and title should rewrite
-  //   let wrapped = false;
-
-  //   const bookings = testBookings.filter((booking) => {
-  //     // if in range
-  //     if (booking.start.toDateString() === day.toDateString()) {
-  //       first = true;
-  //       return true;
-  //     }
-
-  //     if (booking.start && booking.end) {
-  //       return (
-  //         day >= booking.start &&
-  //         day <= booking.end
-  //       );
-  //     }
-  //   });
-
-  //   day.getDay() === 1 && bookings.length > 0 && (wrapped = true);
-
-  //   return { bookings, first, wrapped };
-  // };
-
-	//! start nonsense
-	/* useMemo hook is used to memoize the computation of days in the month. useCallback memoizes this populateDays function, which sets setDays() to the computed array of days. The useEffect hook is used to call the populateDays function when the component is rendered. These hooks are used together to avoid unnecessary recalculations. */
+	/* useMemo hook is used to memoize the computation of days in the month. 
+    useCallback memoizes this populateDays function, which sets setDays() to the computed array of days. 
+    The useEffect hook is used to call the populateDays function when the component is rendered. 
+    These hooks are used to avoid unnecessary recalculations. */
 
 const computeDays = useMemo(() => {
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
@@ -266,7 +181,6 @@ const computeDays = useMemo(() => {
   useEffect(() => {
     populateDays();
   }, [populateDays]);
-
 	//! end nonsense
 
 

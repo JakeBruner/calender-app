@@ -5,7 +5,7 @@ import { router, protectedProcedure } from "../trpc";
 // type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
 export const bookingsRouter = router({
-  getByMonth: protectedProcedure
+  getAll: protectedProcedure
     // // input is an object where month is 0-indexed from 0-11 and year is 2022-2030
     // .input( //! for now, we'll just get all bookings since there are only a few
     //   z.object({
