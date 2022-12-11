@@ -4,7 +4,7 @@ import classnames from "classnames";
 import type { Day, DayWithBookingInfo } from "../types/calendar";
 
 export type DayProps = {
-  day: Day;
+  day: Day & { bookings?: DayWithBookingInfo[] };
   isItToday: boolean;
   isSelected: boolean;
   bookings?: DayWithBookingInfo[];

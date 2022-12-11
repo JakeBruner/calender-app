@@ -240,7 +240,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
       </header>
 
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
-        <Calendar selectedRange={selectedRange} setSelectedRange={setSelectedRange} selectedMonth={selectedMonth} selectedYear={selectedYear} />
+        <Calendar selectedRange={selectedRange} setSelectedRange={setSelectedRange} selectedMonth={selectedMonth} selectedYear={selectedYear} bookings={bookings} />
       </div>
     </div>
   );

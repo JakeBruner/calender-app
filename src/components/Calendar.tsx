@@ -7,12 +7,14 @@ import type { Day } from "../types/calendar";
 
 import { MemoizedDesktopDay, MemoizedMobileDay } from "./Days";
 
+import type { Booking, DayWithBookingInfo } from "../types/calendar"
 
 interface CalendarProps {
   selectedRange: SelectedRange;
   setSelectedRange: React.Dispatch<React.SetStateAction<SelectedRange>>;
   selectedMonth: number;
   selectedYear: number;
+  bookings: Booking[];
 }
 
 
@@ -22,9 +24,8 @@ export const Calendar: React.FC<CalendarProps> = ({
   setSelectedRange,
   selectedMonth,
   selectedYear,
+  bookings,
 }) => {
-
-  // const bookings = trpc.bookings.getAll.useQuery();
 
   const [moreRows, setMoreRows] = useState(false);
 
@@ -162,6 +163,48 @@ const computeDays = useMemo(() => {
     return date >= selectedRange[0] && date <= selectedRange[1];
   };
 
+  const getDayFromBookings = (day: Date): DayWithBookingInfo[] | null => {
+
+    if (bookings.length === 0) return null;
+    const _bookinginfo: DayWithBookingInfo[] = [];
+    bookings.forEach((b) => {
+      if (b.start === day) {
+        _bookinginfo.push({
+          id: b.id,
+          title: b.title,
+          author: b.author.name,
+          isStart: true,
+          isEnd: false,
+          isMonday: day.getDay() === 1,
+        });
+      }
+      if (b.end === day) {
+        _bookinginfo.push({
+          id: b.id,
+          title: b.title,
+          author: b.author?.name,
+          isStart: false,
+          isEnd: true,
+          isMonday: day.getDay() === 1,
+        });
+      }
+      if (b.start < day && b.end > day) {
+        _bookinginfo.push({
+          id: b.id,
+          title: b.title,
+          author: b.author?.name,
+          isStart: false,
+          isEnd: false,
+          isMonday: day.getDay() === 1,
+        });
+      }
+    });
+
+    if (_bookinginfo.length === 0) return null;
+    
+    return _bookinginfo;
+  }
+
   return (
     <>
       <div className="grid grid-cols-7 gap-px border-b border-neutral-300 bg-neutral-200 text-center text-xs font-semibold leading-6 text-neutral-700 lg:flex-none">
@@ -198,6 +241,11 @@ const computeDays = useMemo(() => {
         >
           {days.map((day) => {
             const isSelected = isInRange(day.date);
+            // check if day is in range of BookingDates
+            
+
+
+
             return (
               <MemoizedDesktopDay
                 key={day.date.toDateString()}
@@ -218,14 +266,13 @@ const computeDays = useMemo(() => {
           onClick={handleClick}
         >
           {days.map((day) => {
-            const isItToday = day.isToday || false;
             const isSelected = isInRange(day.date);
             // console.log(isSelected)
             return (
               <MemoizedMobileDay
                 key={day.date.toDateString()}
                 day={day}
-                isItToday={isItToday}
+                isItToday={day.isToday || false}
                 isSelected={isSelected}
               />
             );

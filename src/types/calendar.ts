@@ -8,9 +8,10 @@ export interface Day {
 export interface DayWithBookingInfo {
   id: string;
   title: string;
-  author: string;
+  author: string | null;
   isStart: boolean;
   isEnd: boolean;
+  isMonday: boolean;
 }
 
 import type { inferRouterOutputs } from "@trpc/server";
