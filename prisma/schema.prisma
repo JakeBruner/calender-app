@@ -21,6 +21,14 @@ model Example {
   updatedAt DateTime @updatedAt
 }
 
+enum Location {
+  L1
+  L2
+  L3
+  L4
+  OTHER
+}
+
 model Booking {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
@@ -28,6 +36,7 @@ model Booking {
   start       DateTime
   end         DateTime
   title       String
+  location    Location
   message     String?
   approved    Boolean  @default(false)
   draft       Boolean  @default(false)

@@ -29,7 +29,7 @@ const monthNames = [
   "December",
 ];
 
-import type { Booking } from "../../src/types/calendar"
+import type { Booking } from "../types/calendar"
 
 type CalenderWrapperProps = {
   bookings: Booking[];

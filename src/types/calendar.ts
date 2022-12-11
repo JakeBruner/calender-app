@@ -3,7 +3,14 @@ export type SelectedRange = [Date | null, Date | null];
 export interface Day {
   date: Date;
   isCurrentMonth?: boolean;
-  isSelected?: boolean;
+  isToday?: boolean;
+}
+export interface DayWithBookingInfo {
+  id: string;
+  title: string;
+  author: string;
+  isStart: boolean;
+  isEnd: boolean;
 }
 
 import type { inferRouterOutputs } from "@trpc/server";

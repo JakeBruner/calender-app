@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CalendarWrapper from "../../components/CalendarWrapper";
-import { trpc } from "../../utils/trpc";
+// import { trpc } from "../../utils/trpc";
 
 import type { Booking } from "../../../src/types/calendar";
 
