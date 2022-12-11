@@ -4,13 +4,29 @@ import classnames from "classnames";
 import type { Day, DayWithBookingInfo } from "../types/calendar";
 
 export type DayProps = {
-  day: Day & { bookings?: DayWithBookingInfo[] };
+  day: Day 
   isItToday: boolean;
   isSelected: boolean;
-  bookings?: DayWithBookingInfo[];
+  bookings: DayWithBookingInfo[] | null;
 }
 
-const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
+
+const Booking: React.FC<{ bookings: DayWithBookingInfo[] | null }> = ({ bookings }) => {
+  console.log("Booking component: ", bookings)
+  return (
+    <div className="absolute translate-y-8 left-0 w-full h-4 bg-red-500">
+      {bookings?.map((booking) => (
+        <div key={booking.id} className="h-1 relative bg-red-500">
+          <p className="text-red-100 -translate-y-1">{booking.author}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
+const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings }) => {
+  // console.log("Day component: ", bookings)
   return (
     <div
       key={day.date.toDateString()}
@@ -46,7 +62,7 @@ const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
 export const MemoizedDesktopDay = React.memo(DesktopDay);
 
 // Day component that displays the day number and applies styling if it is in the selected range
-const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
+const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings }) => {
   return (
     <div
       id={day.date.getDate().toString()}
@@ -64,6 +80,9 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
         "t"
       )}
     >
+      {bookings && 
+      <div className="relative"><Booking bookings={bookings} /></div>
+      }
       <div>
         <time
           dateTime={day.date.toDateString()}
@@ -78,9 +97,10 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
           {day.date.getDate()}
         </time>
       </div>
-      <span className="sr-only">{day.date.getDate()} events</span>
+      <span className="sr-only">{day.date.getDate()} bookings</span>
     </div>
   );
 };
 
 export const MemoizedMobileDay = React.memo(MobileDay);
+

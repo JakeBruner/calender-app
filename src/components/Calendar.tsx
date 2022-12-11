@@ -169,6 +169,7 @@ const computeDays = useMemo(() => {
     const _bookinginfo: DayWithBookingInfo[] = [];
     bookings.forEach((b) => {
       if (b.start === day) {
+        console.log(b);
         _bookinginfo.push({
           id: b.id,
           title: b.title,
@@ -201,7 +202,7 @@ const computeDays = useMemo(() => {
     });
 
     if (_bookinginfo.length === 0) return null;
-    
+    // console.log("bookinginfo: ", _bookinginfo)
     return _bookinginfo;
   }
 
@@ -241,10 +242,6 @@ const computeDays = useMemo(() => {
         >
           {days.map((day) => {
             const isSelected = isInRange(day.date);
-            // check if day is in range of BookingDates
-            
-
-
 
             return (
               <MemoizedDesktopDay
@@ -252,6 +249,7 @@ const computeDays = useMemo(() => {
                 day={day}
                 isItToday={day.isToday || false}
                 isSelected={isSelected}
+                bookings={getDayFromBookings(day.date)}
               />
             );
           })}
@@ -274,6 +272,7 @@ const computeDays = useMemo(() => {
                 day={day}
                 isItToday={day.isToday || false}
                 isSelected={isSelected}
+                bookings={getDayFromBookings(day.date)}
               />
             );
           })}
