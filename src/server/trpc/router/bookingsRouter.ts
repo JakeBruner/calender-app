@@ -48,6 +48,7 @@ export const bookingsRouter = router({
             message: true,
             start: true,
             end: true,
+            location: true,
             author: {
               select: {
                 id: true,

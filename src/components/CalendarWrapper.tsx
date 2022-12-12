@@ -14,6 +14,8 @@ import Flyover from "./Flyover";
 import Calendar from "./Calendar";
 import Image from "next/image";
 
+import { useEffect } from "react";
+
 const monthNames = [
   "January",
   "February",
@@ -29,7 +31,7 @@ const monthNames = [
   "December",
 ];
 
-import type { Booking } from "../types/calendar"
+import type { Booking, BookingID } from "../types/calendar"
 
 type CalenderWrapperProps = {
   bookings: Booking[];
@@ -46,6 +48,17 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
     null,
     null,
   ]);
+
+  const [selectedBooking, setSelectedBooking] = useState<BookingID | null>(null);
+  const [selectedBookingInfo, setSelectedBookingInfo] = useState<Booking | null>(null);
+
+  // useEffect to get full booking given the booking id
+  useEffect(() => {
+    if (selectedBooking) {
+      const booking = bookings.find((booking) => booking.id === selectedBooking);
+      booking && setSelectedBookingInfo(booking);
+    }
+  }, [selectedBooking, bookings]);
 
 
   const [showFlyover, setShowFlyover] = useState(false);
@@ -240,8 +253,9 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
       </header>
 
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
-        <Calendar selectedRange={selectedRange} setSelectedRange={setSelectedRange} selectedMonth={selectedMonth} selectedYear={selectedYear} bookings={bookings} />
+        <Calendar selectedRange={selectedRange} setSelectedRange={setSelectedRange} selectedMonth={selectedMonth} selectedYear={selectedYear} bookings={bookings} setSelectedBooking={setSelectedBooking} />
       </div>
+      {selectedBooking && JSON.stringify(selectedBookingInfo)}
     </div>
   );
 }

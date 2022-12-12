@@ -7,7 +7,7 @@ import type { Day } from "../types/calendar";
 
 import { MemoizedDesktopDay, MemoizedMobileDay } from "./Days";
 
-import type { Booking, DayWithBookingInfo } from "../types/calendar"
+import type { Booking, DayWithBookingInfo, BookingID } from "../types/calendar"
 
 interface CalendarProps {
   selectedRange: SelectedRange;
@@ -15,6 +15,7 @@ interface CalendarProps {
   selectedMonth: number;
   selectedYear: number;
   bookings: Booking[];
+	setSelectedBooking: React.Dispatch<React.SetStateAction<BookingID | null>>;
 }
 
 
@@ -25,6 +26,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   selectedMonth,
   selectedYear,
   bookings,
+	setSelectedBooking,
 }) => {
 
   const [moreRows, setMoreRows] = useState(false);
@@ -168,22 +170,24 @@ const computeDays = useMemo(() => {
     if (bookings.length === 0) return null;
     const _bookinginfo: DayWithBookingInfo[] = [];
     bookings.forEach((b) => {
-      if (b.start === day) {
-        console.log(b);
+      if (b.start.toISOString().split('T')[0] === day.toISOString().split('T')[0]) {
+        // console.log(b);
         _bookinginfo.push({
           id: b.id,
           title: b.title,
           author: b.author.name,
+					location: b.location,
           isStart: true,
           isEnd: false,
           isMonday: day.getDay() === 1,
         });
       }
-      if (b.end === day) {
+      if (b.end.toISOString().split('T')[0] === day.toISOString().split("T")[0]) {
         _bookinginfo.push({
           id: b.id,
           title: b.title,
           author: b.author?.name,
+					location: b.location,
           isStart: false,
           isEnd: true,
           isMonday: day.getDay() === 1,
@@ -194,6 +198,7 @@ const computeDays = useMemo(() => {
           id: b.id,
           title: b.title,
           author: b.author?.name,
+					location: b.location,
           isStart: false,
           isEnd: false,
           isMonday: day.getDay() === 1,
@@ -250,6 +255,7 @@ const computeDays = useMemo(() => {
                 isItToday={day.isToday || false}
                 isSelected={isSelected}
                 bookings={getDayFromBookings(day.date)}
+								setSelectedBooking={setSelectedBooking}
               />
             );
           })}
@@ -273,6 +279,7 @@ const computeDays = useMemo(() => {
                 isItToday={day.isToday || false}
                 isSelected={isSelected}
                 bookings={getDayFromBookings(day.date)}
+								setSelectedBooking={setSelectedBooking}
               />
             );
           })}

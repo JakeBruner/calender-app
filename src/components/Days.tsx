@@ -1,32 +1,50 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import React from "react";
 import classnames from "classnames";
 
-import type { Day, DayWithBookingInfo } from "../types/calendar";
+import type { Day, DayWithBookingInfo, BookingID, Booking } from "../types/calendar";
+
+import { locations } from "../types/location";
+
+import { useRef, useEffect, useCallback, useState } from "react";
 
 export type DayProps = {
   day: Day 
   isItToday: boolean;
   isSelected: boolean;
   bookings: DayWithBookingInfo[] | null;
+  setSelectedBooking: React.Dispatch<React.SetStateAction<BookingID | null>>;
 }
 
+type BookingProps = {
+  bookings: DayWithBookingInfo[] | null;
+  setSelectedBooking: React.Dispatch<React.SetStateAction<BookingID | null>>;
+}
 
-const Booking: React.FC<{ bookings: DayWithBookingInfo[] | null }> = ({ bookings }) => {
-  console.log("Booking component: ", bookings)
+const BookingLine: React.FC<BookingProps> = ({ bookings, setSelectedBooking }) => {
+  // console.log("Booking component: ", bookings)
+  
   return (
-    <div className="absolute translate-y-8 left-0 w-full h-4 bg-red-500">
+    <>
       {bookings?.map((booking) => (
-        <div key={booking.id} className="h-1 relative bg-red-500">
-          <p className="text-red-100 -translate-y-1">{booking.author}</p>
-        </div>
+        // these colors are defined in tailwind.config.js
+        <button key={booking.id} className={classnames("w-full h-4 relative z-10", `bg-${locations[booking.location].color}-500`)}
+          onClick={() => 
+            setSelectedBooking(booking.id)}>
+          {booking.isStart && <p className={classnames("-translate-y-3 absolute text-left overflow-x-auto", `text-${locations[booking.location].color}-100`)}>{booking.title} | {booking.author}</p>}
+          {booking.isMonday && <p className={classnames("-translate-y-1 text-left", `text-${locations[booking.location].color}-100`)}>{booking.author}</p>}
+        </button>
       ))}
-    </div>
+  </>
   );
 };
 
 
-const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings }) => {
+const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, setSelectedBooking }) => {
   // console.log("Day component: ", bookings)
+
+
   return (
     <div
       key={day.date.toDateString()}
@@ -55,6 +73,9 @@ const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings }
       >
         {day.date.getDate()}
       </time>
+      {bookings && 
+      <div className="relative"><BookingLine bookings={bookings} setSelectedBooking={setSelectedBooking} /></div>
+      }
     </div>
   );
 };
@@ -62,9 +83,12 @@ const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings }
 export const MemoizedDesktopDay = React.memo(DesktopDay);
 
 // Day component that displays the day number and applies styling if it is in the selected range
-const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings }) => {
+const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, setSelectedBooking }) => {
+  const componentRef = useRef<HTMLDivElement>(null);
+  const { width, /*height*/ } = useResize(componentRef);
   return (
     <div
+      ref={componentRef}
       id={day.date.getDate().toString()}
       className={classnames(
         day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
@@ -80,9 +104,6 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings })
         "t"
       )}
     >
-      {bookings && 
-      <div className="relative"><Booking bookings={bookings} /></div>
-      }
       <div>
         <time
           dateTime={day.date.toDateString()}
@@ -94,13 +115,38 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings })
             "pointer-events-none ml-auto cursor-default select-none"
           )}
         >
-          {day.date.getDate()}
+          {day.date.getDate()}{bookings?.length}
         </time>
       </div>
       <span className="sr-only">{day.date.getDate()} bookings</span>
+      {bookings && 
+      <div className="relative"><BookingLine bookings={bookings} setSelectedBooking={setSelectedBooking} /></div>
+      }
     </div>
   );
 };
 
 export const MemoizedMobileDay = React.memo(MobileDay);
 
+
+const useResize = (myRef: React.RefObject<HTMLDivElement>) => {
+  const [width, setWidth] = useState(0)
+  // const [height, setHeight] = useState(0)
+  
+  const handleResize = useCallback(() => {
+      setWidth(myRef.current!.offsetWidth)
+      // setHeight(myRef.current!.offsetHeight)
+  }, [myRef])
+
+  useEffect(() => {
+    window.addEventListener('load', handleResize)
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('load', handleResize)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [myRef, handleResize])
+
+  return { width, /*height*/ }
+}

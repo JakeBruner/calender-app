@@ -11,6 +11,7 @@ const testBookings: Booking[] = [
     end: new Date(2022, 11, 3),
     title: "Test Booking 1",
     message: "Test Message 1",
+    location: "L1",
 		author: {
       id: "1",
       name: "Author 1",
@@ -24,6 +25,7 @@ const testBookings: Booking[] = [
     end: new Date(2022, 11, 5),
     title: "Test Booking 2",
     message: "Test Message 2",
+    location: "L2",
 		author: {
       id: "2",
       name: "Author 2",
@@ -37,6 +39,7 @@ const testBookings: Booking[] = [
     end: new Date(2022, 11, 7),
     title: "Test Booking 3",
     message: "Test Message 3",
+    location: "L3",
 		author: {
       id: "3",
       name: "Author 3",
@@ -56,6 +59,8 @@ export default function CalendarApp(): JSX.Element {
   
 
   return (
+
     <CalendarWrapper bookings={bookings}/>
+
   );
 }
