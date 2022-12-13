@@ -115,7 +115,7 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, s
   return (
     <div className="relative">
       <div
-        id={day.date.getDate().toString()}
+        id={day.date.toDateString()}
         className={classnames(
           day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
           (isSelected || isItToday) && "font-semibold",
@@ -130,10 +130,11 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, s
           "t"
         )}
       >
-        <div className="cursor-default select-none"
-          id={day.date.getDate.toString()}
+        <div 
+        id={day.date.toDateString()}
           >
           <time
+            
             dateTime={day.date.toDateString()}
             className={classnames(
               isSelected &&

@@ -117,35 +117,28 @@ const computeDays = useMemo(() => {
     // console.log(event.target);
     if (event.target instanceof HTMLDivElement) {
       // Get the selected day's id value
-      // if (!event.target.id) return;
-      if (event.target.id === selectedRange[0]?.getDate().toString()) {
+      if (!event.target.id) return;
+
+
+      const date = new Date(event.target.id);
+      if (date.toString() === "Invalid Date") return;
+
+      if (event.target.id === selectedRange[0]?.toDateString()) {
         setSelectedRange([null, null]);
         return;
       }
-      if (
-        selectedMonth === selectedRange[0]?.getMonth() &&
-        selectedYear === selectedRange[0].getFullYear() &&
-        parseInt(event.target.id, 10) < selectedRange[0]?.getDate()
+      if ( selectedRange[0] &&
+          date.getTime() < selectedRange[0]?.getTime()
       ) {
         setSelectedRange([null, null]);
         return;
       }
       if (!selectedRange[0]) {
-        const selectedDayId = parseInt(event.target.id, 10);
 
-        // Use the mapping function to convert the selected day's id into a Date object
-        const selectedDate = idToDate(selectedDayId);
-        // Update the selected day state variable with the Date object
-        setSelectedRange([selectedDate, null]);
+        setSelectedRange([date, null]);
       }
       if (selectedRange[0] && !selectedRange[1]) {
-        const selectedDayId = parseInt(event.target.id, 10);
-
-        // Use the mapping function to convert the selected day's id into a Date object
-        const selectedDate = idToDate(selectedDayId);
-
-        // Update the selected day state variable with the Date object
-        setSelectedRange([selectedRange[0], selectedDate]);
+        setSelectedRange([selectedRange[0], date]);
       }
       if (selectedRange[0] && selectedRange[1]) {
         setSelectedRange([null, null]);
@@ -153,8 +146,6 @@ const computeDays = useMemo(() => {
     }
   };
 
-  // helper functions for interacting with the calendar
-  const idToDate = (id: number) => new Date(selectedYear, selectedMonth, id);
 
   const isInRange = (date: Date) => {
     // if only one date is selected, return true if the date is the same as the selected date
