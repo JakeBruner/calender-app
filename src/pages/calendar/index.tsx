@@ -56,8 +56,6 @@ export default function CalendarApp(): JSX.Element {
  
   const [bookings, setBookings] = useState<Booking[]>(testBookings);
 
-  
-
   return (
 
     <CalendarWrapper bookings={bookings}/>

@@ -3,7 +3,7 @@
 import React from "react";
 import classnames from "classnames";
 
-import type { Day, DayWithBookingInfo, BookingID, Booking } from "../types/calendar";
+import type { Day, DayWithBookingInfo, BookingID } from "../types/calendar";
 
 
 import { locations } from "../types/location";
@@ -130,7 +130,9 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, s
           "t"
         )}
       >
-        <div>
+        <div className="cursor-default select-none"
+          id={day.date.getDate.toString()}
+          >
           <time
             dateTime={day.date.toDateString()}
             className={classnames(
@@ -141,7 +143,7 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, s
               "pointer-events-none ml-auto cursor-default select-none"
             )}
           >
-            {day.date.getDate()}{bookings?.length}
+            {day.date.getDate()}
           </time>
         </div>
         <span className="sr-only">{day.date.getDate()} bookings</span>

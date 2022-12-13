@@ -117,7 +117,7 @@ const computeDays = useMemo(() => {
     // console.log(event.target);
     if (event.target instanceof HTMLDivElement) {
       // Get the selected day's id value
-      if (!event.target.id) return;
+      // if (!event.target.id) return;
       if (event.target.id === selectedRange[0]?.getDate().toString()) {
         setSelectedRange([null, null]);
         return;
@@ -307,27 +307,3 @@ const computeDays = useMemo(() => {
 };
 
 export default Calendar;
-
-
-// export const useComponentWidth = (ref: RefObject<HTMLDivElement>) => {
-// 	const [width, setWidth] = useState(0);
-
-// 	const handleResize = useCallback(() => {
-// 		if (ref.current) {
-// 			setWidth(ref.current.offsetWidth);
-// 			// setHeight(myRef.current.offsetHeight)
-// 		}
-// 	}, [ref])
-
-// 	useEffect(() => {
-//     window.addEventListener('load', handleResize)
-//     window.addEventListener('resize', handleResize)
-
-//     return () => {
-//       window.removeEventListener('load', handleResize)
-//       window.removeEventListener('resize', handleResize)
-//     }
-//   }, [ref, handleResize])
-
-// 	return { width };
-// }
