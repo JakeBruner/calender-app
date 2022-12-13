@@ -76,7 +76,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <form className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
+                  <form className="flex h-full flex-col divide-y divide-neutral-200 bg-white shadow-xl">
                     <div className="h-0 flex-1 overflow-y-auto">
                       <div className="bg-sky-700 py-6 px-4 sm:px-6">
                         <div className="flex items-center justify-between">
@@ -99,10 +99,10 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                         </div>
                       </div>
                       <div className="flex flex-1 flex-col justify-between">
-                        <div className="divide-y divide-gray-200 px-4 sm:px-6">
+                        <div className="divide-y divide-neutral-200 px-4 sm:px-6">
                           <div className="space-y-6 pt-6 pb-5">
                             <div>
-                              <label htmlFor="project-name" className="block text-sm font-medium text-gray-900">
+                              <label htmlFor="project-name" className="block text-sm font-medium text-neutral-900">
                                 Booking title
                               </label>
                               <div className="mt-1">
@@ -110,24 +110,24 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                   type="text"
                                   name="project-name"
                                   id="project-name"
-                                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                                  className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
                                 />
                               </div>
                             </div>
                             <div>
                               
-                              <label htmlFor="description" className="pl-1 block text-sm font-medium text-gray-900">
+                              <label htmlFor="description" className="pl-1 block text-sm font-medium text-neutral-900">
                                 Dates
                               </label>
                               <div className="mt-1">
-                              <CalendarIcon className="h-5 w-5 text-gray-400 inline-block" aria-hidden="true" />
+                              <CalendarIcon className="h-5 w-5 text-neutral-400 inline-block" aria-hidden="true" />
 
                                 <DateSelector dateRange={dateRange} setDateRange={setDateRange} />
 
                               </div>
                             </div>
                             <div>
-                              <label htmlFor="description" className="block text-sm font-medium text-gray-900">
+                              <label htmlFor="description" className="block text-sm font-medium text-neutral-900">
                                 Description <span className="text-neutral-400">(optional)</span>
                               </label>
                               <div className="mt-1">
@@ -135,13 +135,13 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                   id="description"
                                   name="description"
                                   rows={4}
-                                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                                  className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
                                   defaultValue={''}
                                 />
                               </div>
                             </div>
                             <div>
-                              <h3 className="text-sm font-medium text-gray-900">Invite other users:</h3>
+                              <h3 className="text-sm font-medium text-neutral-900">Invite other users:</h3>
                               <div className="mt-2">
                                 <div className="flex space-x-2">
                                   {team.map((person) => (
@@ -156,7 +156,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                   ))}
                                   <button
                                     type="button"
-                                    className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                    className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-neutral-200 bg-white text-neutral-400 hover:border-neutral-300 hover:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                   >
                                     <span className="sr-only">Add users</span>
                                     <PlusIcon className="h-5 w-5" aria-hidden="true" />
@@ -165,7 +165,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                               </div>
                             </div>
                             <fieldset>
-                              <legend className="text-sm font-medium text-gray-900">Privacy</legend>
+                              <legend className="text-sm font-medium text-neutral-900">Privacy</legend>
                               <div className="mt-2 space-y-5">
                                 <div className="relative flex items-start">
                                   <div className="absolute flex h-5 items-center">
@@ -174,15 +174,15 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                       name="privacy"
                                       aria-describedby="privacy-public-description"
                                       type="radio"
-                                      className="h-4 w-4 border-gray-300 text-sky-600 focus:ring-sky-500"
+                                      className="h-4 w-4 border-neutral-300 text-sky-600 focus:ring-sky-500"
                                       defaultChecked
                                     />
                                   </div>
                                   <div className="pl-7 text-sm">
-                                    <label htmlFor="privacy-public" className="font-medium text-gray-900">
+                                    <label htmlFor="privacy-public" className="font-medium text-neutral-900">
                                       Public access
                                     </label>
-                                    <p id="privacy-public-description" className="text-gray-500">
+                                    <p id="privacy-public-description" className="text-neutral-500">
                                       Everyone with the link will see this project.
                                     </p>
                                   </div>
@@ -195,14 +195,14 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                         name="privacy"
                                         aria-describedby="privacy-private-to-project-description"
                                         type="radio"
-                                        className="h-4 w-4 border-gray-300 text-sky-600 focus:ring-sky-500"
+                                        className="h-4 w-4 border-neutral-300 text-sky-600 focus:ring-sky-500"
                                       />
                                     </div>
                                     <div className="pl-7 text-sm">
-                                      <label htmlFor="privacy-private-to-project" className="font-medium text-gray-900">
+                                      <label htmlFor="privacy-private-to-project" className="font-medium text-neutral-900">
                                         Private to project members
                                       </label>
-                                      <p id="privacy-private-to-project-description" className="text-gray-500">
+                                      <p id="privacy-private-to-project-description" className="text-neutral-500">
                                         Only members of this project would be able to access.
                                       </p>
                                     </div>
@@ -216,14 +216,14 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                         name="privacy"
                                         aria-describedby="privacy-private-to-project-description"
                                         type="radio"
-                                        className="h-4 w-4 border-gray-300 text-sky-600 focus:ring-sky-500"
+                                        className="h-4 w-4 border-neutral-300 text-sky-600 focus:ring-sky-500"
                                       />
                                     </div>
                                     <div className="pl-7 text-sm">
-                                      <label htmlFor="privacy-private" className="font-medium text-gray-900">
+                                      <label htmlFor="privacy-private" className="font-medium text-neutral-900">
                                         Private to you
                                       </label>
-                                      <p id="privacy-private-description" className="text-gray-500">
+                                      <p id="privacy-private-description" className="text-neutral-500">
                                         You are the only one able to access this project.
                                       </p>
                                     </div>
@@ -246,9 +246,9 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                               </a>
                             </div>
                             <div className="mt-4 flex text-sm">
-                              <a href="#" className="group inline-flex items-center text-gray-500 hover:text-gray-900">
+                              <a href="#" className="group inline-flex items-center text-neutral-500 hover:text-neutral-900">
                                 <QuestionMarkCircleIcon
-                                  className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                  className="h-5 w-5 text-neutral-400 group-hover:text-neutral-500"
                                   aria-hidden="true"
                                 />
                                 <span className="ml-2">Learn more about sharing</span>
@@ -261,7 +261,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                     <div className="flex flex-shrink-0 justify-end px-4 py-4">
                       <button
                         type="button"
-                        className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                        className="rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                         onClick={() => setOpen(false)}
                       >
                         Cancel

@@ -13,6 +13,7 @@ import classnames from "classnames";
 import Flyover from "./Flyover";
 import Calendar from "./Calendar";
 import Image from "next/image";
+import BookingDisplay from "../components/BookingDisplay";
 
 import { useEffect } from "react";
 
@@ -255,7 +256,8 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
         <Calendar selectedRange={selectedRange} setSelectedRange={setSelectedRange} selectedMonth={selectedMonth} selectedYear={selectedYear} bookings={bookings} setSelectedBooking={setSelectedBooking} />
       </div>
-      {selectedBooking && JSON.stringify(selectedBookingInfo)}
+      <BookingDisplay selectedBookingInfo={selectedBookingInfo} />
+      {/* {selectedBooking && JSON.stringify(selectedBookingInfo)} */}
     </div>
   );
 }

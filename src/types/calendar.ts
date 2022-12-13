@@ -10,6 +10,8 @@ export interface DayWithBookingInfo {
   title: string;
   author: string | null;
   location: Location;
+  start: Date;
+  end: Date;
   isStart: boolean;
   isEnd: boolean;
   isMonday: boolean;

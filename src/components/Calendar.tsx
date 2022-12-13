@@ -1,7 +1,6 @@
 import classnames from "classnames";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef, RefObject } from "react";
 import type { SelectedRange /*Day*/ } from "../types/calendar";
-import React from "react";
 
 import type { Day } from "../types/calendar";
 
@@ -177,6 +176,8 @@ const computeDays = useMemo(() => {
           title: b.title,
           author: b.author.name,
 					location: b.location,
+					start: b.start,
+					end: b.end,
           isStart: true,
           isEnd: false,
           isMonday: day.getDay() === 1,
@@ -188,6 +189,8 @@ const computeDays = useMemo(() => {
           title: b.title,
           author: b.author?.name,
 					location: b.location,
+					start: b.start,
+					end: b.end,
           isStart: false,
           isEnd: true,
           isMonday: day.getDay() === 1,
@@ -199,6 +202,8 @@ const computeDays = useMemo(() => {
           title: b.title,
           author: b.author?.name,
 					location: b.location,
+					start: b.start,
+					end: b.end,
           isStart: false,
           isEnd: false,
           isMonday: day.getDay() === 1,
@@ -211,10 +216,17 @@ const computeDays = useMemo(() => {
     return _bookinginfo;
   }
 
+	const divElem = useRef<HTMLDivElement>(null);
+	const { width } = useComponentWidth(divElem);
+	console.log("width: ", width)
+
+
   return (
     <>
       <div className="grid grid-cols-7 gap-px border-b border-neutral-300 bg-neutral-200 text-center text-xs font-semibold leading-6 text-neutral-700 lg:flex-none">
-        <div className="bg-white py-2">
+        <div className="bg-white py-2"
+					ref={divElem}
+				>
           M<span className="sr-only sm:not-sr-only">on</span>
         </div>
         <div className="bg-white py-2">
@@ -236,8 +248,8 @@ const computeDays = useMemo(() => {
           S<span className="sr-only sm:not-sr-only">un</span>
         </div>
       </div>
-      {/* DESKTOP CALENDER */}
       <div className="flex bg-neutral-200 text-xs leading-6 text-neutral-700 lg:flex-auto">
+				{/* DESKTOP CALENDER */}
         <div
           className={classnames(
             moreRows ? "lg:grid-rows-6" : "lg:grid-rows-5",
@@ -256,6 +268,7 @@ const computeDays = useMemo(() => {
                 isSelected={isSelected}
                 bookings={getDayFromBookings(day.date)}
 								setSelectedBooking={setSelectedBooking}
+								cellWidth={width}
               />
             );
           })}
@@ -280,6 +293,7 @@ const computeDays = useMemo(() => {
                 isSelected={isSelected}
                 bookings={getDayFromBookings(day.date)}
 								setSelectedBooking={setSelectedBooking}
+								cellWidth={width}
               />
             );
           })}
@@ -290,3 +304,27 @@ const computeDays = useMemo(() => {
 };
 
 export default Calendar;
+
+
+export const useComponentWidth = (ref: RefObject<HTMLDivElement>) => {
+	const [width, setWidth] = useState(0);
+
+	const handleResize = useCallback(() => {
+		if (ref.current) {
+			setWidth(ref.current.offsetWidth);
+			// setHeight(myRef.current.offsetHeight)
+		}
+	}, [ref])
+
+	useEffect(() => {
+    window.addEventListener('load', handleResize)
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('load', handleResize)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [ref, handleResize])
+
+	return { width };
+}
