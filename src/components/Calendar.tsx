@@ -5,7 +5,7 @@ import type { SelectedRange /*Day*/ } from "../types/calendar";
 
 import type { Day } from "../types/calendar";
 
-import { MemoizedDesktopDay, MemoizedMobileDay } from "./Days";
+import MemoizedDay from "./Days";
 
 import type { Booking, DayWithBookingInfo, BookingID } from "../types/calendar";
 
@@ -243,32 +243,6 @@ export const Calendar: React.FC<CalendarProps> = ({
         </div>
       </div>
       <div className="flex bg-neutral-200 text-xs leading-6 text-neutral-700 lg:flex-auto">
-        {/* DESKTOP CALENDER */}
-        <div
-          className={classnames(
-            moreRows ? "lg:grid-rows-6" : "lg:grid-rows-5",
-            "hidden w-full lg:grid lg:grid-cols-7 lg:gap-px"
-          )}
-          onClick={handleClick}
-        >
-          {days.map((day) => {
-            const isSelected = isInRange(day.date);
-
-            return (
-              <MemoizedDesktopDay
-                key={day.date.toDateString()}
-                day={day}
-                isItToday={day.isToday || false}
-                isSelected={isSelected}
-                bookings={getDayFromBookings(day.date)}
-                setSelectedBooking={setSelectedBooking}
-                cellWidth={width}
-              />
-            );
-          })}
-        </div>
-
-        {/* MOBILE CALENDER */}
         <div
           className={classnames(
             moreRows ? "grid-rows-6" : "grid-rows-5",
@@ -280,7 +254,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             const isSelected = isInRange(day.date);
             // console.log(isSelected)
             return (
-              <MemoizedMobileDay
+              <MemoizedDay
                 key={day.date.toDateString()}
                 day={day}
                 isItToday={day.isToday || false}
