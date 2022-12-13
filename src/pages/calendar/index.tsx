@@ -10,7 +10,7 @@ const testBookings: Booking[] = [
     start: new Date(2022, 11, 1),
     end: new Date(2022, 11, 3),
     title: "Test Booking 1",
-    message: "Test Message 1",
+    message: "Test Message 1 this is a long message that is very long and very wordy and is very good at demonstrating how this user-interface will look when it is used by a user.",
     location: "L1",
 		author: {
       id: "1",

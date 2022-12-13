@@ -58,6 +58,8 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
     if (selectedBooking) {
       const booking = bookings.find((booking) => booking.id === selectedBooking);
       booking && setSelectedBookingInfo(booking);
+    } else {
+      setSelectedBookingInfo(null);
     }
   }, [selectedBooking, bookings]);
 
@@ -256,7 +258,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
         <Calendar selectedRange={selectedRange} setSelectedRange={setSelectedRange} selectedMonth={selectedMonth} selectedYear={selectedYear} bookings={bookings} setSelectedBooking={setSelectedBooking} />
       </div>
-      <BookingDisplay selectedBookingInfo={selectedBookingInfo} />
+      <BookingDisplay selectedBookingInfo={selectedBookingInfo} setSelectedBooking={setSelectedBooking} />
       {/* {selectedBooking && JSON.stringify(selectedBookingInfo)} */}
     </div>
   );

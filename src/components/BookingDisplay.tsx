@@ -1,20 +1,32 @@
-import type { FC } from 'react';
+import { type FC, useEffect, useState } from 'react';
+import { Transition } from '@headlessui/react';
 import type { Booking } from '../types/calendar';
 
 import { locations } from '../types/location';
-import { EllipsisHorizontalIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { ArrowsRightLeftIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import classnames from 'classnames';
 
-import { useState } from 'react';
+import type { BookingID } from "../types/calendar"
+
 
 type BookingDisplayProps = {
   selectedBookingInfo: Booking | null;
+  setSelectedBooking: (booking: BookingID | null) => void;
 };
+
 
 export const BookingDisplay: FC<BookingDisplayProps> = ({
   selectedBookingInfo,
+  setSelectedBooking,
 }) => {
+
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(!!selectedBookingInfo);
+  }, [selectedBookingInfo]);
+
 
   if (!selectedBookingInfo) {
     return null;
@@ -36,21 +48,18 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
     }),
   ];
 
+  // to future self -- transiiton cannot run on leave because setSelectBooking is called before the transition is complete
 
   return (
-    // <div>
-    //   {/* {selectedBookingInfo && JSON.stringify(selectedBookingInfo)} */}
-    //   <div className="flex flex-col p-5 justify-center bg-neutral-50 rounded-lg">
-    //     <div> 
-    //     <h1 className="text-2xl font-bold">{selectedBookingInfo.title}</h1>
-        
-    //     </div>
-    //     {selectedBookingInfo?.author && <p className="text-lg">{selectedBookingInfo.author.name}</p>}
-    //     <p className="text-lg">{locations[selectedBookingInfo.location].name}</p>
-    //     <p className="text-lg">{selectedBookingInfo.start.toDateString()}</p>
-    //     <p className="text-lg">{selectedBookingInfo.end.toDateString()}</p>
-    //     <p className="text-lg">{selectedBookingInfo.message}</p>
-    <div className="m-5 overflow-hidden bg-white shadow sm:rounded-lg relative">
+    <Transition show={open} className="m-5 lg:m-8 overflow-hidden bg-white shadow sm:rounded-lg lg:rounded-xl relative"
+    enter="transition ease-out duration-200"
+    enterFrom="transform opacity-0 scale-95"
+    enterTo="transform opacity-100 scale-100"
+    leave="transition ease-in duration-200"
+    leaveFrom="transform opacity-100 scale-100"
+    leaveTo="transform opacity-0 scale-95"
+
+    >
       <div className="px-4 py-5 sm:px-6">
         <h3 className="text-lg font-medium leading-6 text-gray-900">{selectedBookingInfo.title}</h3>
         {/* X-mark button */}
@@ -58,6 +67,7 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
           <button
             type="button"
             className="text-gray-400 hover:text-gray-500"
+            onClick={() => {setOpen(false);setSelectedBooking(null)}}
           >
             <span className="sr-only">Close</span>
             <XMarkIcon className="w-6 h-6" aria-hidden="true" />
@@ -72,14 +82,14 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
             selectedBookingInfo.author.image && "flex items-center"
             )}>
               {selectedBookingInfo.author.name}
-             {selectedBookingInfo.author.image && <Image src={selectedBookingInfo.author.image} width={40} height={40} className="rounded-full inline-block ml-auto mr-4" alt="avatar" />}
+             {selectedBookingInfo.author.image && <Image src={selectedBookingInfo.author.image} width={40} height={40} className="rounded-full inline-block ml-auto mr-4 -translate-y-2 md:translate-y-0 -my-2" alt="avatar" />}
             </dd>
           </div>
           <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Dates</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
               {dateStrings[0]} 
-              <EllipsisHorizontalIcon className="h-5 w-5 mx-2 text-gray-500 inline-block" aria-hidden="true" />
+              <ArrowsRightLeftIcon className="h-4 w-4 mx-2 text-gray-500 inline-block" aria-hidden="true" />
               {dateStrings[1]}  
             </dd>
           </div>
@@ -97,7 +107,7 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
           
         </dl>
       </div>
-    </div>
+  </Transition>
   );
 }
 
