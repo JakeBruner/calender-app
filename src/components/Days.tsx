@@ -25,52 +25,77 @@ type BookingProps = {
   bookings: DayWithBookingInfo[] | null;
   setSelectedBooking: React.Dispatch<React.SetStateAction<BookingID | null>>;
   cellWidth: number;
+  date: Date;
 }
 
-const BookingLine: React.FC<BookingProps> = ({ bookings, setSelectedBooking, cellWidth }) => {
+const BookingLine: React.FC<BookingProps> = ({ bookings, setSelectedBooking, cellWidth, date }) => {
   // console.log("Booking component: ", bookings)
   
+
   return (
     <>
       {bookings?.map((booking) => {
-        const bookingWidth = (booking.end.getTime() - booking.start.getTime()) / (1000 * 60 * 60 * 24) * cellWidth - 2;
-        
-        if (booking.isStart) {
-          return (
-            <button key={booking.id} className={classnames("h-4 z-10 rounded-sm", `bg-${locations[booking.location].color}-500`,
-            "hover:scale-[101%] hover:shadow-lg transition-all duration-200 ease-in-out select-none ml-0.5"
-            )}
-              style={{width: `${bookingWidth}px`}}
-              onClick={() => 
-                setSelectedBooking(booking.id)}
-            >
-              <div className={classnames("pl-1 -translate-y-1 text-left", `text-${locations[booking.location].color}-100`)}>
-              {booking.title} <ChevronRightIcon className="inline -mx-0.5 h-3 w-3"/> {booking.author}
-               </div>
-            </button>
-          )
-        } else {
-          return null;
-        }
-        // these colors are defined in tailwind.config.js
+      // if (!(booking.isMonday && date.getDay() === 1) && !(booking.start.toUTCString().split("T")[0] === date.toUTCString().split("T")[0])) {
+      //   return null;
+      // } //* this check is implied
+      const oneDayBooking = booking.start.toUTCString().split("T")[0] === booking.end.toUTCString().split("T")[0];
+      const daysTillSunday = 7 - date.getDay();
 
-        // <button key={booking.id} className={classnames("w-full h-4 relative z-10", `bg-${locations[booking.location].color}-500`)}
-        //   onClick={() => 
-        //     setSelectedBooking(booking.id)}>
-        //   {/* {booking.isStart && <p className={classnames("-translate-y-3 absolute text-left overflow-x-auto rounded-r-lg", `text-${locations[booking.location].color}-100`)}>{booking.title} | {booking.author}</p>}
-        //   {booking.isMonday && <p className={classnames("-translate-y-1 text-left rounded-r-lg", `text-${locations[booking.location].color}-100`)}>{booking.author}</p>} */}
-        // </button>
+
+      const bookingWidth = oneDayBooking ? cellWidth - 2 + "px" : 
+      (booking.end.getTime() - booking.start.getTime()) / (1000 * 60 * 60 * 24) * cellWidth - 2 + "px";
         
-       })
+        // (booking.end.getTime() - booking.start.getTime()) / (1000 * 60 * 60 * 24) * cellWidth - 2 + "px";
+       
+      if (booking.isStart){
+
+        
+        
+      
+        return (
+          <button key={booking.id} className={classnames("h-4 z-10 rounded-sm", `bg-${locations[booking.location].color}-500`,
+          "hover:scale-[101%] hover:shadow-lg transition-all duration-200 ease-in-out select-none ml-0.5 w-full"
+          )}
+            style={{width: `${bookingWidth}`}}
+            onClick={() => 
+              setSelectedBooking(booking.id)}
+          >
+            <div className={classnames("pl-1 -translate-y-1 text-left whitespace-nowrap overflow-clip", `text-${locations[booking.location].color}-100`)}>
+            {booking.title} <ChevronRightIcon className="inline -mx-0.5 h-3 w-3"/> {booking.author}
+              </div>
+          </button>
+        );
+      } else if (booking.isMonday && date.toUTCString().split("T")[0] === booking.start.toUTCString().split("T")[0]) {
+        const same = booking.start.toUTCString().split("T")[0] === booking.end.toUTCString().split("T")[0];
+        const bookingWidth = same ? (cellWidth - 2) + "px" : (booking.end.getTime() - booking.start.getTime()) / (1000 * 60 * 60 * 24) * cellWidth - 2 + "px";
+
+        return (
+          <button key={booking.id} className={classnames("h-4 z-10 rounded-sm", `bg-${locations[booking.location].color}-500`,
+          "hover:scale-[101%] hover:shadow-lg transition-all duration-200 ease-in-out select-none ml-0.5 w-full"
+          )}
+            style={{width: `${bookingWidth}`}}
+            onClick={() => 
+              setSelectedBooking(booking.id)}
+          >
+            <div className={classnames("pl-1 -translate-y-1 text-left whitespace-nowrap overflow-clip", `text-${locations[booking.location].color}-100`)}>
+            {booking.title} <ChevronRightIcon className="inline -mx-0.5 h-3 w-3"/> {booking.author}
+              </div>
+          </button>
+        );
+      } else {
+        return null;
       }
-    </>
-  );
+   })}
+   </>
+   )
 };
 
 
 const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, setSelectedBooking, cellWidth }) => {
   // console.log("Day component: ", bookings)
 
+  const isInBooking = bookings?.some((booking) => day.date >= booking.start && day.date <= booking.end);
+  //TODO This is defininetly not the best way to do this...
 
   return (
     <div
@@ -100,8 +125,8 @@ const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, 
       >
         {day.date.getDate()}
       </time>
-      {bookings &&
-      <div className="relative"><BookingLine bookings={bookings} setSelectedBooking={setSelectedBooking} cellWidth={cellWidth} /></div>
+      {isInBooking &&
+      <div className="relative"><BookingLine bookings={bookings} setSelectedBooking={setSelectedBooking} cellWidth={cellWidth} date={day.date} /></div>
       }
     </div>
   );
@@ -111,6 +136,8 @@ export const MemoizedDesktopDay = React.memo(DesktopDay);
 
 // Day component that displays the day number and applies styling if it is in the selected range
 const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, setSelectedBooking, cellWidth }) => {
+
+  const isInBooking = bookings?.some((booking) => day.date >= booking.start && day.date <= booking.end);
 
   return (
     <div className="relative">
@@ -150,9 +177,9 @@ const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected, bookings, s
         <span className="sr-only">{day.date.getDate()} bookings</span>
       </div>
       <div className="absolute top-0 mt-6 z-20">
-      {bookings && 
+      {isInBooking && 
         <div className="relative">
-          <BookingLine bookings={bookings} setSelectedBooking={setSelectedBooking} cellWidth={cellWidth} />
+          <BookingLine bookings={bookings} setSelectedBooking={setSelectedBooking} cellWidth={cellWidth} date={day.date} />
         </div>
         }
         </div>

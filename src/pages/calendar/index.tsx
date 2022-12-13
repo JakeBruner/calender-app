@@ -22,7 +22,7 @@ const testBookings: Booking[] = [
   {
     id: "2",
     start: new Date(2022,11, 3),
-    end: new Date(2022, 11, 5),
+    end: new Date(2022, 11, 6),
     title: "Test Booking 2",
     message: "Test Message 2",
     location: "L2",
@@ -54,7 +54,8 @@ export default function CalendarApp(): JSX.Element {
 
   // const bookings = trpc.bookings.getAll.useQuery();
  
-  const [bookings, setBookings] = useState<Booking[]>(testBookings);
+  // const [bookings, setBookings] = useState<Booking[]>(testBookings);
+  const bookings = testBookings;
 
   return (
 

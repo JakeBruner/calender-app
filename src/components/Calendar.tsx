@@ -7,7 +7,7 @@ import type { Day } from "../types/calendar";
 
 import { MemoizedDesktopDay, MemoizedMobileDay } from "./Days";
 
-import type { Booking, DayWithBookingInfo, BookingID } from "../types/calendar"
+import type { Booking, DayWithBookingInfo, BookingID } from "../types/calendar";
 
 interface CalendarProps {
   selectedRange: SelectedRange;
@@ -15,10 +15,8 @@ interface CalendarProps {
   selectedMonth: number;
   selectedYear: number;
   bookings: Booking[];
-	setSelectedBooking: React.Dispatch<React.SetStateAction<BookingID | null>>;
+  setSelectedBooking: React.Dispatch<React.SetStateAction<BookingID | null>>;
 }
-
-
 
 export const Calendar: React.FC<CalendarProps> = ({
   selectedRange,
@@ -26,82 +24,79 @@ export const Calendar: React.FC<CalendarProps> = ({
   selectedMonth,
   selectedYear,
   bookings,
-	setSelectedBooking,
+  setSelectedBooking,
 }) => {
-
   const [moreRows, setMoreRows] = useState(false);
 
   const [days, setDays] = useState<Day[]>([]);
 
-
-	/* useMemo hook is used to memoize the computation of days in the month. 
+  /* useMemo hook is used to memoize the computation of days in the month. 
     useCallback memoizes this populateDays function, which sets setDays() to the computed array of days. 
     The useEffect hook is used to call the populateDays function when the component is rendered. 
     These hooks are used to avoid unnecessary recalculations. */
 
-const computeDays = useMemo(() => {
-  const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-  const today = new Date();
-  // create an array of days from 1 to the last day in the month
-  const _days: Day[] = Array.from(
-    { length: daysInMonth },
-    (_, i) => i + 1
-  ).map((dayNumber) => {
-    const date = new Date(selectedYear, selectedMonth, dayNumber);
-    const isCurrentMonth = date.getMonth() === selectedMonth;
-    const isToday = date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth() &&
-    date.getDate() === today.getDate();
+  const computeDays = useMemo(() => {
+    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+    const today = new Date();
+    // create an array of days from 1 to the last day in the month
+    const _days: Day[] = Array.from(
+      { length: daysInMonth },
+      (_, i) => i + 1
+    ).map((dayNumber) => {
+      const date = new Date(selectedYear, selectedMonth, dayNumber);
+      const isCurrentMonth = date.getMonth() === selectedMonth;
+      const isToday =
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate();
 
-    return {
-      date,
-      isCurrentMonth,
-      isToday,
-    };
-  });
-
-
-  // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
-  const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
-
-  const numberOfPlaceholders =
-    firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-  for (let i = 0; i < numberOfPlaceholders; i++) {
-    _days.unshift({
-      date: new Date(selectedYear, selectedMonth, -i),
+      return {
+        date,
+        isCurrentMonth,
+        isToday,
+      };
     });
-  }
 
-  // add empty placeholders for the last few days so that the last day always falls on a Saturday
-  const lastDayOfMonth = new Date(
-    selectedYear,
-    selectedMonth + 1,
-    0
-  ).getDay();
-  const numberOfPlaceholdersAtEnd =
-    lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
-  for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
-    _days.push({
-      date: new Date(selectedYear, selectedMonth + 1, i + 1),
-    });
-  }
+    // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
+    const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
 
-  return _days;
-}, [selectedMonth, selectedYear]); // dependencies
+    const numberOfPlaceholders =
+      firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+    for (let i = 0; i < numberOfPlaceholders; i++) {
+      _days.unshift({
+        date: new Date(selectedYear, selectedMonth, -i),
+      });
+    }
 
-	// this prevents useEffect infinite loop and unnecessary re-computations
+    // add empty placeholders for the last few days so that the last day always falls on a Saturday
+    const lastDayOfMonth = new Date(
+      selectedYear,
+      selectedMonth + 1,
+      0
+    ).getDay();
+    const numberOfPlaceholdersAtEnd =
+      lastDayOfMonth === 7 ? 0 : 7 - lastDayOfMonth;
+    for (let i = 0; i < numberOfPlaceholdersAtEnd; i++) {
+      _days.push({
+        date: new Date(selectedYear, selectedMonth + 1, i + 1),
+      });
+    }
+
+    return _days;
+  }, [selectedMonth, selectedYear]); // dependencies
+
+  // this prevents useEffect infinite loop and unnecessary re-computations
   const populateDays = useCallback(() => {
     const days = computeDays;
-		setDays(days);
-		setMoreRows(days.length > 35);
+    setDays(days);
+    setMoreRows(days.length > 35);
   }, [computeDays]);
 
-	// finally, useEffect is used to call populateDays when the component is rendered
+  // finally, useEffect is used to call populateDays when the component is rendered
   useEffect(() => {
     populateDays();
   }, [populateDays]);
-	//! end nonsense
-
+  //! end nonsense
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -113,12 +108,10 @@ const computeDays = useMemo(() => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedRange, setSelectedRange]);
 
-  const handleClick = (event: React.MouseEvent) => {
-    // console.log(event.target);
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target instanceof HTMLDivElement) {
       // Get the selected day's id value
       if (!event.target.id) return;
-
 
       const date = new Date(event.target.id);
       if (date.toString() === "Invalid Date") return;
@@ -127,14 +120,11 @@ const computeDays = useMemo(() => {
         setSelectedRange([null, null]);
         return;
       }
-      if ( selectedRange[0] &&
-          date.getTime() < selectedRange[0]?.getTime()
-      ) {
+      if (selectedRange[0] && date.getTime() < selectedRange[0]?.getTime()) {
         setSelectedRange([null, null]);
         return;
       }
       if (!selectedRange[0]) {
-
         setSelectedRange([date, null]);
       }
       if (selectedRange[0] && !selectedRange[1]) {
@@ -146,7 +136,6 @@ const computeDays = useMemo(() => {
     }
   };
 
-
   const isInRange = (date: Date) => {
     // if only one date is selected, return true if the date is the same as the selected date
     if (!selectedRange[0] && !selectedRange[1]) return false;
@@ -157,70 +146,81 @@ const computeDays = useMemo(() => {
   };
 
   const getDayFromBookings = (day: Date): DayWithBookingInfo[] | null => {
-
     if (bookings.length === 0) return null;
     const _bookinginfo: DayWithBookingInfo[] = [];
     bookings.forEach((b) => {
-      if (b.start.toISOString().split('T')[0] === day.toISOString().split('T')[0]) {
-        // console.log(b);
+      /** if the month day year are the same */
+      if (
+        b.start.toISOString().split("T")[0] === day.toISOString().split("T")[0]
+      ) {
         _bookinginfo.push({
           id: b.id,
           title: b.title,
           author: b.author.name,
-					location: b.location,
-					start: b.start,
-					end: b.end,
+          location: b.location,
+          start: b.start,
+          end: b.end,
           isStart: true,
           isEnd: false,
           isMonday: day.getDay() === 1,
         });
-      }
-      if (b.end.toISOString().split('T')[0] === day.toISOString().split("T")[0]) {
+      } else if (day.getDay() === 1) {
         _bookinginfo.push({
           id: b.id,
           title: b.title,
           author: b.author?.name,
-					location: b.location,
-					start: b.start,
-					end: b.end,
-          isStart: false,
-          isEnd: true,
-          isMonday: day.getDay() === 1,
-        });
-      }
-      if (b.start < day && b.end > day) {
-        _bookinginfo.push({
-          id: b.id,
-          title: b.title,
-          author: b.author?.name,
-					location: b.location,
-					start: b.start,
-					end: b.end,
+          location: b.location,
+          start: b.start,
+          end: b.end,
           isStart: false,
           isEnd: false,
-          isMonday: day.getDay() === 1,
+          isMonday: true,
         });
+
+        // if (b.end.toISOString().split('T')[0] === day.toISOString().split("T")[0]) {
+        //   _bookinginfo.push({
+        //     id: b.id,
+        //     title: b.title,
+        //     author: b.author?.name,
+        // 		location: b.location,
+        // 		start: b.start,
+        // 		end: b.end,
+        //     isStart: false,
+        //     isEnd: true,
+        //     isMonday: day.getDay() === 1,
+        //   });
+        // }
+        // if (b.start < day && b.end > day) {
+        //   _bookinginfo.push({
+        //     id: b.id,
+        //     title: b.title,
+        //     author: b.author?.name,
+        // 		location: b.location,
+        // 		start: b.start,
+        // 		end: b.end,
+        //     isStart: false,
+        //     isEnd: false,
+        //     isMonday: day.getDay() === 1,
+        //   });
+        // }
       }
     });
 
     if (_bookinginfo.length === 0) return null;
     // console.log("bookinginfo: ", _bookinginfo)
     return _bookinginfo;
-  }
+  };
 
-	// const divElem = useRef<HTMLDivElement>(null);
-	// const { width } = useComponentWidth(divElem);
-	// console.log("width: ", width)
+  // const divElem = useRef<HTMLDivElement>(null);
+  // const { width } = useComponentWidth(divElem);
+  // console.log("width: ", width)
 
-	const [ref, { width }] = useMeasure<HTMLDivElement>();
-
+  const [ref, { width }] = useMeasure<HTMLDivElement>();
 
   return (
     <>
       <div className="grid grid-cols-7 gap-px border-b border-neutral-300 bg-neutral-200 text-center text-xs font-semibold leading-6 text-neutral-700 lg:flex-none">
-        <div className="bg-white py-2"
-					ref={ref}
-				>
+        <div className="bg-white py-2" ref={ref}>
           M<span className="sr-only sm:not-sr-only">on</span>
         </div>
         <div className="bg-white py-2">
@@ -243,7 +243,7 @@ const computeDays = useMemo(() => {
         </div>
       </div>
       <div className="flex bg-neutral-200 text-xs leading-6 text-neutral-700 lg:flex-auto">
-				{/* DESKTOP CALENDER */}
+        {/* DESKTOP CALENDER */}
         <div
           className={classnames(
             moreRows ? "lg:grid-rows-6" : "lg:grid-rows-5",
@@ -261,8 +261,8 @@ const computeDays = useMemo(() => {
                 isItToday={day.isToday || false}
                 isSelected={isSelected}
                 bookings={getDayFromBookings(day.date)}
-								setSelectedBooking={setSelectedBooking}
-								cellWidth={width}
+                setSelectedBooking={setSelectedBooking}
+                cellWidth={width}
               />
             );
           })}
@@ -286,8 +286,8 @@ const computeDays = useMemo(() => {
                 isItToday={day.isToday || false}
                 isSelected={isSelected}
                 bookings={getDayFromBookings(day.date)}
-								setSelectedBooking={setSelectedBooking}
-								cellWidth={width}
+                setSelectedBooking={setSelectedBooking}
+                cellWidth={width}
               />
             );
           })}

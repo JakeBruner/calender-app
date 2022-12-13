@@ -138,7 +138,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
             </button>
           </div>
           <Menu as="div" className="relative ml-6 md:hidden">
-            <Menu.Button className="-mx-2 flex items-center rounded-full border border-transparent p-2 text-neutral-400 hover:text-neutral-500">
+            <Menu.Button className="-mx-2 flex items-center rounded-full border border-transparent p-2 text-neutral-500 hover:text-neutral-600">
               <span className="sr-only">Open menu</span>
               <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
             </Menu.Button>
@@ -164,6 +164,9 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
                             : "text-neutral-700",
                           "block px-4 py-2 text-sm"
                         )}
+                        onClick={() => {
+                          setShowFlyover(true);
+                        }}
                       >
                         Create event
                       </a>
@@ -181,70 +184,13 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
                             : "text-neutral-700",
                           "block px-4 py-2 text-sm"
                         )}
+                        onClick={() => {
+                          const today = new Date();
+                          setSelectedMonth(today.getMonth());
+                          setSelectedYear(today.getFullYear());
+                        }}
                       >
                         Go to today
-                      </a>
-                    )}
-                  </Menu.Item>
-                </div>
-                <div className="py-1">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        className={classnames(
-                          active
-                            ? "bg-neutral-100 text-neutral-900"
-                            : "text-neutral-700",
-                          "block px-4 py-2 text-sm"
-                        )}
-                      >
-                        Day view
-                      </a>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        className={classnames(
-                          active
-                            ? "bg-neutral-100 text-neutral-900"
-                            : "text-neutral-700",
-                          "block px-4 py-2 text-sm"
-                        )}
-                      >
-                        Week view
-                      </a>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        className={classnames(
-                          active
-                            ? "bg-neutral-100 text-neutral-900"
-                            : "text-neutral-700",
-                          "block px-4 py-2 text-sm"
-                        )}
-                      >
-                        Month view
-                      </a>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        className={classnames(
-                          active
-                            ? "bg-neutral-100 text-neutral-900"
-                            : "text-neutral-700",
-                          "block px-4 py-2 text-sm"
-                        )}
-                      >
-                        Year view
                       </a>
                     )}
                   </Menu.Item>
