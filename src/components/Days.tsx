@@ -33,12 +33,12 @@ const BookingLine: React.FC<BookingProps> = ({ bookings, setSelectedBooking, cel
   return (
     <>
       {bookings?.map((booking) => {
-        const bookingWidth = (booking.end.getTime() - booking.start.getTime()) / (1000 * 60 * 60 * 24) * cellWidth;
+        const bookingWidth = (booking.end.getTime() - booking.start.getTime()) / (1000 * 60 * 60 * 24) * cellWidth - 2;
         
         if (booking.isStart) {
           return (
             <button key={booking.id} className={classnames("h-4 z-10 rounded-sm", `bg-${locations[booking.location].color}-500`,
-            `hover:scale-[101%] hover:shadow-lg transition-all duration-200 ease-in-out select-none`
+            "hover:scale-[101%] hover:shadow-lg transition-all duration-200 ease-in-out select-none ml-0.5"
             )}
               style={{width: `${bookingWidth}px`}}
               onClick={() => 

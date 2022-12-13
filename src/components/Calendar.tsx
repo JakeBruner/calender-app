@@ -1,5 +1,6 @@
 import classnames from "classnames";
-import { useEffect, useState, useCallback, useMemo, useRef, RefObject } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useMeasure } from "react-use";
 import type { SelectedRange /*Day*/ } from "../types/calendar";
 
 import type { Day } from "../types/calendar";
@@ -216,16 +217,18 @@ const computeDays = useMemo(() => {
     return _bookinginfo;
   }
 
-	const divElem = useRef<HTMLDivElement>(null);
-	const { width } = useComponentWidth(divElem);
-	console.log("width: ", width)
+	// const divElem = useRef<HTMLDivElement>(null);
+	// const { width } = useComponentWidth(divElem);
+	// console.log("width: ", width)
+
+	const [ref, { width }] = useMeasure<HTMLDivElement>();
 
 
   return (
     <>
       <div className="grid grid-cols-7 gap-px border-b border-neutral-300 bg-neutral-200 text-center text-xs font-semibold leading-6 text-neutral-700 lg:flex-none">
         <div className="bg-white py-2"
-					ref={divElem}
+					ref={ref}
 				>
           M<span className="sr-only sm:not-sr-only">on</span>
         </div>
@@ -306,25 +309,25 @@ const computeDays = useMemo(() => {
 export default Calendar;
 
 
-export const useComponentWidth = (ref: RefObject<HTMLDivElement>) => {
-	const [width, setWidth] = useState(0);
+// export const useComponentWidth = (ref: RefObject<HTMLDivElement>) => {
+// 	const [width, setWidth] = useState(0);
 
-	const handleResize = useCallback(() => {
-		if (ref.current) {
-			setWidth(ref.current.offsetWidth);
-			// setHeight(myRef.current.offsetHeight)
-		}
-	}, [ref])
+// 	const handleResize = useCallback(() => {
+// 		if (ref.current) {
+// 			setWidth(ref.current.offsetWidth);
+// 			// setHeight(myRef.current.offsetHeight)
+// 		}
+// 	}, [ref])
 
-	useEffect(() => {
-    window.addEventListener('load', handleResize)
-    window.addEventListener('resize', handleResize)
+// 	useEffect(() => {
+//     window.addEventListener('load', handleResize)
+//     window.addEventListener('resize', handleResize)
 
-    return () => {
-      window.removeEventListener('load', handleResize)
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [ref, handleResize])
+//     return () => {
+//       window.removeEventListener('load', handleResize)
+//       window.removeEventListener('resize', handleResize)
+//     }
+//   }, [ref, handleResize])
 
-	return { width };
-}
+// 	return { width };
+// }
