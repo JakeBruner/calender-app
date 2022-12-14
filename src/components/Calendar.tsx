@@ -1,90 +1,21 @@
 import classnames from "classnames";
-import { useEffect, useState } from "react";
-import type { SelectedRange, Day } from "../types/calendar";
-import React from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useMeasure } from "react-use";
+import type { SelectedRange /*Day*/ } from "../types/calendar";
 
-interface DayProps {
-  day: Day;
-  isItToday: boolean;
-  isSelected: boolean;
-}
+import type { Day } from "../types/calendar";
 
-const DesktopDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
-  return (
-    <div
-      key={day.date.toDateString()}
-      id={day.date.getDate().toString()}
-      className={classnames(
-        day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
-        (isSelected || isItToday) && "font-semibold",
-        isSelected && "text-white",
-        !isSelected && isItToday && "text-sky-600",
-        !isSelected && day.isCurrentMonth && !isItToday && "text-neutral-900",
-        !isSelected && !day.isCurrentMonth && !isItToday && "text-neutral-500",
-        "relative min-h-[100px] py-2 px-3 hover:bg-neutral-100"
-      )}
-    >
-      <time
-        dateTime={day.date.toDateString()}
-        className={classnames(
-          isSelected && "flex h-6 w-6 items-center justify-center rounded-full",
-          isSelected && isItToday && "bg-sky-600",
-          isSelected && !isItToday && "bg-neutral-900",
-          isItToday && !isSelected
-            ? "flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 font-semibold text-white"
-            : undefined,
-            "cursor-default pointer-events-none select-none"
-        )}
-      >
-        {day.date.getDate()}
-      </time>
-    </div>
-  );
-};
+import MemoizedDay from "./Days";
 
-const MemoizedDesktopDay = React.memo(DesktopDay);
-
-// Day component that displays the day number and applies styling if it is in the selected range
-const MobileDay: React.FC<DayProps> = ({ day, isItToday, isSelected }) => {
-  return (
-    <div
-      id={day.date.getDate().toString()}
-      className={classnames(
-        day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
-        (isSelected || isItToday) && "font-semibold",
-        isSelected && "text-white",
-        !isSelected && isItToday && "text-sky-600",
-        !isSelected && day.isCurrentMonth && !isItToday && "text-neutral-900",
-        !isSelected && !day.isCurrentMonth && !isItToday && "text-neutral-500",
-        isSelected
-          ? "bg-green-50 hover:bg-green-100/60"
-          : "hover:bg-neutral-100",
-        "flex h-14 min-h-[70px] flex-col py-2 px-3 focus:z-10"
-      )}
-    >
-      <time
-        dateTime={day.date.toDateString()}
-        className={classnames(
-          isSelected && "flex h-6 w-6 items-center justify-center rounded-full",
-          isSelected && isItToday && "bg-sky-600",
-          isSelected && !isItToday && "bg-green-700/70",
-          "ml-auto cursor-default pointer-events-none select-none"
-        )}
-      >
-        {day.date.getDate()}
-      </time>
-      <span className="sr-only">{day.date.getDate()} events</span>
-    </div>
-  );
-};
-
-const MemoizedMobileDay = React.memo(MobileDay);
+import type { Booking, DayWithBookingInfo, BookingID } from "../types/calendar";
 
 interface CalendarProps {
   selectedRange: SelectedRange;
   setSelectedRange: React.Dispatch<React.SetStateAction<SelectedRange>>;
   selectedMonth: number;
   selectedYear: number;
+  bookings: Booking[];
+  setSelectedBooking: React.Dispatch<React.SetStateAction<BookingID | null>>;
 }
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -92,25 +23,21 @@ export const Calendar: React.FC<CalendarProps> = ({
   setSelectedRange,
   selectedMonth,
   selectedYear,
+  bookings,
+  setSelectedBooking,
 }) => {
   const [moreRows, setMoreRows] = useState(false);
 
   const [days, setDays] = useState<Day[]>([]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setSelectedRange([null, null]);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedRange, setSelectedRange]);
+  /* useMemo hook is used to memoize the computation of days in the month. 
+    useCallback memoizes this populateDays function, which sets setDays() to the computed array of days. 
+    The useEffect hook is used to call the populateDays function when the component is rendered. 
+    These hooks are used to avoid unnecessary recalculations. */
 
-  // populate the array of calendar days with a dependency on the current month and year
-  useEffect(() => {
+  const computeDays = useMemo(() => {
     const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-
+    const today = new Date();
     // create an array of days from 1 to the last day in the month
     const _days: Day[] = Array.from(
       { length: daysInMonth },
@@ -118,17 +45,21 @@ export const Calendar: React.FC<CalendarProps> = ({
     ).map((dayNumber) => {
       const date = new Date(selectedYear, selectedMonth, dayNumber);
       const isCurrentMonth = date.getMonth() === selectedMonth;
-      // const isToday = date.toDateString() === new Date().toDateString();
+      const isToday =
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate();
+
       return {
         date,
         isCurrentMonth,
-        // isToday,
-        // isSelected,
+        isToday,
       };
     });
 
     // add empty placeholders for the first few days so that the 1st always falls on the correct day of the week
     const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+
     const numberOfPlaceholders =
       firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     for (let i = 0; i < numberOfPlaceholders; i++) {
@@ -151,65 +82,59 @@ export const Calendar: React.FC<CalendarProps> = ({
       });
     }
 
-    // check if needs more rows
-    if (_days.length > 35) {
-      setMoreRows(true);
-    } else {
-      setMoreRows(false);
-    }
+    return _days;
+  }, [selectedMonth, selectedYear]); // dependencies
 
-    setDays(_days);
-  }, [selectedMonth, selectedYear]);
+  // this prevents useEffect infinite loop and unnecessary re-computations
+  const populateDays = useCallback(() => {
+    const days = computeDays;
+    setDays(days);
+    setMoreRows(days.length > 35);
+  }, [computeDays]);
 
-  const handleClick = (event: React.MouseEvent) => {
-    // console.log(event.target);
+  // finally, useEffect is used to call populateDays when the component is rendered
+  useEffect(() => {
+    populateDays();
+  }, [populateDays]);
+  //! end nonsense
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedRange([null, null]);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedRange, setSelectedRange]);
+
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target instanceof HTMLDivElement) {
       // Get the selected day's id value
       if (!event.target.id) return;
-      if (event.target.id === selectedRange[0]?.getDate().toString()) {
+
+      const date = new Date(event.target.id);
+      if (date.toString() === "Invalid Date") return;
+
+      if (event.target.id === selectedRange[0]?.toDateString()) {
         setSelectedRange([null, null]);
         return;
       }
-      if (
-        selectedMonth === selectedRange[0]?.getMonth() &&
-        selectedYear === selectedRange[0].getFullYear() &&
-        parseInt(event.target.id, 10) < selectedRange[0]?.getDate()
-      ) {
+      if (selectedRange[0] && date.getTime() < selectedRange[0]?.getTime()) {
         setSelectedRange([null, null]);
         return;
       }
       if (!selectedRange[0]) {
-        const selectedDayId = parseInt(event.target.id, 10);
-
-        // Use the mapping function to convert the selected day's id into a Date object
-        const selectedDate = idToDate(selectedDayId);
-        // Update the selected day state variable with the Date object
-        setSelectedRange([selectedDate, null]);
+        setSelectedRange([date, null]);
       }
       if (selectedRange[0] && !selectedRange[1]) {
-        const selectedDayId = parseInt(event.target.id, 10);
-
-        // Use the mapping function to convert the selected day's id into a Date object
-        const selectedDate = idToDate(selectedDayId);
-
-        // Update the selected day state variable with the Date object
-        setSelectedRange([selectedRange[0], selectedDate]);
+        setSelectedRange([selectedRange[0], date]);
       }
       if (selectedRange[0] && selectedRange[1]) {
         setSelectedRange([null, null]);
       }
     }
   };
-
-  // helper functions for interacting with the calendar
-  const idToDate = (id: number) => new Date(selectedYear, selectedMonth, id);
-
-  const today = new Date();
-
-  const isToday = (date: Date): boolean =>
-    date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth() &&
-    date.getDate() === today.getDate();
 
   const isInRange = (date: Date) => {
     // if only one date is selected, return true if the date is the same as the selected date
@@ -220,10 +145,53 @@ export const Calendar: React.FC<CalendarProps> = ({
     return date >= selectedRange[0] && date <= selectedRange[1];
   };
 
+  const getDayFromBookings = (day: Date): DayWithBookingInfo[] | null => {
+    if (bookings.length === 0) return null;
+    const _bookinginfo: DayWithBookingInfo[] = [];
+    bookings.forEach((b) => {
+      /** if the month day year are the same */
+      if (
+        b.start.toISOString().split("T")[0] === day.toISOString().split("T")[0]
+      ) {
+        _bookinginfo.push({
+          id: b.id,
+          title: b.title,
+          author: b.author.name,
+          location: b.location,
+          start: b.start,
+          end: b.end,
+          isStart: true,
+          isMonday: day.getDay() === 1,
+        });
+      } else if (day.getDay() === 1) {
+        _bookinginfo.push({
+          id: b.id,
+          title: b.title,
+          author: b.author?.name,
+          location: b.location,
+          start: b.start,
+          end: b.end,
+          isStart: false,
+          isMonday: true,
+        });
+      }
+    });
+
+    if (_bookinginfo.length === 0) return null;
+    // console.log("bookinginfo: ", _bookinginfo)
+    return _bookinginfo;
+  };
+
+  // const divElem = useRef<HTMLDivElement>(null);
+  // const { width } = useComponentWidth(divElem);
+  // console.log("width: ", width)
+
+  const [ref, { width }] = useMeasure<HTMLDivElement>();
+
   return (
     <>
       <div className="grid grid-cols-7 gap-px border-b border-neutral-300 bg-neutral-200 text-center text-xs font-semibold leading-6 text-neutral-700 lg:flex-none">
-        <div className="bg-white py-2">
+        <div className="bg-white py-2" ref={ref}>
           M<span className="sr-only sm:not-sr-only">on</span>
         </div>
         <div className="bg-white py-2">
@@ -245,47 +213,26 @@ export const Calendar: React.FC<CalendarProps> = ({
           S<span className="sr-only sm:not-sr-only">un</span>
         </div>
       </div>
-      {/* DESKTOP CALENDER */}
-      <div className="flex bg-neutral-200 text-xs leading-6 text-neutral-700 lg:flex-auto">
-        <div
-          className={classnames(
-            moreRows ? "lg:grid-rows-6" : "lg:grid-rows-5",
-            "hidden w-full lg:grid lg:grid-cols-7 lg:gap-px"
-          )}
-          onClick={handleClick}
-        >
-          {days.map((day) => {
-            const isItToday = isToday(day.date);
-            const isSelected = isInRange(day.date);
-            return (
-              <MemoizedDesktopDay
-                key={day.date.toDateString()}
-                day={day}
-                isItToday={isItToday}
-                isSelected={isSelected}
-              />
-            );
-          })}
-        </div>
-
-        {/* MOBILE CALENDER */}
+      <div className="flex bg-neutral-200 leading-6 text-neutral-700 lg:flex-auto">
         <div
           className={classnames(
             moreRows ? "grid-rows-6" : "grid-rows-5",
-            "isolate grid w-full grid-cols-7 gap-px lg:hidden"
+            "isolate grid w-full grid-cols-7 gap-px overflow-x-clip"
           )}
           onClick={handleClick}
         >
           {days.map((day) => {
-            const isItToday = isToday(day.date);
             const isSelected = isInRange(day.date);
             // console.log(isSelected)
             return (
-              <MemoizedMobileDay
+              <MemoizedDay
                 key={day.date.toDateString()}
                 day={day}
-                isItToday={isItToday}
+                isItToday={day.isToday || false}
                 isSelected={isSelected}
+                bookings={getDayFromBookings(day.date)}
+                setSelectedBooking={setSelectedBooking}
+                cellWidth={width}
               />
             );
           })}

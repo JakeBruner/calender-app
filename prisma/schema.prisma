@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  // output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -21,12 +21,22 @@ model Example {
   updatedAt DateTime @updatedAt
 }
 
+enum Location {
+  L1
+  L2
+  L3
+  L4
+  OTHER
+}
+
 model Booking {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   start       DateTime
   end         DateTime
+  title       String
+  location    Location
   message     String?
   approved    Boolean  @default(false)
   draft       Boolean  @default(false)
@@ -34,9 +44,6 @@ model Booking {
   authorId    String
   sharedUsers User[]   @relation("SharedBookings")
 }
-
-// write me an explicit join table
-// model BookingUser {
 
 // Necessary for Next auth
 model Account {

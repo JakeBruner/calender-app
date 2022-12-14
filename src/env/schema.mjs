@@ -41,5 +41,8 @@ export const clientSchema = z.object({
  * @type {{ [k in keyof z.infer<typeof clientSchema>]: z.infer<typeof clientSchema>[k] | undefined }}
  */
 export const clientEnv = {
-  // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+  NEXT_PUBLIC_L1: z.string(),
+  NEXT_PUBLIC_L2: z.string(),
+  NEXT_PUBLIC_L3: z.string(),
+  NEXT_PUBLIC_L4: z.string()
 };

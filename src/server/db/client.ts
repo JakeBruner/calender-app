@@ -1,3 +1,5 @@
+// import { PrismaClient } from "../../../node_modules/.prisma/client";
+// import type { PrismaClient as PC } from "../../../node_modules/.prisma/client";
 import { PrismaClient } from "@prisma/client";
 
 import { env } from "../../env/server.mjs";
