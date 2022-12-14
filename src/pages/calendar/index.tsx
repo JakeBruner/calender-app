@@ -1,8 +1,10 @@
-import { useState } from "react";
+// import { useState } from "react";
 import CalendarWrapper from "../../components/CalendarWrapper";
 // import { trpc } from "../../utils/trpc";
-
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import type { Booking } from "../../../src/types/calendar";
+import { useEffect } from "react";
 
 const testBookings: Booking[] = [
   {
@@ -65,6 +67,15 @@ const testBookings: Booking[] = [
 
 
 export default function CalendarApp(): JSX.Element {
+
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!session) {
+      router.push("/");
+    }
+  }, [session, router]);
 
   // const bookings = trpc.bookings.getAll.useQuery();
  
