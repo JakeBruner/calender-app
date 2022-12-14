@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import { useRouter } from "next/router";
 import {
   // ChevronDownIcon,
   ChevronLeftIcon,
@@ -7,6 +8,7 @@ import {
   EllipsisHorizontalIcon,
 } from "@heroicons/react/20/solid";
 import { Menu, Transition } from "@headlessui/react";
+import { signOut } from "next-auth/react";
 // import { isToday } from 'date-fns'
 import classnames from "classnames";
 
@@ -32,7 +34,7 @@ const monthNames = [
   "December",
 ];
 
-import type { Booking, BookingID } from "../types/calendar"
+import type { Booking, BookingID } from "../types/calendar";
 
 type CalenderWrapperProps = {
   bookings: Booking[];
@@ -41,6 +43,7 @@ type CalenderWrapperProps = {
 type SelectedRange = [Date | null, Date | null];
 
 const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
+  const router = useRouter();
 
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -50,28 +53,43 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
     null,
   ]);
 
-  const [selectedBooking, setSelectedBooking] = useState<BookingID | null>(null);
-  const [selectedBookingInfo, setSelectedBookingInfo] = useState<Booking | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<BookingID | null>(
+    null
+  );
+  const [selectedBookingInfo, setSelectedBookingInfo] =
+    useState<Booking | null>(null);
 
   // useEffect to get full booking given the booking id
   useEffect(() => {
     if (selectedBooking) {
-      const booking = bookings.find((booking) => booking.id === selectedBooking);
+      const booking = bookings.find(
+        (booking) => booking.id === selectedBooking
+      );
       booking && setSelectedBookingInfo(booking);
     } else {
       setSelectedBookingInfo(null);
     }
   }, [selectedBooking, bookings]);
 
-
   const [showFlyover, setShowFlyover] = useState(false);
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
-      <Flyover open={showFlyover} setOpen={setShowFlyover} dateRange={selectedRange} setDateRange={setSelectedRange} />
-      <header className="flex relative items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
-        <Image src="/logo2.png" className="absolute" width={36} height={36} alt="Logo" />
-        <h1 className="text-lg font-semibold text-neutral-900 ml-12 md:ml-14">
+      <Flyover
+        open={showFlyover}
+        setOpen={setShowFlyover}
+        dateRange={selectedRange}
+        setDateRange={setSelectedRange}
+      />
+      <header className="relative flex items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
+        <Image
+          src="/logo2.png"
+          className="absolute"
+          width={36}
+          height={36}
+          alt="Logo"
+        />
+        <h1 className="ml-12 text-lg font-semibold text-neutral-900 md:ml-14">
           <time
             dateTime={`${selectedYear}-${selectedMonth
               .toString()
@@ -82,6 +100,18 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
         </h1>
         <div className="flex items-center">
           <div className="flex items-center rounded-md shadow-sm md:items-stretch">
+            <div className="mr-4 hidden md:flex md:items-center">
+              <button
+                type="button"
+                className="mr-2 rounded-md border border-neutral-300 bg-white py-2 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                onClick={() => {
+                  signOut();
+                  router.push("/");
+                }}
+              >
+                Log out
+              </button>
+            </div>
             <button
               type="button"
               className="flex items-center justify-center rounded-l-md border border-r-0 border-neutral-300 bg-white py-2 pl-3 pr-4 text-neutral-400 hover:text-neutral-500 focus:relative md:w-9 md:px-2 md:hover:bg-neutral-50"
@@ -125,7 +155,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
-          <div className="hidden md:ml-4 md:flex md:items-center">
+          <div className="hidden md:flex md:items-center">
             <div className="ml-6 h-6 w-px bg-neutral-300" />
             <button
               type="button"
@@ -168,7 +198,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
                           setShowFlyover(true);
                         }}
                       >
-                        Create event
+                        Request booking
                       </a>
                     )}
                   </Menu.Item>
@@ -195,6 +225,27 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
                     )}
                   </Menu.Item>
                 </div>
+                <div className="py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <a
+                        href="#"
+                        className={classnames(
+                          active
+                            ? "bg-neutral-100 text-neutral-900"
+                            : "text-neutral-700",
+                          "block px-4 py-2 text-sm"
+                        )}
+                        onClick={() => {
+                          signOut();
+                          router.push("/");
+                        }}
+                      >
+                        Sign Out
+                      </a>
+                    )}
+                  </Menu.Item>
+                </div>
               </Menu.Items>
             </Transition>
           </Menu>
@@ -202,12 +253,22 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
       </header>
 
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
-        <Calendar selectedRange={selectedRange} setSelectedRange={setSelectedRange} selectedMonth={selectedMonth} selectedYear={selectedYear} bookings={bookings} setSelectedBooking={setSelectedBooking} />
+        <Calendar
+          selectedRange={selectedRange}
+          setSelectedRange={setSelectedRange}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
+          bookings={bookings}
+          setSelectedBooking={setSelectedBooking}
+        />
       </div>
-      <BookingDisplay selectedBookingInfo={selectedBookingInfo} setSelectedBooking={setSelectedBooking} />
+      <BookingDisplay
+        selectedBookingInfo={selectedBookingInfo}
+        setSelectedBooking={setSelectedBooking}
+      />
       {/* {selectedBooking && JSON.stringify(selectedBookingInfo)} */}
     </div>
   );
-}
+};
 
 export default CalendarWrapper;
