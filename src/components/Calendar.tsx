@@ -213,11 +213,11 @@ export const Calendar: React.FC<CalendarProps> = ({
           S<span className="sr-only sm:not-sr-only">un</span>
         </div>
       </div>
-      <div className="flex bg-neutral-200 text-xs leading-6 text-neutral-700 lg:flex-auto">
+      <div className="flex bg-neutral-200 leading-6 text-neutral-700 lg:flex-auto">
         <div
           className={classnames(
             moreRows ? "grid-rows-6" : "grid-rows-5",
-            "isolate grid w-full grid-cols-7 gap-px lg:hidden"
+            "isolate grid w-full grid-cols-7 gap-px overflow-x-clip"
           )}
           onClick={handleClick}
         >

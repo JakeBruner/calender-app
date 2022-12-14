@@ -7,6 +7,11 @@ module.exports = {
             ],
   theme: {
     extend: {},
+    minHeight: {
+      "20": "5rem",
+      "28": "7rem",
+      "40": "10rem",
+    },
   },
   plugins: [
     require("@tailwindcss/forms"),

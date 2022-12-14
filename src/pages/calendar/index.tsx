@@ -47,6 +47,20 @@ const testBookings: Booking[] = [
     },
     sharedUsers: [],
   },
+  {
+    id: "4",
+    start: new Date(2022, 11, 25),
+    end: new Date(2022, 11, 25),
+    title: "Test Booking 4",
+    message: "Test Message 4",
+    location: "L4",
+    author: {
+      id: "4",
+      name: "Author 4",
+      image: null
+    },
+    sharedUsers: [],
+  }
 ];
 
 

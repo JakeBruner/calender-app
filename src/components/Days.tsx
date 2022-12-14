@@ -37,30 +37,21 @@ const DayComponent: FC<DayProps> = ({ day, isItToday, isSelected, bookings, setS
         id={day.date.toDateString()}
         className={classnames(
           day.isCurrentMonth ? "bg-white" : "bg-neutral-100",
-          (isSelected || isItToday) && "font-semibold",
-          isSelected && "text-white",
-          !isSelected && isItToday && "text-sky-600",
-          !isSelected && day.isCurrentMonth && !isItToday && "text-neutral-900",
-          !isSelected && !day.isCurrentMonth && !isItToday && "text-neutral-500",
-          isSelected
-            ? "bg-green-50 hover:bg-green-100/60"
-            : "hover:bg-neutral-100",
-          "flex h-14 min-h-[70px] flex-col focus:z-10",
-          "t"
+          day.isCurrentMonth && isSelected && "bg-sky-100/70 ring-1 ring-neutral-300 ",
+          !day.isCurrentMonth && isSelected && "bg-sky-200/20",
+          "flex h-14 sm:min-h-20 lg:min-h-28 flex-col focus:z-10",
         )}
       >
         <div 
+          className="w-full flex"
         id={day.date.toDateString()}
           >
           <time
             
             dateTime={day.date.toDateString()}
             className={classnames(
-              isSelected &&
-                "flex h-6 w-6 items-center justify-center rounded-full",
-              isSelected && isItToday && "bg-sky-600",
-              isSelected && !isItToday && "bg-green-700/70",
-              "pointer-events-none ml-auto cursor-default select-none"
+              isSelected && "text-green-900",
+              "pointer-events-none cursor-default select-none ml-auto md:mr-1.5 md:mt-1 mr-1 mt-0.5 text-xs sm:text-sm lg:text-md"
             )}
           >
             {day.date.getDate()}
