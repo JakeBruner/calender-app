@@ -13,7 +13,6 @@ export interface DayWithBookingInfo {
   start: Date;
   end: Date;
   isStart: boolean;
-  isEnd: boolean;
   isMonday: boolean;
 }
 

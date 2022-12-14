@@ -161,7 +161,6 @@ export const Calendar: React.FC<CalendarProps> = ({
           start: b.start,
           end: b.end,
           isStart: true,
-          isEnd: false,
           isMonday: day.getDay() === 1,
         });
       } else if (day.getDay() === 1) {
@@ -173,36 +172,8 @@ export const Calendar: React.FC<CalendarProps> = ({
           start: b.start,
           end: b.end,
           isStart: false,
-          isEnd: false,
           isMonday: true,
         });
-
-        // if (b.end.toISOString().split('T')[0] === day.toISOString().split("T")[0]) {
-        //   _bookinginfo.push({
-        //     id: b.id,
-        //     title: b.title,
-        //     author: b.author?.name,
-        // 		location: b.location,
-        // 		start: b.start,
-        // 		end: b.end,
-        //     isStart: false,
-        //     isEnd: true,
-        //     isMonday: day.getDay() === 1,
-        //   });
-        // }
-        // if (b.start < day && b.end > day) {
-        //   _bookinginfo.push({
-        //     id: b.id,
-        //     title: b.title,
-        //     author: b.author?.name,
-        // 		location: b.location,
-        // 		start: b.start,
-        // 		end: b.end,
-        //     isStart: false,
-        //     isEnd: false,
-        //     isMonday: day.getDay() === 1,
-        //   });
-        // }
       }
     });
 

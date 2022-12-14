@@ -24,7 +24,12 @@ export type DayProps = {
 // Day component that displays the day number and applies styling if it is in the selected range
 const DayComponent: FC<DayProps> = ({ day, isItToday, isSelected, bookings, setSelectedBooking, cellWidth }) => {
 
-  const isInBooking = bookings?.some((booking) => day.date >= booking.start && day.date <= booking.end);
+  // include if booking starts on the day or if day is monday and booking includes the day
+  const filteredBookings = bookings?.filter((booking) => {
+    return booking.start.toISOString().split("T")[0] === day.date.toISOString().split("T")[0] || (day.date.getDay() === 1 && booking.start < day.date && booking.end > day.date)
+  })
+  // console.log(filteredBookings)
+
 
   return (
     <div className="relative">
@@ -64,9 +69,9 @@ const DayComponent: FC<DayProps> = ({ day, isItToday, isSelected, bookings, setS
         <span className="sr-only">{day.date.getDate()} bookings</span>
       </div>
       <div className="absolute top-0 mt-6 z-20">
-      {isInBooking && 
+      {filteredBookings && 
         <div className="relative">
-          <BookingLine bookings={bookings} setSelectedBooking={setSelectedBooking} cellWidth={cellWidth} date={day.date} />
+          <BookingLine bookings={filteredBookings} setSelectedBooking={setSelectedBooking} cellWidth={cellWidth} date={day.date} />
         </div>
         }
         </div>
