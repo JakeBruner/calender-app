@@ -56,6 +56,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
   const [selectedBooking, setSelectedBooking] = useState<BookingID | null>(
     null
   );
+  
   const [selectedBookingInfo, setSelectedBookingInfo] =
     useState<Booking | null>(null);
 
