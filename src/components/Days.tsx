@@ -26,7 +26,7 @@ const DayComponent: FC<DayProps> = ({ day, isItToday, isSelected, bookings, setS
 
   // include if booking starts on the day or if day is monday and booking includes the day
   const filteredBookings = bookings?.filter((booking) => {
-    return booking.start.toISOString().split("T")[0] === day.date.toISOString().split("T")[0] || (day.date.getDay() === 1 && booking.start < day.date && booking.end > day.date)
+    return booking.start.toISOString().split("T")[0] === day.date.toISOString().split("T")[0] || (day.date.getDay() === 1 && booking.start < day.date && booking.end >= day.date)
   })
   // console.log(filteredBookings)
 
@@ -51,6 +51,7 @@ const DayComponent: FC<DayProps> = ({ day, isItToday, isSelected, bookings, setS
             dateTime={day.date.toDateString()}
             className={classnames(
               isSelected && "text-green-900",
+              isItToday && "underline",
               "pointer-events-none cursor-default select-none ml-auto md:mr-1.5 md:mt-1 mr-1 mt-0.5 text-xs sm:text-sm lg:text-md"
             )}
           >
