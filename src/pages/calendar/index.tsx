@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import type { Booking } from "../../../src/types/calendar";
 // import { useEffect } from "react";
-import { router } from "../../server/trpc/trpc";
 
 const testBookings: Booking[] = [
   {
@@ -13,26 +12,28 @@ const testBookings: Booking[] = [
     start: new Date(2022, 11, 1),
     end: new Date(2022, 11, 3),
     title: "Test Booking 1",
-    message: "Test Message 1 this is a long message that is very long and very wordy and is very good at demonstrating how this user-interface will look when it is used by a user.",
+    message:
+      "Test Message 1 this is a long message that is very long and very wordy and is very good at demonstrating how this user-interface will look when it is used by a user.",
     location: "L1",
-		author: {
+    author: {
       id: "1",
       name: "Author 1",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+      image:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
     sharedUsers: [],
   },
   {
     id: "2",
-    start: new Date(2022,11, 3),
-    end: new Date(2022, 11, 12),
+    start: new Date(2022, 11, 15),
+    end: new Date(2022, 11, 19),
     title: "Test Booking 2",
     message: "Test Message 2",
     location: "L2",
-		author: {
+    author: {
       id: "2",
       name: "Author 2",
-      image: null
+      image: null,
     },
     sharedUsers: [],
   },
@@ -43,10 +44,10 @@ const testBookings: Booking[] = [
     title: "Test Booking 3",
     message: "Test Message 3",
     location: "L3",
-		author: {
+    author: {
       id: "3",
       name: "Author 3",
-      image: null
+      image: null,
     },
     sharedUsers: [],
   },
@@ -60,26 +61,37 @@ const testBookings: Booking[] = [
     author: {
       id: "4",
       name: "Author 4",
-      image: null
+      image: null,
     },
     sharedUsers: [],
-  }
+  },
 ];
 
-
 export default function CalendarApp(): JSX.Element {
-
-  const { data: session } = useSession();
-  const router = useRouter();
+  const { status } = useSession();
 
   const bookings = testBookings;
 
-  if (!session) {
-    <CalendarWrapper bookings={bookings}/>
-  } 
+  const router = useRouter();
 
+  if (status === "loading") {
+    return (
+      <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
+        Loading...
+      </div>
+    );
+  }
 
-  router.push("/calendar");
-  return (<div className="w-full h-screen text-lg my-auto text-center">Redirecting...</div>);
+  if (status === "unauthenticated") {
+    router.push("/");
+    return <div>Redirecting...</div>;
+  }
 
+  return (
+    <main>
+      <CalendarWrapper bookings={bookings} />
+    </main>
+  );
 }
+// q: how to undo git add . for all files?
+// a: git reset HEAD

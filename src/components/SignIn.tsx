@@ -80,7 +80,7 @@ export const SignIn: FC = () => {
               <div>
                 <button
                   className="inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
-                  onClick={() => signIn("twitter", { callbackUrl: "/calendar" })}
+                  onClick={() => signIn("twitter")}
                 >
                   <span className="sr-only">Sign in with Twitter</span>
                   <svg

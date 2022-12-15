@@ -85,13 +85,13 @@ const BookingLine: FC<BookingProps> = ({
           <button
             key={booking.id}
             className={classnames(
-              "z-10 h-4 rounded-sm",
+              "z-10 h-3 md:h-4 rounded-sm",
               `bg-${locations[booking.location].color}-500 opacity-80`,
               overflowingEnd && "rounded-r-none border-r-2 border-neutral-600",
               overflowingStart &&
                 "rounded-l-none border-l-2 border-neutral-600",
               !overflowingEnd && !overflowingStart && "mx-0.5",
-              "relative -translate-y-0.5 transform",
+              "absolute -translate-y-1.5 sm:-translate-y-1 md:translate-y-1 transform",
               "w-full select-none transition-all duration-200 ease-in-out hover:scale-[101%] hover:shadow-lg"
             )}
             style={{ width: `${bookingWidth}` }}
@@ -99,7 +99,7 @@ const BookingLine: FC<BookingProps> = ({
           >
             <div
               className={classnames(
-                "-translate-y-0.5 overflow-clip whitespace-nowrap pl-1 text-left text-sm",
+                "-translate-y-0.5 overflow-clip whitespace-nowrap pl-0.5 md:pl-1 text-left text-xs md:text-sm",
                 `text-${locations[booking.location].color}-100`
               )}
             >
