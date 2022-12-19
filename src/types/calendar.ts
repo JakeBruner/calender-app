@@ -1,4 +1,4 @@
-import type { RouterOutputs } from "../utils/trpc";
+// import type { RouterOutputs } from "../utils/trpc";
 
 export type SelectedRange = [Date | null, Date | null];
 
@@ -34,11 +34,14 @@ export type Booking = {
     name: string | null;
     image: string | null;
   };
-  sharedUsers: {
-    id: string;
-    name: string | null;
-    image: string | null;
-  }[];
+  sharedUsers:
+    | {
+        id: string;
+        name: string | null;
+        image: string | null;
+      }[]
+    | undefined
+    | null;
   start: Date;
   title: string;
   location: Location;
