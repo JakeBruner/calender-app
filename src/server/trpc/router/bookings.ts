@@ -40,34 +40,30 @@ export const bookingsRouter = router({
       // );
 
       // normal user
-      return ctx.prisma.booking
-        .findMany({
-          select: {
-            id: true,
-            title: true,
-            message: true,
-            start: true,
-            end: true,
-            location: true,
-            author: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
-            sharedUsers: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
+      return ctx.prisma.booking.findMany({
+        select: {
+          id: true,
+          title: true,
+          message: true,
+          start: true,
+          end: true,
+          location: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
             },
           },
-        })
-        .catch((err) => {
-          throw new Error("Error fetching bookings: ", err);
-        });
+          sharedUsers: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+      });
       // .then((unfilteredBookings) => {
       //   return unfilteredBookings.map((booking) => {
       //     // if the booking is shared with the user, return the booking without author and sharedUsers
