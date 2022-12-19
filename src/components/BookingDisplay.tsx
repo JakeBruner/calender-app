@@ -79,10 +79,10 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
           <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Name</dt>
             <dd className={classnames("mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0", 
-            selectedBookingInfo.author.image && "flex items-center"
+            selectedBookingInfo?.author?.image && "flex items-center"
             )}>
-              {selectedBookingInfo.author.name}
-             {selectedBookingInfo.author.image && <Image src={selectedBookingInfo.author.image} width={40} height={40} className="rounded-full inline-block ml-auto mr-4 -translate-y-2 md:translate-y-0 -my-2" alt="avatar" />}
+              {selectedBookingInfo?.author?.name || "Anonymous"}
+             {selectedBookingInfo?.author?.image && <Image src={selectedBookingInfo.author.image} width={40} height={40} className="rounded-full inline-block ml-auto mr-4 -translate-y-2 md:translate-y-0 -my-2" alt="avatar" />}
             </dd>
           </div>
           <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
@@ -95,9 +95,9 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
           </div>
           <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Location</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{locations[selectedBookingInfo.location].name}</dd>
+            <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{selectedBookingInfo?.location && locations[selectedBookingInfo.location].name}</dd>
           </div>
-          {selectedBookingInfo.message && (
+          {selectedBookingInfo?.message && (
           <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Description</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
