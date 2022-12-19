@@ -7,3 +7,7 @@
     @apply text-neutral-800 bg-neutral-100;
   }
 }
+
+button {
+  all: unset;
+}
