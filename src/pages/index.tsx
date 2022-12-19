@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 import { SignIn } from "../components/SignIn";
 
 const Home = () => {
-  const { status } = useSession();
+  const { data: session } = useSession();
 
   const router = useRouter();
 
-  // if (status === "loading") {
-  //   return <div>Loading...</div>;
-  // }
-
-  if (status === "authenticated") {
-    router.push("/calendar");
+  if (session) {
+    if (session.user.role !== "LIMBO") {
+      router.push("/calendar");
+    } else {
+      router.push("/limbo");
+    }
   }
 
 

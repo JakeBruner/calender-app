@@ -49,8 +49,6 @@ model Booking {
 // Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
-  whitelisted       Boolean @default(false)
-  isAdmin           Boolean @default(false)
   userId            String
   type              String
   provider          String

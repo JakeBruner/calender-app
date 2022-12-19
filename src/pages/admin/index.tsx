@@ -16,9 +16,19 @@ export default function AdminPage() {
     );
   }
 
-  if (status === "unauthenticated") {
+  if (!session) {
     router.push("/");
-    return <div>Redirecting...</div>;
+    return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
+    Redirecting...
+    </div>;
+  }
+
+  if (session.user.role !== "ADMIN") {
+    console.log("User is not an admin")
+    router.push("/");
+    return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
+    Redirecting...
+  </div>;
   }
 
   return (

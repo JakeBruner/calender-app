@@ -85,7 +85,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
       <header className="relative flex items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
         <Image
           src="/logo2.png"
-          className="absolute"
+          className="absolute -translate-y-0.5"
           width={36}
           height={36}
           alt="Logo"

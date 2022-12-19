@@ -1,5 +1,7 @@
 // import { useState } from 'react';
 
+// maybe use https://react-spectrum.adobe.com/react-aria/useRangeCalendar.html#styled-examples
+
 type DateSelectorProps = {
   dateRange: [Date | null, Date | null];
   setDateRange: (dateRange: [Date | null, Date | null]) => void;

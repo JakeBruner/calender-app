@@ -68,7 +68,7 @@ const testBookings: Booking[] = [
 ];
 
 export default function CalendarApp(): JSX.Element {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
 
   const bookings = testBookings;
 
@@ -82,9 +82,18 @@ export default function CalendarApp(): JSX.Element {
     );
   }
 
-  if (status === "unauthenticated") {
+  if (!session) {
     router.push("/");
-    return <div>Redirecting...</div>;
+    return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
+    Redirecting...
+    </div>;
+  }
+
+  if (session.user.role === "LIMBO") {
+    router.push("/limbo");
+    return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
+    Redirecting...
+    </div>;
   }
 
   return (
@@ -93,5 +102,3 @@ export default function CalendarApp(): JSX.Element {
     </main>
   );
 }
-// q: how to undo git add . for all files?
-// a: git reset HEAD
