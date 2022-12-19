@@ -5,7 +5,7 @@ const people = [
   // More people...
 ]
 
-export default function Table() {
+export default function Bookings() {
   
 
 

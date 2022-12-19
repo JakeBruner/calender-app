@@ -9,10 +9,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url      = env("DATABASE_URL")
 }
 
@@ -31,19 +27,21 @@ enum Location {
 }
 
 model Booking {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  start       DateTime
-  end         DateTime
-  title       String
-  location    Location
-  message     String?
-  approved    Boolean  @default(false)
-  draft       Boolean  @default(false)
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
-  sharedUsers User[]   @relation("SharedBookings")
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  start     DateTime
+  end       DateTime
+  title     String
+  location  Location
+  message   String?
+  approved  Boolean  @default(false)
+  draft     Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  // sharedUsers User[]   @relation("SharedBookings")
+
+  @@index([authorId])
 }
 
 // Necessary for Next auth
@@ -63,6 +61,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -71,6 +70,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 enum Role {
@@ -80,16 +81,16 @@ enum Role {
 }
 
 model User {
-  id               String    @id @default(cuid())
-  name             String?
-  email            String?   @unique
-  emailVerified    DateTime?
-  image            String?
-  role             Role      @default(LIMBO)
-  bookings         Booking[]
-  viewableBookings Booking[] @relation("SharedBookings")
-  accounts         Account[]
-  sessions         Session[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(LIMBO)
+  bookings      Booking[]
+  // viewableBookings Booking[] @relation("SharedBookings")
+  accounts      Account[]
+  sessions      Session[]
 }
 
 model VerificationToken {

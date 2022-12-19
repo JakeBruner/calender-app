@@ -1,4 +1,6 @@
 // import type { Booking } from '../../types/calendar'
+import Image from "next/image";
+import { trpc } from "../../utils/trpc"
 
 const people = [
   { name: 'Lindsay Walton', title: 'Front-end Developer', email: 'lindsay.walton@example.com', role: 'Member' },
@@ -7,6 +9,17 @@ const people = [
 
 export default function Bookings() {
   
+  const users = trpc.users.getAllUsers.useQuery()
+  
+  if (users.isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (users.error) {
+    return <div>{users.error.message}</div>
+  }
+
+  const limboUsers = users.data.filter((user) => user.role === 'LIMBO')
 
 
   return (
@@ -35,6 +48,9 @@ export default function Bookings() {
                 <thead className="bg-neutral-50">
                   <tr>
                     <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6">
+                      &nbsp;
+                    </th>
+                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6">
                       Name
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900">
@@ -43,27 +59,37 @@ export default function Bookings() {
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900">
                       Email
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900">
-                      Role
-                    </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                       <span className="sr-only">Edit</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-200 bg-white">
-                  {people.map((person) => (
+                  {limboUsers.map((person) => (
                     <tr key={person.email}>
+                      <td className="py-4 pl-4 pr-3 relative text-sm font-medium text-neutral-900 sm:pl-6">
+                        { person.image ?
+                        <Image src={person.image} alt={person.name + "profile"} fill={true} className="object-contain" />
+                        : 
+                        <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center">
+                          <svg className="w-6 h-6 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                        }
+                      </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
                         {person.name}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">{person.title}</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">{person.id}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">{person.email}</td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">{person.role}</td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <a href="#" className="text-sky-600 hover:text-sky-900">
-                          Edit<span className="sr-only">, {person.name}</span>
-                        </a>
+                      <td className="relative whitespace-nowrap py-4 pl-2 pr-4 text-right text-sm font-medium sm:pr-6">
+                        <button className="text-sky-600 hover:text-sky-900 mr-6">
+                          Approve<span className="sr-only">, {person.name}</span>
+                        </button>
+                        <button className="text-red-600 hover:text-sky-900">
+                          Delete<span className="sr-only">, {person.name}</span>
+                        </button>
                       </td>
                     </tr>
                   ))}

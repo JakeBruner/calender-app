@@ -16,8 +16,6 @@ export default function AdminPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  const tabs = ["General", "Approve Users", "Approve Bookings"]
-
 
   if (status === "loading") {
     return (
