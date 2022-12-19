@@ -18,6 +18,10 @@ export const authOptions: NextAuthOptions = {
         // session.user.role = user.role;
 
         session.user.id = user.id;
+        session.user.role = user.role;
+        session.user.name = user.name;
+        session.user.email = user.email;
+        session.user.image = user.image;
       }
       return session;
     },

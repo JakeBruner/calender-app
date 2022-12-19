@@ -5,11 +5,10 @@ const people = [
   // More people...
 ]
 
-type TableProps = {
-  bookings: Booking[]
-}
-
 export default function Table() {
+  
+
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
