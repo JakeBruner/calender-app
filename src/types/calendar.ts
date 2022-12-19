@@ -1,3 +1,5 @@
+import type { RouterOutputs } from "../utils/trpc";
+
 export type SelectedRange = [Date | null, Date | null];
 
 export interface Day {
@@ -16,12 +18,16 @@ export interface DayWithBookingInfo {
   isMonday: boolean;
 }
 
-import type { inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "../server/trpc/router/_app";
-export type Booking = inferRouterOutputs<AppRouter>["bookings"]["getAll"][0];
-export type Location = Booking["location"] extends infer T
-  ? T
-  : Booking["location"];
+// import type { inferRouterOutputs } from "@trpc/server";
+// import type { AppRouter } from "../server/trpc/router/_app";
+// export type Booking = inferRouterOutputs<AppRouter>["bookings"]["getAll"][0];
+// export type Location = Booking["location"] extends infer T
+//   ? T
+//   : Booking["location"];
+
+export type Booking = RouterOutputs["bookings"]["getAll"][0];
+
+export type Location = Booking["location"];
 
 export type BookingID = string;
 
