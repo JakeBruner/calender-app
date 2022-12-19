@@ -8,8 +8,3 @@
   }
 }
 
-button:not(.btn) {
-  all: unset;
-  cursor: pointer;
-}
-
