@@ -2,9 +2,14 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import classnames from "classnames";
 import { Tab } from '@headlessui/react'
-import Table from "../../components/admin/Table";
-import { useState } from "react";
 import { Fragment } from "react";
+
+import Bookings from "../../components/admin/Users";
+import Users from "../../components/admin/Users";
+
+import { signOut } from "next-auth/react";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
+
 
 
 export default function AdminPage() {
@@ -40,8 +45,19 @@ export default function AdminPage() {
 
   return (
     <div className="p-5 md:p-10">
-      <div className="pb-8">
-        <h1 className="font-semibold text-5xl">Admin Panel</h1>
+      <div className="pb-8 flex flex-row">
+        <h1 className="font-semibold text-3xl md:text-5xl">Admin Panel</h1>
+        {/* signout button flush left */}
+        <div className="flex-grow"></div>
+        <button
+            className="inline-flex items-center rounded-md border border-transparent bg-sky-600 px-2 py-1 text-xs font-medium leading-4 text-white shadow-sm hover:sky-red-700 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
+            onClick={() => { signOut() }}
+            >
+              <ArrowRightOnRectangleIcon
+              className="mr-1.5 h-4 w-4 flex-shrink-0 text-white lg:h-5 lg:w-5"
+            />
+            Log out
+        </button>
       </div>
       <div className="flex flex-col">
         <Tab.Group defaultIndex={0}>
@@ -115,7 +131,10 @@ export default function AdminPage() {
               </div>
             </Tab.Panel>
             <Tab.Panel>
-              <Table />
+              <Users />
+            </Tab.Panel>
+            <Tab.Panel>
+              <Bookings />
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
