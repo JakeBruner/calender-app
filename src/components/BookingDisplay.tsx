@@ -49,7 +49,7 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
   ];
 
   // to future self -- transiiton cannot run on leave because setSelectBooking is called before the transition is complete
-
+  console.log(selectedBookingInfo)
   return (
     <Transition show={open} className="m-5 lg:m-8 overflow-hidden bg-white shadow rounded-lg lg:rounded-xl relative"
     enter="transition ease-out duration-200"

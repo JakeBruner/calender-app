@@ -25,9 +25,27 @@ export interface DayWithBookingInfo {
 //   ? T
 //   : Booking["location"];
 
-export type Booking = RouterOutputs["bookings"]["getAll"][0];
+// export type Booking = RouterOutputs["bookings"]["getAll"][0];
+export type Booking = {
+  end: Date;
+  id: string;
+  author: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  };
+  sharedUsers: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  }[];
+  start: Date;
+  title: string;
+  location: Location;
+  message: string | null;
+};
 
-export type Location = Booking["location"];
+export type Location = "L1" | "L2" | "L3" | "L4" | "OTHER";
 
 export type BookingID = string;
 
