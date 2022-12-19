@@ -104,7 +104,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
             <div className="mr-4 hidden md:flex md:items-center">
               <button
                 type="button"
-                className="mr-2 rounded-md border border-neutral-300 bg-white py-2 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                className="btn mr-2 rounded-md border border-neutral-300 bg-white py-2 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                 onClick={() => {
                   signOut();
                   router.push("/");
@@ -115,7 +115,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
             </div>
             <button
               type="button"
-              className="flex items-center justify-center rounded-l-md border border-r-0 border-neutral-300 bg-white py-2 pl-3 pr-4 text-neutral-400 hover:text-neutral-500 focus:relative md:w-9 md:px-2 md:hover:bg-neutral-50"
+              className="btn flex items-center justify-center rounded-l-md border border-r-0 border-neutral-300 bg-white py-2 pl-3 pr-4 text-neutral-400 hover:text-neutral-500 focus:relative md:w-9 md:px-2 md:hover:bg-neutral-50"
               onClick={() => {
                 if (selectedMonth === 0) {
                   setSelectedMonth(11);
@@ -130,7 +130,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
             </button>
             <button
               type="button"
-              className="hidden border-t border-b border-neutral-300 bg-white px-3.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 focus:relative md:block"
+              className="btn hidden border-t border-b border-neutral-300 bg-white px-3.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 focus:relative md:block"
               onClick={() => {
                 const today = new Date();
                 setSelectedMonth(today.getMonth());
@@ -142,7 +142,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
             <span className="relative -mx-px h-5 w-px bg-neutral-300 md:hidden" />
             <button
               type="button"
-              className="flex items-center justify-center rounded-r-md border border-l-0 border-neutral-300 bg-white py-2 pl-4 pr-3 text-neutral-400 hover:text-neutral-500 focus:relative md:w-9 md:px-2 md:hover:bg-neutral-50"
+              className="btn flex items-center justify-center rounded-r-md border border-l-0 border-neutral-300 bg-white py-2 pl-4 pr-3 text-neutral-400 hover:text-neutral-500 focus:relative md:w-9 md:px-2 md:hover:bg-neutral-50"
               onClick={() => {
                 if (selectedMonth === 11) {
                   setSelectedMonth(0);
@@ -160,7 +160,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
             <div className="ml-6 h-6 w-px bg-neutral-300" />
             <button
               type="button"
-              className="ml-6 rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+              className="btn ml-6 rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
               onClick={() => {
                 setShowFlyover(true);
               }}
@@ -169,7 +169,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
             </button>
           </div>
           <Menu as="div" className="relative ml-6 md:hidden">
-            <Menu.Button className="-mx-2 flex items-center rounded-full border border-transparent p-2 text-neutral-500 hover:text-neutral-600">
+            <Menu.Button className="btn -mx-2 flex items-center rounded-full border border-transparent p-2 text-neutral-500 hover:text-neutral-600">
               <span className="sr-only">Open menu</span>
               <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
             </Menu.Button>

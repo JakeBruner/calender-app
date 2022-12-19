@@ -13,8 +13,18 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
-  images: {
-    domains: ["images.unsplash.com", "lh3.googleusercontent.com"],
+  images: { // facebook image content
+    domains: ["images.unsplash.com"],
+   remotePatterns: [
+    {
+      protocol: "https",
+      hostname: "**.googleusercontent.com",
+    },
+    {
+      protocol: "https",
+      hostname: "**.fbcdn.net",
+    },
+    ],
   },
 };
 export default config;
