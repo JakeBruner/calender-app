@@ -24,3 +24,9 @@ export type Location = Booking["location"] extends infer T
   : Booking["location"];
 
 export type BookingID = string;
+
+type Tab = {
+  name: string;
+  href: string;
+  current: boolean;
+};

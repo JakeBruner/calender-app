@@ -1,13 +1,12 @@
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-// import classnames from "classnames";
-import Admin from "../../components/admin/Table";
 import Tabs from "../../components/admin/Tabs";
+import Table from "../../components/admin/Table";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import UI from "../../components/admin/UI";
 
-
-export default function AdminPage() {
+export default function AdminBookings() {
   const router = useRouter();
+
   const { data: session, status } = useSession();
 
   if (status === "loading") {
@@ -34,20 +33,15 @@ export default function AdminPage() {
   }
 
   const tabs = [
-    { name: "General", href: "/admin", current: true},
-    { name: "Approve Users", href: "/admin/users", current: false },
+    { name: "General", href: "/admin", current: false},
+    { name: "Approve Users", href: "/admin/users", current: true },
     { name: 'Approve Bookings', href: '/admin/bookings', current: false },
   ]
 
   return (
     <UI>
       <Tabs tabs={tabs} />
-      <div className="relative py-6">
-      <div className="absolute inset-0 flex items-center" aria-hidden="true">
-        <div className="w-full border-t border-gray-300" />
-      </div>
-    </div>
-      <Admin />
+      <Table />
     </UI>
   );
 }
