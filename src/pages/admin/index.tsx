@@ -48,11 +48,17 @@ export default function AdminPage() {
         {/* signout button flush left */}
         <div className="flex-grow"></div>
         <button
-            className="inline-flex items-center rounded-md border border-transparent bg-sky-600 px-2 py-1 text-xs font-medium leading-4 text-white shadow-sm hover:sky-red-700 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
+            className="mr-4 inline-flex items-center rounded-md border border-transparent bg-sky-200 px-2 py-1 text-xs font-medium leading-4 text-sky-800 shadow-sm hover:bg-sky-300 hover:shadow-inner focus:outline-none  focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
+            onClick={() => { signOut() }}
+            >
+            Return to Calendar
+        </button>
+        <button
+            className="inline-flex items-center rounded-md border border-transparent bg-sky-600 px-2 py-1 text-xs font-medium leading-4 text-white shadow-sm hover:bg-sky-700 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
             onClick={() => { signOut() }}
             >
               <ArrowRightOnRectangleIcon
-              className="mr-1.5 h-4 w-4 flex-shrink-0 text-white lg:h-5 lg:w-5"
+              className="mr-1.5 h-5 w-5 flex-shrink-0 text-white lg:h-5 lg:w-5"
             />
             Log out
         </button>

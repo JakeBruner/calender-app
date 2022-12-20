@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import {
   // ChevronDownIcon,
@@ -35,6 +36,7 @@ const monthNames = [
 ];
 
 import type { Booking, BookingID } from "../types/calendar";
+import Link from "next/link";
 
 type CalenderWrapperProps = {
   bookings: Booking[];
@@ -44,6 +46,7 @@ type SelectedRange = [Date | null, Date | null];
 
 const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -74,6 +77,11 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
 
   const [showFlyover, setShowFlyover] = useState(false);
 
+  if (!session) {
+    router.push("/");
+    return null;
+  }
+
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
       <Flyover
@@ -100,11 +108,21 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
           </time>
         </h1>
         <div className="flex items-center">
-          <div className="flex items-center rounded-md shadow-sm md:items-stretch">
+          <div className="flex items-center md:items-stretch">
+            {session.user.role === "ADMIN" && (
+            <div className="mr-4 hidden md:flex md:items-center">
+              <Link
+                href={"/admin"}
+                className=" mr-2 rounded-md border border-transparent bg-sky-100 py-2 px-3 text-sm font-medium text-sky-700 hover:bg-sky-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+              >
+                Admin
+              </Link>
+            </div>
+            )}
             <div className="mr-4 hidden md:flex md:items-center">
               <button
                 type="button"
-                className="btn mr-2 rounded-md border border-neutral-300 bg-white py-2 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                className="rounded-md border border-neutral-300 bg-white py-2 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                 onClick={() => {
                   signOut();
                   router.push("/");
