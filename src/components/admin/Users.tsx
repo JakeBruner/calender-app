@@ -161,6 +161,7 @@ export default function Users() {
                               src={person.image}
                               alt={person.name + "profile"}
                               fill={true}
+                              sizes="100%"
                               className="object-contain"
                             />
                           </div>

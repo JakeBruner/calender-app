@@ -82,14 +82,14 @@ export default function CalendarApp(): JSX.Element {
     );
   }
 
-  if (!session) {
+  if (status === "unauthenticated") {
     router.push("/");
     return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
     Redirecting...
     </div>;
   }
 
-  if (session.user.role === "LIMBO") {
+  if (session?.user.role === "LIMBO") {
     router.push("/limbo");
     return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
     Redirecting...

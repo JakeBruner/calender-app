@@ -77,10 +77,10 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
 
   const [showFlyover, setShowFlyover] = useState(false);
 
-  if (!session) {
-    router.push("/");
-    return null;
-  }
+  // if (!session) {
+  //   router.push("/");
+  //   return null;
+  // }
 
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
@@ -109,7 +109,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
         </h1>
         <div className="flex items-center">
           <div className="flex items-center md:items-stretch">
-            {session.user.role === "ADMIN" && (
+            {session?.user.role === "ADMIN" && (
             <div className="mr-4 hidden md:flex md:items-center">
               <Link
                 href={"/admin"}
