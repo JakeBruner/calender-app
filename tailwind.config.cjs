@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const defaultTheme = require('tailwindcss/defaultTheme');
+// const defaultTheme = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -9,11 +9,11 @@ module.exports = {
             "text-indigo-100", "text-yellow-100", "text-teal-100", "text-red-100",
             ],
   theme: {
-    extend: {
-      fontFamily: {
-        sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
-      }
-    },
+    // extend: {
+    //   fontFamily: {
+    //     sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
+    //   }
+    // },
     minHeight: {
       "20": "5rem",
       "28": "7rem",

@@ -82,7 +82,7 @@ export const bookingsRouter = router({
     .input(
       z.object({
         title: z.string(),
-        message: z.string(),
+        message: z.string().nullable(),
         start: z.date(),
         end: z.date(),
         // location must be L1, L2, L3, L4, OTHER

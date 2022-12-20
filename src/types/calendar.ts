@@ -1,4 +1,4 @@
-// import type { RouterOutputs } from "../utils/trpc";
+import type { RouterOutputs, RouterInputs } from "../utils/trpc";
 
 export type SelectedRange = [Date | null, Date | null];
 
@@ -25,28 +25,30 @@ export interface DayWithBookingInfo {
 //   ? T
 //   : Booking["location"];
 
-// export type Booking = RouterOutputs["bookings"]["getAll"][0];
-export type Booking = {
-  end: Date;
-  id: string;
-  author: {
-    id: string;
-    name: string | null;
-    image: string | null;
-  };
-  sharedUsers:
-    | {
-        id: string;
-        name: string | null;
-        image: string | null;
-      }[]
-    | undefined
-    | null;
-  start: Date;
-  title: string;
-  location: Location;
-  message: string | null;
-};
+export type Booking = RouterOutputs["bookings"]["getAll"][0];
+
+export type PartialBooking = RouterInputs["bookings"]["create"];
+// export type Booking = {
+//   end: Date;
+//   id: string;
+//   author: {
+//     id: string;
+//     name: string | null;
+//     image: string | null;
+//   };
+//   sharedUsers:
+//     | {
+//         id: string;
+//         name: string | null;
+//         image: string | null;
+//       }[]
+//     | undefined
+//     | null;
+//   start: Date;
+//   title: string;
+//   location: Location;
+//   message: string | null;
+// };
 
 export type Location = "L1" | "L2" | "L3" | "L4" | "OTHER";
 

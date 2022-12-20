@@ -35,11 +35,12 @@ const monthNames = [
   "December",
 ];
 
-import type { Booking, BookingID } from "../types/calendar";
+import type { Booking, BookingID, PartialBooking } from "../types/calendar";
 import Link from "next/link";
 
 type CalenderWrapperProps = {
   bookings: Booking[];
+  createBooking: (booking: PartialBooking) => void;
 };
 
 type SelectedRange = [Date | null, Date | null];

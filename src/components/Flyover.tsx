@@ -1,68 +1,72 @@
 // import Image from 'next/image'
 
 
-import { Fragment } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { XMarkIcon, CalendarIcon } from '@heroicons/react/24/outline'
-import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
+import { Fragment, useRef } from 'react'
+import { Dialog, Transition, Listbox } from '@headlessui/react'
+import { XMarkIcon, /**CalendarIcon*/ } from '@heroicons/react/24/outline'
+// import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
 import DateSelector from './DateSelector'
+import type { PartialBooking } from '../types/calendar';
 
 // import { boolean } from 'zod';
 
-const team = [
-  {
-    name: 'Tom Cook',
-    email: 'tom.cook@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Whitney Francis',
-    email: 'whitney.francis@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Leonard Krasner',
-    email: 'leonard.krasner@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Floyd Miles',
-    email: 'floy.dmiles@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Emily Selman',
-    email: 'emily.selman@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-]
+// const team = [
+//   {
+//     name: 'Tom Cook',
+//     email: 'tom.cook@example.com',
+//     href: '#',
+//     imageUrl:
+//       'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//   },
+//   {
+//     name: 'Whitney Francis',
+//     email: 'whitney.francis@example.com',
+//     href: '#',
+//     imageUrl:
+//       'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//   },
+//   {
+//     name: 'Leonard Krasner',
+//     email: 'leonard.krasner@example.com',
+//     href: '#',
+//     imageUrl:
+//       'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//   },
+//   {
+//     name: 'Floyd Miles',
+//     email: 'floy.dmiles@example.com',
+//     href: '#',
+//     imageUrl:
+//       'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//   },
+//   {
+//     name: 'Emily Selman',
+//     email: 'emily.selman@example.com',
+//     href: '#',
+//     imageUrl:
+//       'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//   },
+// ]
 
 interface FlyoverProps {
   dateRange: [Date | null, Date | null];
   setDateRange: (dateRange: [Date | null, Date | null]) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
+  createBooking: (booking: PartialBooking) => void;
 }
 
 
-export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, setOpen}) => {
+export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, setOpen, createBooking }) => {
 
-
+  const titleRef = useRef(null)
+  const messageRef = useRef(null)
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10 font-sans" onClose={setOpen}>
+      <Dialog as="div" className="relative z-10" onClose={setOpen}>
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
@@ -94,7 +98,8 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                         </div>
                         <div className="mt-1">
                           <p className="text-sm text-sky-300">
-                            Get started by filling in dates and the information below.
+                            Get started by filling in dates and the information below. <br/>
+                            You can also select dates using the calendar on the right.
                           </p>
                         </div>
                       </div>
@@ -111,6 +116,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                   name="project-name"
                                   id="project-name"
                                   className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                                  ref={titleRef}
                                 />
                               </div>
                             </div>
@@ -120,7 +126,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                 Dates
                               </label>
                               <div className="mt-1">
-                              <CalendarIcon className="h-5 w-5 text-neutral-400 inline-block" aria-hidden="true" />
+                              {/* <CalendarIcon className="h-5 w-5 text-neutral-400 inline-block" aria-hidden="true" /> */}
 
                                 <DateSelector dateRange={dateRange} setDateRange={setDateRange} />
 
@@ -135,18 +141,18 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                   id="description"
                                   name="description"
                                   rows={4}
-                                  className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
-                                  defaultValue={''}
+                                  className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm placeholder:text-neutral-400/80"
+                                  placeholder="You can write an optional message here."
+                                  ref={messageRef}
                                 />
                               </div>
                             </div>
-                            <div>
+                            {/* <div>
                               <h3 className="text-sm font-medium text-neutral-900">Invite other users:</h3>
                               <div className="mt-2">
                                 <div className="flex space-x-2">
                                   {team.map((person) => (
                                     <a key={person.email} href={person.href} className="rounded-full hover:opacity-75">
-                                      {/* eslint-disable-next-line @next/next/no-img-element */}
                                       <img
                                         className="inline-block rounded-full h-8 w-8"
                                         src={person.imageUrl}
@@ -163,8 +169,8 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                   </button>
                                 </div>
                               </div>
-                            </div>
-                            <fieldset>
+                            </div> */}
+                            {/* <fieldset>
                               <legend className="text-sm font-medium text-neutral-900">Privacy</legend>
                               <div className="mt-2 space-y-5">
                                 <div className="relative flex items-start">
@@ -230,10 +236,10 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                   </div>
                                 </div>
                               </div>
-                            </fieldset>
+                            </fieldset> */}
                           </div>
                           <div className="pt-4 pb-6">
-                            <div className="flex text-sm">
+                            {/* <div className="flex text-sm">
                               <a
                                 href="#"
                                 className="group inline-flex items-center font-medium text-sky-600 hover:text-sky-900"
@@ -244,8 +250,8 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                 />
                                 <span className="ml-2">Copy link</span>
                               </a>
-                            </div>
-                            <div className="mt-4 flex text-sm">
+                            </div> */}
+                            {/* <div className="mt-4 flex text-sm">
                               <a href="#" className="group inline-flex items-center text-neutral-500 hover:text-neutral-900">
                                 <QuestionMarkCircleIcon
                                   className="h-5 w-5 text-neutral-400 group-hover:text-neutral-500"
@@ -253,7 +259,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                 />
                                 <span className="ml-2">Learn more about sharing</span>
                               </a>
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       </div>
@@ -267,10 +273,13 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                         Cancel
                       </button>
                       <button
-                        // type="submit"
                         className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                        onClick={() => {
+                          // if (dateRange[0] && dateRange[1] )
+                          setOpen(false);
+                        }}
                       >
-                        Save
+                        Submit for approval
                       </button>
                     </div>
                   </form>
