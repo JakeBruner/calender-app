@@ -45,14 +45,20 @@ export default function AdminPage() {
   return (
     <div className="p-5 md:p-10">
       <div className="pb-8 flex flex-row">
-        <h1 className="font-semibold text-3xl md:text-5xl">Admin Panel</h1>
+        <h1 className="font-semibold text-2xl sm:text-3xl md:text-5xl">Admin Panel</h1>
         {/* signout button flush left */}
         <div className="flex-grow"></div>
         <Link
             href="/calendar"
-            className="mr-4 inline-flex items-center rounded-md border border-transparent bg-sky-200 px-2 py-1 text-xs font-medium leading-4 text-sky-800 shadow-sm hover:bg-sky-300 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
+            className="hidden sm:inline-flex mr-4 items-center rounded-md border border-transparent bg-sky-200 px-2 py-1 text-xs font-medium leading-4 text-sky-800 shadow-sm hover:bg-sky-300 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
             >
             Return to Calendar
+        </Link>
+        <Link
+            href="/calendar"
+            className="inline-flex sm:hidden mr-2 sm:mr-4 items-center rounded-md border border-transparent bg-sky-200 px-2 py-1 text-xs font-medium leading-4 text-sky-800 shadow-sm hover:bg-sky-300 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
+            >
+            Calendar
         </Link>
         <button
             className="inline-flex items-center rounded-md border border-transparent bg-sky-600 px-2 py-1 text-xs font-medium leading-4 text-white shadow-sm hover:bg-sky-700 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"

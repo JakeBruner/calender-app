@@ -1,14 +1,18 @@
-// import Image from 'next/image'
-
-
-import { Fragment, useRef } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { Dialog, Transition, Listbox } from '@headlessui/react'
 import { XMarkIcon, /**CalendarIcon*/ } from '@heroicons/react/24/outline'
 // import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { CheckIcon, ChevronUpDownIcon, ExclamationCircleIcon } from '@heroicons/react/20/solid'
 
 import DateSelector from './DateSelector'
 import type { PartialBooking } from '../types/calendar';
+
+import { locationsList } from '../types/location'
+
+type Location = typeof locationsList[number]
+
+import classnames from 'classnames'
+
 
 // import { boolean } from 'zod';
 
@@ -61,8 +65,13 @@ interface FlyoverProps {
 
 export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, setOpen, createBooking }) => {
 
-  const titleRef = useRef(null)
-  const messageRef = useRef(null)
+  const titleRef = useRef<HTMLInputElement>(null)
+  const messageRef = useRef<HTMLTextAreaElement>(null)
+
+  const [error, setError] = useState<string | null>(null)
+
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+  
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -80,7 +89,7 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <form className="flex h-full flex-col divide-y divide-neutral-200 bg-white shadow-xl">
+                  <div className="flex h-full flex-col divide-y divide-neutral-200 bg-white shadow-xl">
                     <div className="h-0 flex-1 overflow-y-auto">
                       <div className="bg-sky-700 py-6 px-4 sm:px-6">
                         <div className="flex items-center justify-between">
@@ -113,11 +122,11 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                               <div className="mt-1">
                                 <input
                                   type="text"
-                                  name="project-name"
-                                  id="project-name"
+                                  name="booking title"
                                   className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
                                   ref={titleRef}
-                                />
+                                  // onChange={e => console.log(e.target.value)}
+                                ></input>
                               </div>
                             </div>
                             <div>
@@ -131,6 +140,65 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                 <DateSelector dateRange={dateRange} setDateRange={setDateRange} />
 
                               </div>
+                            </div>
+                            <div>
+                              <Listbox value={selectedLocation} onChange={setSelectedLocation}>
+                                {({ open }) => (
+                                  <>
+                                    <Listbox.Label className="block text-sm font-medium text-neutral-700">Assigned to</Listbox.Label>
+                                    <div className="relative mt-1">
+                                      <Listbox.Button className="relative w-full cursor-default rounded-md border border-neutral-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm">
+                                        <span className="block truncate">{selectedLocation ? selectedLocation.name : "Select a location"}</span>
+                                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                          <ChevronUpDownIcon className="h-5 w-5 text-neutral-400" aria-hidden="true" />
+                                        </span>
+                                      </Listbox.Button>
+
+                                      <Transition
+                                        show={open}
+                                        as={Fragment}
+                                        leave="transition ease-in duration-100"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                      >
+                                        <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                          {locationsList.map((l) => (
+                                            <Listbox.Option
+                                              key={l.id}
+                                              className={({ active }) =>
+                                                classnames(
+                                                  active ? 'text-white bg-sky-600' : 'text-neutral-900',
+                                                  'relative cursor-default select-none py-2 pl-8 pr-4'
+                                                )
+                                              }
+                                              value={l}
+                                            >
+                                              {({ selected, active }) => (
+                                                <>
+                                                  <span className={classnames(selected ? 'font-semibold' : 'font-normal', 'block truncate')}>
+                                                    {l.name}
+                                                  </span>
+
+                                                  {selected ? (
+                                                    <span
+                                                      className={classnames(
+                                                        active ? 'text-white' : 'text-sky-600',
+                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5'
+                                                      )}
+                                                    >
+                                                      <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                                    </span>
+                                                  ) : null}
+                                                </>
+                                              )}
+                                            </Listbox.Option>
+                                          ))}
+                                        </Listbox.Options>
+                                      </Transition>
+                                    </div>
+                                  </>
+                                )}
+                              </Listbox>
                             </div>
                             <div>
                               <label htmlFor="description" className="block text-sm font-medium text-neutral-900">
@@ -260,6 +328,25 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                                 <span className="ml-2">Learn more about sharing</span>
                               </a>
                             </div> */}
+
+                            <Transition className="mt-4 flex text-sm"
+                              show={!!error}
+                              enter="transition ease-out duration-100"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <div className="group inline-flex items-center text-red-500">
+                                <ExclamationCircleIcon
+                                  className="h-5 w-5 text-red-400 group-hover:text-red-500"
+                                  aria-hidden="true"
+                                />
+                                <span className="ml-2">{error}</span>
+                              </div>
+                            </Transition>
+
                           </div>
                         </div>
                       </div>
@@ -275,14 +362,52 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                       <button
                         className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                         onClick={() => {
-                          // if (dateRange[0] && dateRange[1] )
-                          setOpen(false);
+                          const title = titleRef?.current?.value;
+                          console.log(title);
+                          const message = messageRef?.current?.innerText;
+                          if (dateRange[0] && dateRange[1] && title && selectedLocation && title.length < 20) {
+                            createBooking({
+                              start: dateRange[0],
+                              end: dateRange[1],
+                              title,
+                              location: selectedLocation.id,
+                              message: message || null,
+                            })
+                            setOpen(false);
+                          } else {
+                            const missing = [];
+                            if (!title) {
+                              missing.push('title');
+                            }
+                            if (title && title.length >= 20) {
+                              missing.push('title less than 20 characters');
+                            }
+                            if (!dateRange[0] || !dateRange[1]) {
+                              missing.push('date range');
+                            }
+                            if (!selectedLocation) {
+                              missing.push('location');
+                            }
+                            // add and to ultimate item recursively
+                            if (missing.length > 1) {
+                              missing[missing.length - 1] = `and ${missing[missing.length - 1]}`;
+                            }
+                            setError(`Please provide a ${missing.join(', ')}.`);
+                            // luckily none of these start with vowels lul
+
+                            // set callback
+                            setTimeout(() => {
+                              setError(null);
+                            }
+                            , 5000);
+
+                          }
                         }}
                       >
                         Submit for approval
                       </button>
                     </div>
-                  </form>
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

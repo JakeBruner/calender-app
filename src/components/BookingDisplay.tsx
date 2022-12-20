@@ -82,7 +82,7 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
             selectedBookingInfo?.author?.image && "flex items-center"
             )}>
               {selectedBookingInfo?.author?.name || "Anonymous"}
-             {selectedBookingInfo?.author?.image && <Image src={selectedBookingInfo.author.image} width={40} height={40} className="rounded-full inline-block ml-auto mr-4 -translate-y-2 md:translate-y-0 -my-2" alt="avatar" />}
+             {selectedBookingInfo?.author?.image && <Image src={selectedBookingInfo.author.image} width={40} height={40} className="rounded-full inline-block ml-auto mr-4 -translate-y-2 sm:translate-y-0 -my-2" alt="avatar" />}
             </dd>
           </div>
           <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">

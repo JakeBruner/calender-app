@@ -45,7 +45,7 @@ type CalenderWrapperProps = {
 
 type SelectedRange = [Date | null, Date | null];
 
-const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
+const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings, createBooking }) => {
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -90,6 +90,7 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings }) => {
         setOpen={setShowFlyover}
         dateRange={selectedRange}
         setDateRange={setSelectedRange}
+        createBooking={createBooking}
       />
       <header className="relative flex items-center justify-between border-b border-neutral-200 py-4 px-6 lg:flex-none">
         <Image
