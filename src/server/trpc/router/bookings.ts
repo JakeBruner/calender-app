@@ -78,6 +78,33 @@ export const bookingsRouter = router({
       },
     });
   }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        message: z.string(),
+        start: z.date(),
+        end: z.date(),
+        // location must be L1, L2, L3, L4, OTHER
+        location: z.enum(["L1", "L2", "L3", "L4", "OTHER"]),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      if (ctx.session.user.role === "LIMBO") {
+        throw new Error("You are not authorized to access this resource");
+      }
+      return ctx.prisma.booking.create({
+        data: {
+          title: input.title,
+          message: input.message,
+          start: input.start,
+          end: input.end,
+          location: input.location,
+          approved: ctx.session.user.role === "ADMIN",
+          authorId: ctx.session.user.id,
+        },
+      });
+    }),
   adminDeleteBooking: protectedProcedure
     .input(z.string())
     .mutation(({ ctx, input }) => {

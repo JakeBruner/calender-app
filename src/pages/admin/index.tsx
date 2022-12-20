@@ -9,6 +9,7 @@ import Users from "../../components/admin/Users";
 
 import { signOut } from "next-auth/react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
+import Link from "next/link";
 
 
 
@@ -47,12 +48,12 @@ export default function AdminPage() {
         <h1 className="font-semibold text-3xl md:text-5xl">Admin Panel</h1>
         {/* signout button flush left */}
         <div className="flex-grow"></div>
-        <button
-            className="mr-4 inline-flex items-center rounded-md border border-transparent bg-sky-200 px-2 py-1 text-xs font-medium leading-4 text-sky-800 shadow-sm hover:bg-sky-300 hover:shadow-inner focus:outline-none  focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
-            onClick={() => { signOut() }}
+        <Link
+            href="/calendar"
+            className="mr-4 inline-flex items-center rounded-md border border-transparent bg-sky-200 px-2 py-1 text-xs font-medium leading-4 text-sky-800 shadow-sm hover:bg-sky-300 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
             >
             Return to Calendar
-        </button>
+        </Link>
         <button
             className="inline-flex items-center rounded-md border border-transparent bg-sky-600 px-2 py-1 text-xs font-medium leading-4 text-white shadow-sm hover:bg-sky-700 hover:shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 lg:px-3 lg:py-2 md:text-base"
             onClick={() => { signOut() }}

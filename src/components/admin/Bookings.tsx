@@ -1,5 +1,5 @@
 // import type { Booking } from '../../types/calendar'
-import Image from "next/image";
+// import Image from "next/image";
 import { trpc } from "../../utils/trpc";
 import { useSession } from "next-auth/react";
 import type { RouterOutputs } from "../../utils/trpc";
