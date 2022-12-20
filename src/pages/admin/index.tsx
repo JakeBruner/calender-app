@@ -4,7 +4,7 @@ import classnames from "classnames";
 import { Tab } from '@headlessui/react'
 import { Fragment } from "react";
 
-import Bookings from "../../components/admin/Users";
+import Bookings from "../../components/admin/Bookings";
 import Users from "../../components/admin/Users";
 
 import { signOut } from "next-auth/react";
@@ -131,7 +131,7 @@ export default function AdminPage() {
           <Tab.Panels className="mt-10">
             <Tab.Panel>
               <div className="flex flex-col">
-                Hello 
+                Hello! Welcome to the admin panel. Here you can approve users and bookings.
               </div>
             </Tab.Panel>
             <Tab.Panel>

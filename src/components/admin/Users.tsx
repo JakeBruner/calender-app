@@ -12,7 +12,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 type User = RouterOutputs["users"]["getAllUsers"][0];
 
-export default function Bookings() {
+export default function Users() {
   const { data: session } = useSession();
 
   const users = trpc.users.getAllUsers.useQuery();
@@ -368,7 +368,6 @@ export default function Bookings() {
                     onClick={() => {
                       setShowPopup(false); 
                       popupUser && deleteUser.mutate(popupUser.id);
-                      setPopupUser(null);
                     }}
                   >
                     Delete
