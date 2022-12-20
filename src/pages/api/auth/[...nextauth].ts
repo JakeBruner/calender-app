@@ -15,9 +15,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, user }) {
       if (session.user) {
-        // session.user.role = user.role;
-
         session.user.id = user.id;
+        session.user.role = user.role;
+        session.user.name = user.name;
+        session.user.email = user.email;
+        session.user.image = user.image;
       }
       return session;
     },
@@ -25,10 +27,6 @@ export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
-    // DiscordProvider({
-    //   clientId: env.DISCORD_CLIENT_ID,
-    //   clientSecret: env.DISCORD_CLIENT_SECRET,
-    // }),
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,

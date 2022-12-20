@@ -6,4 +6,6 @@
   body {
     @apply text-neutral-800 bg-neutral-100;
   }
+  /* font is set in _app */
 }
+

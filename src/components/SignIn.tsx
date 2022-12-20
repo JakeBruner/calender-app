@@ -31,7 +31,7 @@ export const SignIn: FC = () => {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <div>
           <button
-            className="inline-flex w-full justify-center rounded-md border mb-4 border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
+            className="btn inline-flex w-full justify-center rounded-md border mb-4 border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
             onClick={() => signIn("google", { callbackUrl: "/calendar" })}
           >
             <span className="sr-only">Sign in with Google</span>
@@ -59,7 +59,7 @@ export const SignIn: FC = () => {
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <button
-                  className="inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
+                  className="btn inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
                   onClick={() => signIn("facebook", { callbackUrl: "/calendar" })}
                 >
                   <span className="sr-only">Sign in with Facebook</span>
@@ -80,7 +80,7 @@ export const SignIn: FC = () => {
 
               <div>
                 <button
-                  className="inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
+                  className="btn inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
                   onClick={() => signIn("twitter")}
                 >
                   <span className="sr-only">Sign in with Twitter</span>
@@ -97,7 +97,7 @@ export const SignIn: FC = () => {
 
               <div>
                 <button
-                  className="inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
+                  className="btn inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
                 >
                   <span className="sr-only">Sign in with GitHub</span>
                   <svg
@@ -195,7 +195,7 @@ export const SignIn: FC = () => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                className="btn flex w-full justify-center rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
               >
                 Sign in
               </button>
