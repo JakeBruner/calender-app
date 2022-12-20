@@ -55,13 +55,13 @@ export const bookingsRouter = router({
               image: true,
             },
           },
-          sharedUsers: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-            },
-          },
+          // sharedUsers: {
+          //   select: {
+          //     id: true,
+          //     name: true,
+          //     image: true,
+          //   },
+          // },
         },
       });
       // .then((unfilteredBookings) => {
