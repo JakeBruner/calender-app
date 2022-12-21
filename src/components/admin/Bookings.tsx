@@ -37,7 +37,15 @@ export const sortingOptionsArray = [0, 1, 2, 3] as const;
 
 export type sortingNumbers = keyof typeof sortingOptions;
 
+// Location in form L1, L2, L3, L4, Other
+// sorting function for comparison
+import  type { LocationID } from "../../types/location";
 
+const locationOrder = ["L1", "L2", "L3", "L4", "Other"];
+const locationCompare = (a: LocationID, b: LocationID) => {
+  if (a === b) return 0;
+  return locationOrder.indexOf(a) - locationOrder.indexOf(b);
+}
 
 type BookingProps = {
   session: Session
@@ -57,6 +65,29 @@ export const Bookings: FC<BookingProps> = ({}) => {
   const cancelButtonRef = useRef(null)
 
   const [sorting, setSorting] = useState<sortingNumbers>(0)
+
+  // sorting the bookings 
+  useEffect(() => {
+    if (bookings.data) {
+      const sortedBookings = bookings.data.sort((a, b) => {
+        switch (sorting) {
+          case 0:
+            return a.start.valueOf() - b.start.valueOf();
+          case 1:
+            return b.start.valueOf() - a.start.valueOf();
+          case 2:
+            return locationCompare(a.location, b.location);
+          case 3: // alphabetical A-Z name a.author.name but can be null
+            if (a.author?.name && b.author?.name) {
+              return a.author.name.localeCompare(b.author.name);
+            }
+            return 0;
+        }
+      });
+      setPendingBookings(sortedBookings.filter((booking) => booking.approved === false));
+      setAllowedBookings(sortedBookings.filter((booking) => booking.approved === true));
+    }
+  }, [bookings, sorting])
 
 
   const utils = trpc.useContext();
@@ -106,12 +137,12 @@ export const Bookings: FC<BookingProps> = ({}) => {
   });
   
 
-  useEffect(() => {
-    if (bookings.data) {
-      setPendingBookings(bookings.data.filter((booking) => booking.approved === false));
-      setAllowedBookings(bookings.data.filter((booking) => booking.approved === true));
-    }
-  }, [bookings.data]);
+  // useEffect(() => {
+  //   if (bookings.data) {
+  //     setPendingBookings(bookings.data.filter((booking) => booking.approved === false));
+  //     setAllowedBookings(bookings.data.filter((booking) => booking.approved === true));
+  //   }
+  // }, [bookings.data]);
 
   if (bookings.isLoading) {
     return <div>Loading...</div>;
@@ -151,25 +182,25 @@ export const Bookings: FC<BookingProps> = ({}) => {
                       scope="col"
                       className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
                     >
-                      &nbsp;
+                      Title
                     </th>
                     <th
                       scope="col"
                       className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
                     >
-                      Name
+                      Author
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
                     >
-                      Email
+                      Start
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
                     >
-                      ID
+                      End
                     </th>
                     <th
                       scope="col"
