@@ -1,19 +1,22 @@
 // import type { Booking } from '../../types/calendar'
 import Image from "next/image";
 import { trpc } from "../../utils/trpc";
-import { useSession } from "next-auth/react";
 import type { RouterOutputs } from "../../utils/trpc";
 
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 
-import { Fragment, useRef, useState, useEffect } from 'react'
+import { Fragment, useRef, useState, useEffect, type FC } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import type { Session } from "next-auth";
 
 type User = RouterOutputs["users"]["getAllUsers"][0];
 
-export default function Users() {
-  const { data: session } = useSession();
+
+type UserProps = {
+  session: Session
+}
+export const Users: FC<UserProps> = ({ session }) => {
 
   const users = trpc.users.getAllUsers.useQuery();
 
@@ -83,6 +86,8 @@ export default function Users() {
       );
     }
   }, [users.data]);
+  // useEffect is needed because the data is stateful for the optimistic updates
+  
 
   if (users.isLoading) {
     return <div>Loading...</div>;
@@ -390,3 +395,5 @@ export default function Users() {
     </Transition.Root>
    </>);
 }
+
+export default Users;

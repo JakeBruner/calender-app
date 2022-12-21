@@ -1,19 +1,50 @@
-// import type { Booking } from '../../types/calendar'
-// import Image from "next/image";
 import { trpc } from "../../utils/trpc";
-import { useSession } from "next-auth/react";
+
 import type { RouterOutputs } from "../../utils/trpc";
 
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 
-import { Fragment, useRef, useState, useEffect } from 'react'
+import { Fragment, useRef, useState, useEffect, type FC } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import type { Session } from "next-auth";
+
 
 type Booking = RouterOutputs["bookings"]["adminGetAll"][0];
 
-export default function Bookings() {
-  const { data: session } = useSession();
+import SortingSelector from "./SortingSelector";
+
+// type sortingOptions = "Date (Ascending)" | "Date (Descending)" | "Location" | "Author"
+// const enum sortingOptions {
+//   "Date (Ascending)",
+//   "Date (Descending)",
+//   "Location",
+//   "Author",
+// }
+// const sortingOptions = {
+//   "Date (Ascending)": 0,
+//   "Date (Descending)": 1,
+//   "Location": 2,
+//   "Author": 3,
+// } opposite
+export const sortingOptions = { // I hope nobody has to see this spaghetti code
+  0: "Date (Ascending)",
+  1: "Date (Descending)",
+  2: "Location",
+  3: "Author",
+} as const;
+export const sortingOptionsArray = [0, 1, 2, 3] as const;
+
+export type sortingNumbers = keyof typeof sortingOptions;
+
+
+
+type BookingProps = {
+  session: Session
+}
+
+export const Bookings: FC<BookingProps> = ({}) => {
+  // const { data: session } = useSession();
 
   const bookings = trpc.bookings.adminGetAll.useQuery();
 
@@ -24,6 +55,8 @@ export default function Bookings() {
   const [popupBooking, setPopupBooking] = useState<
   {title: string, id: string} | null>(null)
   const cancelButtonRef = useRef(null)
+
+  const [sorting, setSorting] = useState<sortingNumbers>(0)
 
 
   const utils = trpc.useContext();
@@ -198,103 +231,98 @@ export default function Bookings() {
           </div>
         )}
       </div>
-
-      <h1 className="mt-8 text-xl font-semibold text-neutral-900">
-        Approved Bookings
-      </h1>
-      <div className="mt-8 flex flex-col">
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <table className="min-w-full divide-y divide-neutral-300">
-                <thead className="bg-neutral-50">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
-                    >
-                      &nbsp;
-                    </th>
-                    <th
-                      scope="col"
-                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
-                    >
-                      Name
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
-                    >
-                      Email
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
-                    >
-                      ID
-                    </th>
-                    <th
-                      scope="col"
-                      className="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                    >
-                      <span className="sr-only">Edit</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-200 bg-white">
-                  {/* {allowedBookings.map((booking) => (
-                    <tr key={person.email}>
-                      <td className="relative py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
-                        {person.image ? (
-                          <div className="relative h-10 w-10 rounded-full">
-                            <Image
-                              src={person.image}
-                              alt={person.name + "profile"}
-                              fill={true}
-                              className="rounded-full object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100">
-                            <span className="text-neutral-500">
-                              {person.name ? person.name[0] : ""}
-                            </span>
-                          </div>
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
-                        {person.name}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">
-                        {person.email}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">
-                        {person.id}
-                      </td>
-                      <td className="relative whitespace-nowrap py-4 pl-2 pr-4 text-right text-sm font-medium sm:pr-6">
-                        {person.id !== session?.user.id &&
-                          person.role !== "ADMIN" && (
-                            <button
-                              className="text-red-600 hover:text-red-900"
-                              onClick={() => {
-                                // deleteUser.mutate(person.id);
-                                setPopupUser(person);
-                                setShowPopup(true);
-                              }}
-                            >
-                              Delete
-                              <span className="sr-only">, {person.name}</span>
-                            </button>
-                          )}
-                      </td>
-                    </tr>
-                  ))} */}
-                </tbody>
-              </table>
-            </div>
+    <div className="relative">
+        <div className="flex flex-row mt-8 z-10">
+          {/* I'm using self-end because of how the Pending Bookings section looks with padding */}
+          <h1 className="text-xl self-end font-semibold text-neutral-900">
+            Approved Bookings
+          </h1>
+          <div className="flex-grow"/>
+          {/* sorting options dropdown */}
+          <div className="self-end z-10 translate-y-2.5 sm:translate-y-2">
+          <SortingSelector sorting={sorting} setSorting={setSorting} />
           </div>
         </div>
-      </div>
+        <div className="mt-8 -mx-4">
+          {allowedBookings.length > 0 && (
+          <div className="overflow-x-auto mx-auto w-full py-2 align-middle md:px-6 lg:px-8">
+              <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                <table className="mx-auto w-full relative divide-y divide-neutral-300">
+                  <thead className="bg-neutral-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
+                      >
+                        &nbsp;
+                      </th>
+                      <th
+                        scope="col"
+                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
+                      >
+                        Name
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
+                      >
+                        Email
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
+                      >
+                        ID
+                      </th>
+                      <th
+                        scope="col"
+                        className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                      >
+                        <span className="sr-only">Edit</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="relative marker:divide-y divide-neutral-200 bg-white">
+                    {allowedBookings.map((booking) => (
+                      <tr key={booking.id}>
+                        <td className="py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
+                        </td>
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
+                          {booking.title}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">
+                          {booking.author.name}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">
+                          {booking.start.toLocaleDateString()}
+                        </td>
+                        <td className="whitespace-nowrap py-4 pr-4 text-right text-sm font-medium sm:pr-6">
+                          <button
+                            className="mr-6 text-sky-600 hover:text-sky-800 cursor-not-allowed"
+                            disabled
+                          >
+                            Edit
+                            <span className="sr-only">, {booking.title}</span>
+                          </button>
+                          <button
+                            className="text-red-600 hover:text-red-800"
+                            onClick={() => {
+                              setPopupBooking(booking);
+                              setShowPopup(true);
+                            }}
+                          >
+                            Delete<span className="sr-only">, {booking.title}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+          </div>
+          )}
+          </div>
+    </div>
     </div>
     <Transition.Root show={showPopup} as={Fragment}>
       <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setShowPopup}>
@@ -365,5 +393,8 @@ export default function Bookings() {
         </div>
       </Dialog>
     </Transition.Root>
-   </>);
+   </>
+   );
 }
+
+export default Bookings;
