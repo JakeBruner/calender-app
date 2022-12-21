@@ -37,4 +37,11 @@ export const usersRouter = router({
         },
       });
     }),
+  adminCountAllUsers: protectedProcedure.query(({ ctx }) => {
+    //TODO: cache?
+    if (ctx.session.user.role !== "ADMIN") {
+      throw new Error("Not authorized");
+    }
+    return ctx.prisma.user.count();
+  }),
 });

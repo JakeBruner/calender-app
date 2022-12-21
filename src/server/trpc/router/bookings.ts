@@ -132,4 +132,10 @@ export const bookingsRouter = router({
         },
       });
     }),
+  adminCountAllBookings: protectedProcedure.query(({ ctx }) => {
+    if (ctx.session.user.role !== "ADMIN") {
+      throw new Error("Not authorized");
+    }
+    return ctx.prisma.booking.count();
+  }),
 });

@@ -31,3 +31,5 @@ export const locationsList = [
   { id: "L4", name: process.env.NEXT_PUBLIC_L4! },
   { id: "OTHER", name: "Other" },
 ] as const;
+
+export type LocationID = keyof typeof locations;
