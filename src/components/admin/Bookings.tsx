@@ -186,112 +186,111 @@ export const Bookings: FC<BookingProps> = ({}) => {
             </p>
           </div>
         </div>
-
-        <h1 className="mt-8 text-xl font-semibold text-neutral-900">
-          Pending Bookings
-        </h1>
-        <div className="mt-8 flex flex-col">
-          {pendingBookings.length > 0 ? (
-            <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-              <div className="min-w-full inline-block py-2 align-middle md:px-6 lg:px-8">
-                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                  <table className="min-w-full divide-y divide-neutral-300">
-                    <thead className="bg-neutral-50">
-                      <tr>
-                        <th
-                          scope="col"
-                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
-                        >
-                          Title
-                        </th>
-                        <th
-                          scope="col"
-                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
-                        >
-                          Author
-                        </th>
-                        <th
-                          scope="col"
-                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
-                        >
-                          Location
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
-                        >
-                          Start
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
-                        >
-                          End
-                        </th>
-                        <th
-                          scope="col"
-                          className="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                        >
-                          <span className="sr-only">Edit</span>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-neutral-200 bg-white">
-                      {pendingBookings.map((booking) => (
-                        <tr key={booking.id}>
-                          <td className="py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
-                            {booking.title}
-                          </td>
-                          <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
-                            {booking.author?.name || booking.author.id}
-                          </td>
-                          <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
-                            {locations[booking.location].name.split(" ")[0]}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">
-                            {booking.start.toLocaleDateString()}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">
-                            {booking.end.toLocaleDateString()}
-                          </td>
-                          <td className="relative whitespace-nowrap py-4 pr-4 text-right text-sm font-medium sm:pr-6">
-                            <button
-                              className="mr-5 text-sky-600 hover:text-sky-900"
-                              onClick={() => {
-                                approveBooking.mutate(booking.id);
-                              }}
-                            >
-                              Approve
-                              <span className="sr-only">, {booking.title}</span>
-                            </button>
-                            <button
-                              className="text-red-600 hover:text-red-900"
-                              onClick={() => {
-                                setPopupBooking(booking);
-                                setShowPopup(true);
-                              }}
-                            >
-                              Delete
-                              <span className="sr-only">, {booking.title}</span>
-                            </button>
-                          </td>
+        <div className="relative">
+          <h1 className="mt-8 text-xl font-semibold text-neutral-900">
+            Pending Bookings
+          </h1>
+          <div className="-mx-4 mt-8">
+            {pendingBookings.length > 0 ? (
+              <div className="mx-auto w-full overflow-x-auto py-2 align-middle md:px-6 lg:px-8">
+                  <div className="overflow-y-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                    <table className="relative mx-auto w-full divide-y divide-neutral-300">
+                      <thead className="bg-neutral-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
+                          >
+                            Title
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
+                          >
+                            Author
+                          </th>
+                          <th
+                            scope="col"
+                            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 sm:pl-6"
+                          >
+                            Location
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
+                          >
+                            Start
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-3 py-3.5 text-left text-sm font-semibold text-neutral-900"
+                          >
+                            End
+                          </th>
+                          <th
+                            scope="col"
+                            className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                          >
+                            <span className="sr-only">Edit</span>
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-200 bg-white">
+                        {pendingBookings.map((booking) => (
+                          <tr key={booking.id}>
+                            <td className="py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
+                              {booking.title}
+                            </td>
+                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
+                              {booking.author?.name || booking.author.id}
+                            </td>
+                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6">
+                              {locations[booking.location].name.split(" ")[0]}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">
+                              {booking.start.toLocaleDateString()}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-neutral-500">
+                              {booking.end.toLocaleDateString()}
+                            </td>
+                            <td className="relative whitespace-nowrap py-4 pr-4 text-right text-sm font-medium sm:pr-6">
+                              <button
+                                className="mr-5 text-sky-600 hover:text-sky-900"
+                                onClick={() => {
+                                  approveBooking.mutate(booking.id);
+                                }}
+                              >
+                                Approve
+                                <span className="sr-only">, {booking.title}</span>
+                              </button>
+                              <button
+                                className="text-red-600 hover:text-red-900"
+                                onClick={() => {
+                                  setPopupBooking(booking);
+                                  setShowPopup(true);
+                                }}
+                              >
+                                Delete
+                                <span className="sr-only">, {booking.title}</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
-                <CheckCircleIcon className="h-6 w-6 text-neutral-500" />
+            ) : (
+              <div className="flex flex-col items-center justify-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
+                  <CheckCircleIcon className="h-6 w-6 text-neutral-500" />
+                </div>
+                <p className="mt-4 text-sm font-medium text-neutral-900">
+                  No bookings to approve! 🎉
+                </p>
               </div>
-              <p className="mt-4 text-sm font-medium text-neutral-900">
-                No bookings to approve! 🎉
-              </p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
         <div className="relative">
           <div className="z-10 mt-8 flex flex-row">

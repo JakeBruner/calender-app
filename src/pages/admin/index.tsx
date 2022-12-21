@@ -12,6 +12,7 @@ import TabHeaderListing from "../../components/admin/TabHeaderListing"
 import { signOut } from "next-auth/react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { trpc } from "../../utils/trpc";
 
 
 
@@ -20,6 +21,9 @@ export default function AdminPage() {
   const { data: session, status } = useSession();
 
   const [tabIndex, setTabIndex] = useState(0);
+
+  const usercount = trpc.users.adminCountAllUsers.useQuery();
+  const bookingcount = trpc.bookings.adminCountAllBookings.useQuery();
 
 
   if (status === "loading") {
@@ -101,7 +105,7 @@ export default function AdminPage() {
                         Total Users
                       </dt>
                       <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                        1,000
+                        {usercount?.data ? usercount?.data : "Fetching..."}
                       </dd>
                     </div>
                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -109,7 +113,7 @@ export default function AdminPage() {
                         Total Bookings
                       </dt>
                       <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                        1,000
+                        {bookingcount?.data ? bookingcount?.data : "Fetching..."}
                       </dd>
                     </div>
                   </dl>
