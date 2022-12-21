@@ -71,7 +71,7 @@ export default function AdminPage() {
             Log out
         </button>
       </div>
-      <div className="block">
+      <div className="flex flex-col">
         <Tab.Group defaultIndex={0}>
           <TabHeaderListing />
           <Tab.Panels className="mt-10">
@@ -90,5 +90,76 @@ export default function AdminPage() {
         </Tab.Group>
       </div>
     </div>
+  );
+}
+
+import { Fragment } from 'react';
+import { Tab } from '@headlessui/react';
+import classnames from 'classnames';
+
+
+const TabHeaderListing = (): JSX.Element => {
+  return (
+  <Tab.List className="flex divide-x divide-neutral-200 rounded-lg shadow" aria-label="Tabs">
+    <Tab as={Fragment}>
+      {( { selected } ) => (
+        <button
+          className={classnames(
+            selected ? 'text-neutral-900' : 'text-neutral-500 hover:text-neutral-700',
+            'rounded-l-lg',
+            'group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-neutral-50 focus:z-10'
+          )}
+        >
+          General
+          <span
+            aria-hidden="true"
+            className={classnames(
+              selected ? 'bg-sky-500' : 'bg-transparent',
+              'absolute inset-x-0 bottom-0 h-0.5'
+            )} />
+        </button>
+      )}
+    </Tab>
+    <Tab as={Fragment}>
+      {( { selected } ) => (
+        <button
+
+          className={classnames(
+            selected ? 'text-neutral-900' : 'text-neutral-500 hover:text-neutral-700',
+
+            // tabIdx === tabs.length - 1 ? 'rounded-r-lg' : '',
+            'group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-neutral-50 focus:z-10'
+          )}
+        >
+          Approve Users
+          <span
+            aria-hidden="true"
+            className={classnames(
+              selected ? 'bg-sky-500' : 'bg-transparent',
+              'absolute inset-x-0 bottom-0 h-0.5'
+            )} />
+        </button>
+      )}
+    </Tab>
+    <Tab as={Fragment}>
+      {( { selected } ) => (
+        <button
+          className={classnames(
+            selected ? 'text-neutral-900' : 'text-neutral-500 hover:text-neutral-700',
+            'rounded-r-lg',
+            'group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-neutral-50 focus:z-10'
+          )}
+        >
+          Approve Bookings
+          <span
+            aria-hidden="true"
+            className={classnames(
+              selected ? 'bg-sky-500' : 'bg-transparent',
+              'absolute inset-x-0 bottom-0 h-0.5'
+            )} />
+        </button>
+      )}
+    </Tab>
+  </Tab.List>
   );
 }
