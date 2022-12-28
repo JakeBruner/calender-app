@@ -33,7 +33,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   /* useMemo hook is used to memoize the computation of days in the month. 
     useCallback memoizes this populateDays function, which sets setDays() to the computed array of days. 
     The useEffect hook is used to call the populateDays function when the component is rendered. 
-    These hooks are used to avoid unnecessary recalculations. */
+ */
 
   const computeDays = useMemo(() => {
     const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();

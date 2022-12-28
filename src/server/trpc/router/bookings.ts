@@ -105,6 +105,55 @@ export const bookingsRouter = router({
         },
       });
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        message: z.string().nullable(),
+        start: z.date(),
+        end: z.date(),
+        // location must be L1, L2, L3, L4, OTHER
+        location: z.enum(["L1", "L2", "L3", "L4", "OTHER"]),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      if (ctx.session.user.role === "LIMBO") {
+        throw new Error("You are not authorized to access this resource");
+      }
+      if (ctx.session.user.role === "ADMIN") {
+        return ctx.prisma.booking.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            title: input.title,
+            message: input.message,
+            start: input.start,
+            end: input.end,
+            location: input.location,
+          },
+        });
+      }
+      // q: how to ensure that the user is the author of the booking?
+      // a: use the where clause
+      // a: by default, the where clause is an AND
+
+
+      return ctx.prisma.booking.updateMany({
+        where: {
+          id: input.id,
+          authorId: ctx.session.user.id,
+        },
+        data: {
+          title: input.title,
+          message: input.message,
+          start: input.start,
+          end: input.end,
+          location: input.location,
+        },
+      });
+    }),
   adminDeleteBooking: protectedProcedure
     .input(z.string())
     .mutation(({ ctx, input }) => {
