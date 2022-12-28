@@ -25,6 +25,20 @@ export const SignIn: FC = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full  sm:max-w-md">
         <div className="flex-1 bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="mb-6">
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-neutral-300" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-neutral-500">
+                    Sign in with social provider
+                  </span>
+                </div>
+              </div>
+
+          </div>
           <>
             <button
               className="btn mb-4 inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white py-2 px-4 text-sm font-medium text-neutral-500 shadow-sm hover:bg-neutral-50"
@@ -100,7 +114,7 @@ export const SignIn: FC = () => {
                 >
                   <span className="sr-only">Sign in with Instagram</span>
                   <svg
-                    className="h-5 w-5"
+                    className="h-5 w-5 scale-125"
                     aria-hidden="true"
                     fill="currentColor"
                     viewBox="0 0 448 512"
@@ -113,7 +127,7 @@ export const SignIn: FC = () => {
               </div>
             </div>
           </>
-          <div className="relative my-6">
+          {/* <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-neutral-300" />
             </div>
@@ -197,7 +211,7 @@ export const SignIn: FC = () => {
                 Sign in
               </button>
             </div>
-          </form>
+          </form> */}
         </div>
       </div>
     </div>
