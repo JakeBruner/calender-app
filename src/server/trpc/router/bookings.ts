@@ -155,6 +155,21 @@ export const bookingsRouter = router({
       });
 
     }),
+
+  delete: protectedProcedure
+    .input(z.string())
+    .mutation(({ ctx, input }) => {
+      if (ctx.session.user.role === "LIMBO") {
+        throw new Error("You are not authorized to access this resource");
+      }
+      return ctx.prisma.booking.deleteMany({
+        where: {
+          id: input,
+          authorId: ctx.session.user.id,
+        },
+      });
+    }),
+    
   adminDeleteBooking: protectedProcedure
     .input(z.string())
     .mutation(({ ctx, input }) => {
