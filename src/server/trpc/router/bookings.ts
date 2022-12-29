@@ -122,7 +122,7 @@ export const bookingsRouter = router({
         throw new Error("You are not authorized to access this resource");
       }
       if (ctx.session.user.role === "ADMIN") {
-        return ctx.prisma.booking.update({
+        return ctx.prisma.booking.updateMany({
           where: {
             id: input.id,
           },
@@ -153,6 +153,7 @@ export const bookingsRouter = router({
           location: input.location,
         },
       });
+
     }),
   adminDeleteBooking: protectedProcedure
     .input(z.string())

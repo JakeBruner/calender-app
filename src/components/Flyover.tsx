@@ -1,58 +1,20 @@
 import { Fragment, useRef, useState } from 'react'
-import { Dialog, Transition, Listbox } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, /**CalendarIcon*/ } from '@heroicons/react/24/outline'
 // import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
-import { CheckIcon, ChevronUpDownIcon, ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
 
 import DateSelector from './DateSelector'
 import type { PartialBooking } from '../types/calendar';
 
-import { locationsList } from '../types/location'
+import { type locationsList } from '../types/location'
 
 type Location = typeof locationsList[number]
 
-import classnames from 'classnames'
+import LocationDropdown from './LocationDropdown'
 
 
 // import { boolean } from 'zod';
-
-// const team = [
-//   {
-//     name: 'Tom Cook',
-//     email: 'tom.cook@example.com',
-//     href: '#',
-//     imageUrl:
-//       'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     name: 'Whitney Francis',
-//     email: 'whitney.francis@example.com',
-//     href: '#',
-//     imageUrl:
-//       'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     name: 'Leonard Krasner',
-//     email: 'leonard.krasner@example.com',
-//     href: '#',
-//     imageUrl:
-//       'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     name: 'Floyd Miles',
-//     email: 'floy.dmiles@example.com',
-//     href: '#',
-//     imageUrl:
-//       'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     name: 'Emily Selman',
-//     email: 'emily.selman@example.com',
-//     href: '#',
-//     imageUrl:
-//       'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-// ]
 
 interface FlyoverProps {
   dateRange: [Date | null, Date | null];
@@ -142,63 +104,8 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
                               </div>
                             </div>
                             <div>
-                              <Listbox value={selectedLocation} onChange={setSelectedLocation}>
-                                {({ open }) => (
-                                  <>
-                                    <Listbox.Label className="block text-sm font-medium text-neutral-700">Assigned to</Listbox.Label>
-                                    <div className="relative mt-1">
-                                      <Listbox.Button className="relative w-full cursor-default rounded-md border border-neutral-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm">
-                                        <span className="block truncate">{selectedLocation ? selectedLocation.name : "Select a location"}</span>
-                                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                          <ChevronUpDownIcon className="h-5 w-5 text-neutral-400" aria-hidden="true" />
-                                        </span>
-                                      </Listbox.Button>
-
-                                      <Transition
-                                        show={open}
-                                        as={Fragment}
-                                        leave="transition ease-in duration-100"
-                                        leaveFrom="opacity-100"
-                                        leaveTo="opacity-0"
-                                      >
-                                        <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                          {locationsList.map((l) => (
-                                            <Listbox.Option
-                                              key={l.id}
-                                              className={({ active }) =>
-                                                classnames(
-                                                  active ? 'text-white bg-sky-600' : 'text-neutral-900',
-                                                  'relative cursor-default select-none py-2 pl-8 pr-4'
-                                                )
-                                              }
-                                              value={l}
-                                            >
-                                              {({ selected, active }) => (
-                                                <>
-                                                  <span className={classnames(selected ? 'font-semibold' : 'font-normal', 'block truncate')}>
-                                                    {l.name}
-                                                  </span>
-
-                                                  {selected ? (
-                                                    <span
-                                                      className={classnames(
-                                                        active ? 'text-white' : 'text-sky-600',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5'
-                                                      )}
-                                                    >
-                                                      <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                                                    </span>
-                                                  ) : null}
-                                                </>
-                                              )}
-                                            </Listbox.Option>
-                                          ))}
-                                        </Listbox.Options>
-                                      </Transition>
-                                    </div>
-                                  </>
-                                )}
-                              </Listbox>
+                            <label className="block text-sm font-medium text-neutral-700">Location</label>
+                            <LocationDropdown selectedLocation={selectedLocation} setSelectedLocation={setSelectedLocation} />
                             </div>
                             <div>
                               <label htmlFor="description" className="block text-sm font-medium text-neutral-900">
