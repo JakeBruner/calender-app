@@ -86,12 +86,12 @@ const BookingLine: FC<BookingProps> = ({
             key={booking.id}
             className={classnames(
               "z-10 h-3 md:h-4 rounded-sm",
-              `bg-${locations[booking.location].color}-500 opacity-80`,
+              `bg-${locations[booking.location].color}-500 opacity-60`,
               overflowingEnd && "rounded-r-none border-r-2 border-neutral-600",
               overflowingStart &&
                 "rounded-l-none border-l-2 border-neutral-600",
               !overflowingEnd && !overflowingStart && "mx-0.5",
-              "absolute -translate-y-1.5 sm:-translate-y-1 md:translate-y-1 transform",
+              "-translate-y-1.5 sm:-translate-y-1 md:translate-y-0.5 transform",
               "w-full select-none transition-all duration-200 ease-in-out hover:scale-[101%] hover:shadow-lg"
             )}
             style={{ width: `${bookingWidth}` }}

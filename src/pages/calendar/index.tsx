@@ -73,6 +73,22 @@ export default function CalendarApp(): JSX.Element {
   const { status, data: session } = useSession();
   const router = useRouter();
 
+  if (status === "unauthenticated") {
+    router.push("/");
+    console.error("Not authenticated");
+    // return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
+    // Redirecting...
+    // </div>;
+  }
+
+  if (session?.user.role === "LIMBO") {
+    router.push("/limbo");
+    console.error("Not authenticated");
+    // return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
+    // Redirecting...
+    // </div>;
+  }
+
   const allBookings = trpc.bookings.getAll.useQuery();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -148,19 +164,7 @@ export default function CalendarApp(): JSX.Element {
     );
   }
 
-  if (status === "unauthenticated") {
-    router.push("/");
-    return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
-    Redirecting...
-    </div>;
-  }
 
-  if (session?.user.role === "LIMBO") {
-    router.push("/limbo");
-    return <div className="flex h-screen animate-pulse items-center justify-center text-2xl">
-    Redirecting...
-    </div>;
-  }
 
   return (
     <main>

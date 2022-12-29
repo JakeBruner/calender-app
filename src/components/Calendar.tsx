@@ -33,7 +33,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   /* useMemo hook is used to memoize the computation of days in the month. 
     useCallback memoizes this populateDays function, which sets setDays() to the computed array of days. 
     The useEffect hook is used to call the populateDays function when the component is rendered. 
-    These hooks are used to avoid unnecessary recalculations. */
+ */
 
   const computeDays = useMemo(() => {
     const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
@@ -97,6 +97,31 @@ export const Calendar: React.FC<CalendarProps> = ({
     populateDays();
   }, [populateDays]);
   //! end nonsense
+
+
+  const [bookingsPerRow, setBookingsPerRow] = useState<number[]>([])
+
+  // useEffect to compute the number of bookings that fall in the range of each week row so as to compute the stacking context, i.e. how many bookings can be displayed in each row
+  useEffect(() => {
+    const bookingsPerRow = days.reduce((acc, day, i) => {
+      if (i % 7 === 0) {
+        acc.push(0);
+      }
+      const bookingsForDay = bookings.filter((booking) => {
+        const bookingStart = new Date(booking.start);
+        const bookingEnd = new Date(booking.end);
+        return (
+          bookingStart.getTime() <= day.date.getTime() &&
+          bookingEnd.getTime() >= day.date.getTime()
+        );
+      });
+      acc[acc.length - 1] += bookingsForDay.length;
+      return acc;
+    }, [] as number[]);
+    setBookingsPerRow(bookingsPerRow);
+  }, [days, bookings]);
+
+
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -223,7 +248,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         >
           {days.map((day) => {
             const isSelected = isInRange(day.date);
-            // console.log(isSelected)
+
             return (
               <MemoizedDay
                 key={day.date.toDateString()}
@@ -233,6 +258,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 bookings={getDayFromBookings(day.date)}
                 setSelectedBooking={setSelectedBooking}
                 cellWidth={width}
+                bookingsPerRow={bookingsPerRow}
               />
             );
           })}

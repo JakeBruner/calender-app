@@ -18,11 +18,12 @@ export type DayProps = {
   bookings: DayWithBookingInfo[] | null;
   setSelectedBooking: React.Dispatch<React.SetStateAction<BookingID | null>>;
   cellWidth: number;
+  bookingsPerRow: number[]
 }
 
 
 // Day component that displays the day number and applies styling if it is in the selected range
-const DayComponent: FC<DayProps> = ({ day, isItToday, isSelected, bookings, setSelectedBooking, cellWidth }) => {
+const DayComponent: FC<DayProps> = ({ day, isItToday, isSelected, bookings, setSelectedBooking, cellWidth, bookingsPerRow }) => {
 
   // include if booking starts on the day or if day is monday and booking includes the day
   const filteredBookings = bookings?.filter((booking) => {
