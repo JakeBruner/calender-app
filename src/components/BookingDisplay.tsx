@@ -72,11 +72,15 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
     });
   };
 
-  const setModifiedDateRange = (start: Date, end: Date) => {
+  const setModifiedDateRange = ([start, end]: [Date | null, Date | null]) => {
+    // setModifiedBooking((prev) => {
+    //   if (!prev) return null;
+    //   return { ...prev, start, end };
+    // });
     setModifiedBooking((prev) => {
       if (!prev) return null;
-      return { ...prev, start, end };
-    });
+      return { ...prev, start: start || prev.start, end: end || prev.end };
+    })
   };
 
   useEffect(() => {
@@ -116,6 +120,15 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
   if (!selectedBookingInfo) {
     return null;
   }
+
+  const getDateString = (day: number, month: number, year: number) => {
+    return new Date(year, month, day).toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   const dateStrings = [
     selectedBookingInfo.start.toLocaleDateString("en-GB", {
@@ -196,7 +209,7 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
           <dl className="sm:divide-y sm:divide-gray-200">
             <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">
-                Name{isEditable ? "hi" : "bye"}
+                Name
               </dt>
               <dd
                 className={classnames(
@@ -227,12 +240,12 @@ export const BookingDisplay: FC<BookingDisplayProps> = ({
 
                 ) : (
                 <>
-                  {dateStrings[0]}
+                  {modifiedBooking ? getDateString(modifiedBooking.start.getDate() + 1, modifiedBooking.start.getMonth(), modifiedBooking.start.getFullYear()) : dateStrings[0]}
                   <ArrowsRightLeftIcon
                     className="mx-2 inline-block h-4 w-4 text-gray-500"
                     aria-hidden="true"
                   />
-                  {dateStrings[1]}
+                  {modifiedBooking ? getDateString(modifiedBooking.end.getDate(), modifiedBooking.end.getMonth(), modifiedBooking.end.getFullYear()) : dateStrings[1]}
                 </>
                 )}
               </dd>
