@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
       clientId: env.TWITTER_CLIENT_ID,
       clientSecret: env.TWITTER_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
-      version: "2",
+      version: "2.0",
     }),
     FacebookProvider({
       clientId: env.FACEBOOK_CLIENT_ID,
