@@ -327,11 +327,44 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
 }
 export default Flyover;
 
+
+const DATE_ARRAY = (
+  props: { [key: string]: unknown },
+  propName: string,
+  componentName: string,
+): Error | null => {
+  const propValue = props[propName];
+
+  if (
+    !Array.isArray(propValue) ||
+    propValue.length !== 2 ||
+    !propValue.every(
+      (date) => date instanceof Date || date === null
+    )
+  ) {
+    return new Error(
+      `Invalid prop ${propName}. Needs to be an array of two dates or null for component ${componentName}`
+    );
+  }
+  return null;
+};
+
+DATE_ARRAY.isRequired = function(
+  props: { [key: string]: unknown },
+  propName: string,
+  componentName: string,
+): Error | null {
+  if (props[propName] === undefined) {
+    return new Error(
+      `The prop ${propName} is marked as required in ${componentName}, but its value is 'undefined'`
+    );
+  }
+  return DATE_ARRAY(props, propName, componentName);
+};
+
+
 Flyover.propTypes = {
-  dateRange: PropTypes.shape({
-    0: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.oneOf([null])]),
-    1: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.oneOf([null])]),
-  }).isRequired,
+  dateRange: DATE_ARRAY.isRequired,
   setDateRange: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
