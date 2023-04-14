@@ -1,5 +1,5 @@
-import { Fragment, useState } from "react";
-import { useSession } from "next-auth/react";
+import { Fragment, useState, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import {
   // ChevronDownIcon,
@@ -9,8 +9,9 @@ import {
   EllipsisHorizontalIcon,
 } from "@heroicons/react/20/solid";
 import { Menu, Transition } from "@headlessui/react";
-import { signOut } from "next-auth/react";
-// import { isToday } from 'date-fns'
+
+// import PropTypes from "prop-types";
+
 import classnames from "classnames";
 
 import Flyover from "./Flyover";
@@ -18,13 +19,11 @@ import Calendar from "./Calendar";
 import Image from "next/image";
 import BookingDisplay from "../components/BookingDisplay";
 
-import { useEffect } from "react";
-
 const monthNames = [
   "January",
   "February",
-  "April",
   "March",
+  "April",
   "May",
   "June",
   "July",
@@ -293,3 +292,52 @@ const CalendarWrapper: React.FC<CalenderWrapperProps> = ({ bookings, createBooki
 };
 
 export default CalendarWrapper;
+
+// type CalenderWrapperProps = {
+//   bookings: Booking[];
+//   createBooking: (booking: PartialBooking) => void;
+// };
+
+// type Booking = {
+//     id: string;
+//     author: {
+//         id: string;
+//         name: string | null;
+//         image: string | null;
+//     };
+//     start: Date;
+//     end: Date;
+//     title: string;
+//     location: Location;
+//     message: string | null;
+// }
+
+// type PartialBooking = {
+//     title: string;
+//     start: Date;
+//     end: Date;
+//     location: "L1" | "L2" | "L3" | "L4" | "OTHER";
+//     message: string | null;
+// }
+
+// CalendarWrapper.propTypes = {
+//   bookings: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.string.isRequired,
+//       author: PropTypes.shape({
+//         id: PropTypes.string.isRequired,
+//         name: PropTypes.string,
+//         image: PropTypes.string,
+//       }).isRequired,
+//       start: PropTypes.instanceOf(Date).isRequired,
+//       end: PropTypes.instanceOf(Date).isRequired,
+//       title: PropTypes.string.isRequired,
+//       location: PropTypes.shape({
+//         name: PropTypes.string.isRequired,
+//         address: PropTypes.string.isRequired,
+//       }).isRequired,
+//       message: PropTypes.string,
+//     })
+//   ),
+//   createBooking: PropTypes.func.isRequired,
+// };
