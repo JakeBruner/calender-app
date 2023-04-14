@@ -1,13 +1,10 @@
 import classnames from "classnames";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useMeasure } from "react-use";
-import type { SelectedRange /* Day*/ } from "../types/calendar";
-
-import type { Day } from "../types/calendar";
 
 import MemoizedDay from "./Days";
 
-import type { Booking, DayWithBookingInfo, BookingID } from "../types/calendar";
+import type { Booking, DayWithBookingInfo, BookingID, Day, SelectedRange } from "../types/calendar";
 
 interface CalendarProps {
   selectedRange: SelectedRange;
