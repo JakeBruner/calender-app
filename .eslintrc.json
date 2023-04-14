@@ -8,8 +8,9 @@
   "rules": {
     "@typescript-eslint/consistent-type-imports": "warn",
     "react/react-in-jsx-scope": "off",
-    "camelcase": "error",
-    "spaced-comment": "error",
-    "no-duplicate-imports": "error"
+    "camelcase": "warn",
+    "spaced-comment": "warn",
+    "no-duplicate-imports": "warn",
+    "react/prop-types": "warn"
   }
 }

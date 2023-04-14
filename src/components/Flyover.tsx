@@ -13,8 +13,8 @@ type Location = typeof locationsList[number]
 
 import LocationDropdown from './LocationDropdown'
 
+import PropTypes from 'prop-types';
 
-// import { boolean } from 'zod';
 
 interface FlyoverProps {
   dateRange: [Date | null, Date | null];
@@ -23,6 +23,7 @@ interface FlyoverProps {
   setOpen: (open: boolean) => void;
   createBooking: (booking: PartialBooking) => void;
 }
+
 
 
 export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, setOpen, createBooking }) => {
@@ -325,3 +326,14 @@ export const Flyover: React.FC<FlyoverProps> = ({dateRange, setDateRange, open, 
   )
 }
 export default Flyover;
+
+Flyover.propTypes = {
+  dateRange: PropTypes.shape({
+    0: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.oneOf([null])]),
+    1: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.oneOf([null])]),
+  }).isRequired,
+  setDateRange: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  setOpen: PropTypes.func.isRequired,
+  createBooking: PropTypes.func.isRequired,
+};
