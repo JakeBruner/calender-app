@@ -38,7 +38,7 @@ export const usersRouter = router({
       });
     }),
   adminCountAllUsers: protectedProcedure.query(({ ctx }) => {
-    //TODO: cache?
+    // TODO: cache?
     if (ctx.session.user.role !== "ADMIN") {
       throw new Error("Not authorized");
     }

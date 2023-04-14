@@ -1,7 +1,7 @@
 import classnames from "classnames";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useMeasure } from "react-use";
-import type { SelectedRange /*Day*/ } from "../types/calendar";
+import type { SelectedRange /* Day*/ } from "../types/calendar";
 
 import type { Day } from "../types/calendar";
 
@@ -96,7 +96,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   useEffect(() => {
     populateDays();
   }, [populateDays]);
-  //! end nonsense
+  // ! end nonsense
 
 
   const [bookingsPerRow, setBookingsPerRow] = useState<number[]>([])

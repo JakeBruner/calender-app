@@ -6,7 +6,7 @@ import { router, protectedProcedure } from "../trpc";
 
 export const bookingsRouter = router({
   getAll: protectedProcedure
-    //! for now, we'll just get all bookings since there are only a few
+    // ! for now, we'll just get all bookings since there are only a few
     .query(({ ctx }) => {
       if (ctx.session.user.role === "LIMBO") {
         throw new Error("You are not authorized to access this resource");

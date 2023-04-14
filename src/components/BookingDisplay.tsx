@@ -1,6 +1,6 @@
 import { type FC, useEffect, useState, Fragment, useRef } from "react";
 import { Transition, Dialog } from "@headlessui/react";
-import type { Booking } from "../types/calendar";
+import type { Booking, BookingID } from "../types/calendar";
 
 type ModifiedBooking = Omit<Booking, "author" | "location" | "id"> & {
   location: LocationFull;
@@ -17,7 +17,6 @@ import {
 import Image from "next/image";
 import classnames from "classnames";
 
-import type { BookingID } from "../types/calendar";
 
 import { useSession } from "next-auth/react";
 

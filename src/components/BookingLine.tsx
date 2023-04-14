@@ -20,8 +20,8 @@ const BookingLine: FC<BookingProps> = ({
   cellWidth,
   date,
 }) => {
-  //TODO I think some sort of setState passed down to this would work to compute whether bookings need to be shifted to make space for one another
-  //TODO I also realize I dont have a consistent system of indexing days and dates...
+  // TODO I think some sort of setState passed down to this would work to compute whether bookings need to be shifted to make space for one another
+  // TODO I also realize I dont have a consistent system of indexing days and dates...
   return (
     <>
       {bookings?.map((booking) => {
@@ -69,7 +69,7 @@ const BookingLine: FC<BookingProps> = ({
             overflowingEnd = true;
             bookingWidth = (daysTillSunday + 1) * cellWidth + 3 + "px"; // +1 because daysTillSunday is not inclusive
           } else {
-            //check if the booking is a single day
+            // check if the booking is a single day
             const singleDayBooking =
               booking.start.toISOString().split("T")[0] ===
               booking.end.toISOString().split("T")[0];
